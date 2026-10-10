@@ -33,6 +33,14 @@ Open **Settings → Style Settings → Translucid**. Each optional feature is a
 `class-toggle` that adds a `body.tld-*` class the CSS keys off. Defaults reproduce
 the previous snippet setup.
 
+### K-Plex compatibility
+The **K-Plex** plugin (`k-plex`, view types `k-plex-react-view` / `k-plex-sidepanel-view`)
+ships an opaque `#0d1219` app root, `.98/.99` gradient chrome and a gradient vignette
+over the plex canvas. With **K-Plex transparent background** on (default), the view
+chain is made transparent so the theme background image shows through the graph,
+and the topbar, content sidecar, search palette, relation modal, info bubbles and
+history bar become frosted glass instead. Node cards keep their own fills.
+
 ## Root-cause fixes applied (not band-aids)
 - **Checkboxes**: the base `input { background: … }` shorthand wiped the native
   tick. The build excludes `[type=checkbox]/[type=radio]` from those fill rules, so

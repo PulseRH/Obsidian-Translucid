@@ -13,7 +13,7 @@
 
    FEATURE ORDER (later overrides earlier):
      dark-mode, background, chrome (tabs/sidebars/vault/gradient), embeds,
-     tables, statusbar, scrollbars, plugins (copilot/extlinks), overrides.
+     tables, statusbar, scrollbars, plugins (copilot/extlinks/kplex), overrides.
 
    Feature toggles live in Style Settings (search "Translucid").
    Each optional feature is gated behind a body class (e.g. body.tld-zebra)
@@ -297,6 +297,12 @@ settings:
   -
     id: tld-extlinks
     title: External-link icon on hover only
+    type: class-toggle
+    default: true
+  -
+    id: tld-kplex
+    title: K-Plex transparent background
+    description: Strips K-Plex's opaque dark background and gradients so the theme background image shows through the plex; toolbars, panes and popups become frosted glass.
     type: class-toggle
     default: true
 */
@@ -857,7 +863,7 @@ settings:
 }
 
 /* =====================================================================
-   PLUGINS — Copilot glass + external-link hover
+   PLUGINS — Copilot glass + external-link hover + K-Plex glass
    (Excalibrain is appended by the build ahead of this section; it is scoped
    to Excalibrain panes and always on in v0.1.)
    ===================================================================== */
@@ -939,6 +945,75 @@ settings:
     background-image: none !important;
     -webkit-mask-image: none !important;
     mask-image: none !important;
+  }
+
+  /* K-Plex glass — K-Plex (k-plex) hardcodes an opaque #0d1219 app root plus
+     .98/.99 gradient chrome and a gradient vignette over the plex canvas, so
+     the theme background never shows through. View types: k-plex-react-view
+     (main) and k-plex-sidepanel-view. Strategy matches Excalibrain: make the
+     view chain transparent so the image shows through the graph area, and
+     turn opaque chrome (topbar, content pane, popups) into frosted glass.
+     Per-node cards keep their own translucent fills for readability. */
+  body.tld-kplex {
+    --tld-kplex-glass: rgba(13, 18, 25, 0.55);
+    --tld-kplex-glass-strong: rgba(13, 18, 25, 0.74);
+    --tld-kplex-frost: blur(16px) saturate(1.15);
+  }
+
+  /* 1. View chain: transparent so the background image shows through. */
+  body.tld-kplex .workspace-leaf-content[data-type="k-plex-react-view"],
+  body.tld-kplex .workspace-leaf-content[data-type="k-plex-react-view"] .view-content,
+  body.tld-kplex .workspace-leaf-content[data-type="k-plex-sidepanel-view"],
+  body.tld-kplex .workspace-leaf-content[data-type="k-plex-sidepanel-view"] .view-content,
+  body.tld-kplex .view-content:has(> .kplex-view-host),
+  body.tld-kplex .kplex-view-host,
+  body.tld-kplex .kplex-view-host > div,
+  body.tld-kplex .kplex-app {
+    --background-primary: transparent;
+    --background-secondary: transparent;
+    --background-secondary-alt: transparent;
+    background: transparent !important;
+  }
+
+  /* 2. Kill the gradient vignette K-Plex paints over the plex canvas. */
+  body.tld-kplex .kplex-plex::after {
+    background: none !important;
+  }
+
+  /* 3. Opaque gradient chrome -> frosted glass (topbar, content sidecar). */
+  body.tld-kplex .kplex-topbar {
+    background: var(--tld-kplex-glass) !important;
+    backdrop-filter: var(--tld-kplex-frost) !important;
+    -webkit-backdrop-filter: var(--tld-kplex-frost) !important;
+  }
+  body.tld-kplex .kplex-content-pane {
+    background: var(--tld-kplex-glass-strong) !important;
+    backdrop-filter: var(--tld-kplex-frost) !important;
+    -webkit-backdrop-filter: var(--tld-kplex-frost) !important;
+  }
+
+  /* 4. Panels/popups that leaned on Obsidian background vars (now transparent)
+        or near-opaque fills: give them explicit glass so text stays readable. */
+  body.tld-kplex .kplex-search-results,
+  body.tld-kplex .kplex-relation-modal,
+  body.tld-kplex .kplex-info-bubble,
+  body.tld-kplex .kplex-history-bar {
+    background: var(--tld-kplex-glass-strong) !important;
+    backdrop-filter: var(--tld-kplex-frost) !important;
+    -webkit-backdrop-filter: var(--tld-kplex-frost) !important;
+  }
+  body.tld-kplex .kplex-info-bubble-pointer {
+    background: var(--tld-kplex-glass-strong) !important;
+  }
+  body.tld-kplex .kplex-relation-modal .kplex-relation-actions {
+    background: var(--tld-kplex-glass-strong) !important;
+  }
+
+  /* 5. Soften K-Plex's own near-opaque panel tokens (.96) for floating
+        controls (central editor toolbar etc.). */
+  body.tld-kplex .kplex-app {
+    --kplex-panel: var(--tld-kplex-glass-strong);
+    --kplex-panel-2: var(--tld-kplex-glass-strong);
   }
 }
 
