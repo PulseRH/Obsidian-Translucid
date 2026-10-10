@@ -3012,6 +3012,19 @@ body.theme-light {
 /* =====================================================================
    OVERRIDES — root-cause form-control fixes
    ===================================================================== */
+  /* PLUGINS PAGE extra line: rows on the Community-plugins tab carry a
+     ::before top line (runtime-injected — not in Obsidian core CSS, the theme,
+     snippets or any plugin styles.css). Kill it ONLY on that tab via
+     :has(.installed-plugins-container); every other settings page keeps its
+     top dividers. */
+  body .modal.mod-settings .installed-plugins-container .setting-item.mod-toggle::before,
+  body .modal:has(.vertical-tabs-container) .installed-plugins-container .setting-item.mod-toggle::before,
+  body .modal-container:has(.vertical-tabs-container) .installed-plugins-container .setting-item.mod-toggle::before,
+  body .modal.mod-settings .vertical-tab-content:has(.installed-plugins-container) .setting-item.mod-toggle::before {
+    display: none !important;
+    content: none !important;
+  }
+
   /* ROOT-CAUSE checkbox fix: the base theme's `input { background: ... }`
      shorthand (in the base section) wiped the native tick's background-image on
      checkboxes. The build step now excludes [type=checkbox]/[type=radio]
