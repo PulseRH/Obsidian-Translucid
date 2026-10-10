@@ -36,9 +36,8 @@ the previous snippet setup.
 ### Layout widths
 The **Layout widths** section has sliders for the **Settings modal width**
 (Obsidian 1.13 sizes it with `--modal-width`/`--modal-max-width`, stock 90vw
-capped at 1100px) and the **left/right sidebar widths** (defaults are the
-current workspace widths). Sidebar sliders fix the width — drag-resize is
-overridden while a value is set — but collapsing a sidebar still works.
+capped at 1100px) and the **Settings sidebar width** — the left navigation
+column inside the Settings window (stock: 25% clamped to 200–250px).
 
 ### K-Plex compatibility
 The **K-Plex** plugin (`k-plex`, view types `k-plex-react-view` / `k-plex-sidepanel-view`)
