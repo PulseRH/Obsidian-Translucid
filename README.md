@@ -33,6 +33,13 @@ Open **Settings → Style Settings → Translucid**. Each optional feature is a
 `class-toggle` that adds a `body.tld-*` class the CSS keys off. Defaults reproduce
 the previous snippet setup.
 
+### Layout widths
+The **Layout widths** section has sliders for the **Settings modal width**
+(Obsidian 1.13 sizes it with `--modal-width`/`--modal-max-width`, stock 90vw
+capped at 1100px) and the **left/right sidebar widths** (defaults are the
+current workspace widths). Sidebar sliders fix the width — drag-resize is
+overridden while a value is set — but collapsing a sidebar still works.
+
 ### K-Plex compatibility
 The **K-Plex** plugin (`k-plex`, view types `k-plex-react-view` / `k-plex-sidepanel-view`)
 ships an opaque `#0d1219` app root, `.98/.99` gradient chrome and a gradient vignette

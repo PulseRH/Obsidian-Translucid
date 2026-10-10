@@ -81,6 +81,42 @@ settings:
     step: 1
     format: '%'
   -
+    id: translucid-layout-header
+    title: Layout widths
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-settings-width
+    title: Settings modal width
+    description: Width of the Settings window. 1100 is Obsidian's stock cap on wide screens; large values are clamped to the window.
+    type: variable-number-slider
+    default: 1100
+    min: 600
+    max: 2000
+    step: 10
+    format: 'px'
+  -
+    id: tld-left-sidebar-width
+    title: Left sidebar width
+    description: Fixes the left sidebar to this width (drag-resize is overridden while a value is set). Default is your current width.
+    type: variable-number-slider
+    default: 528
+    min: 180
+    max: 900
+    step: 1
+    format: 'px'
+  -
+    id: tld-right-sidebar-width
+    title: Right sidebar width
+    description: Fixes the right sidebar to this width (drag-resize is overridden while a value is set). Default is your current width.
+    type: variable-number-slider
+    default: 455
+    min: 180
+    max: 900
+    step: 1
+    format: 'px'
+  -
     id: translucid-bg-header
     title: Background image
     type: heading
@@ -2853,6 +2889,30 @@ body.theme-light {
   body.tld-scrollbar-hover-grow ::-webkit-scrollbar:hover {
     width: calc(var(--tld-scrollbar-width, 12px) + 2px);
     height: calc(var(--tld-scrollbar-width, 12px) + 2px);
+  }
+
+/* =====================================================================
+   LAYOUT WIDTHS — Settings modal + sidebar width knobs
+   Obsidian 1.13 sizes the Settings modal via --modal-width / --modal-max-width
+   on .modal.mod-settings (stock: 90vw capped at 1100px) — overriding the vars
+   needs no !important. Sidebar widths, by contrast, are INLINE styles driven
+   by the saved workspace (drag-resize), so they need !important; the
+   :not([style*="width: 0"]) guard excludes collapsed sidebars (inline
+   width 0px) so collapse/hide keeps working. Defaults = current values.
+   ===================================================================== */
+  /* Settings modal width (min() clamps to the window on small screens). */
+  body:not(.is-phone) .modal.mod-settings {
+    --modal-width: min(var(--tld-settings-width, 90vw), calc(100vw - 40px));
+    --modal-max-width: min(var(--tld-settings-width, 1100px), calc(100vw - 40px));
+  }
+
+  /* Sidebar widths. When collapsed the split carries inline width: 0px, which
+     the attribute guards skip — so the native collapse animation still wins. */
+  body:not(.is-mobile) .workspace-split.mod-left-split:not([style*="width: 0"]):not([style*="width:0"]) {
+    width: var(--tld-left-sidebar-width, 528px) !important;
+  }
+  body:not(.is-mobile) .workspace-split.mod-right-split:not([style*="width: 0"]):not([style*="width:0"]) {
+    width: var(--tld-right-sidebar-width, 455px) !important;
   }
 
 /* =====================================================================
