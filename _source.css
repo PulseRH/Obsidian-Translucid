@@ -1022,11 +1022,28 @@ settings:
    OVERRIDES — root-cause form-control fixes
    ===================================================================== */
 @layer overrides {
-  /* PLUGINS PAGE extra line: rows on the Community-plugins tab carry a
-     ::before top line (runtime-injected — not in Obsidian core CSS, the theme,
-     snippets or any plugin styles.css). Kill it ONLY on that tab via
-     :has(.installed-plugins-container); every other settings page keeps its
-     top dividers. */
+  /* PLUGINS PAGE lines: on the Community-plugins tab the theme's subtle row
+     divider (border-bottom) collides with darker TOP lines — Obsidian's own
+     container/adjacent-row border-top (a dark line when the settings-management
+     plugin is absent) and settings-management's border-top on the first row
+     (which doubles the line when it IS present). Collapse every top line on
+     that tab to nothing so the theme's single subtle divider is the only line;
+     all other settings pages keep their dividers untouched. */
+  body .modal.mod-settings .installed-plugins-container,
+  body .modal:has(.vertical-tabs-container) .installed-plugins-container,
+  body .modal-container:has(.vertical-tabs-container) .installed-plugins-container {
+    border-top: none !important;
+  }
+  body .modal.mod-settings .vertical-tab-content:has(.installed-plugins-container) .setting-item,
+  body .modal:has(.vertical-tabs-container) .vertical-tab-content:has(.installed-plugins-container) .setting-item,
+  body .modal.mod-settings .installed-plugins-container .setting-item.mod-toggle,
+  body .modal:has(.vertical-tabs-container) .installed-plugins-container .setting-item.mod-toggle,
+  body .modal-container:has(.vertical-tabs-container) .installed-plugins-container .setting-item.mod-toggle {
+    border-top: none !important;
+  }
+  /* Belt & braces: rows on that tab also carry a runtime-injected ::before
+     top line (not present in Obsidian core CSS, the theme, snippets or any
+     plugin styles.css). */
   body .modal.mod-settings .installed-plugins-container .setting-item.mod-toggle::before,
   body .modal:has(.vertical-tabs-container) .installed-plugins-container .setting-item.mod-toggle::before,
   body .modal-container:has(.vertical-tabs-container) .installed-plugins-container .setting-item.mod-toggle::before,
