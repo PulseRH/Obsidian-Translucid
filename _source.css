@@ -1,0 +1,1014 @@
+/* =====================================================================
+   TRANSLUCID  —  a translucent glass theme for Obsidian
+   ---------------------------------------------------------------------
+   Consolidated from 13 personal snippets. This is the AUTHORED SOURCE.
+   The build (_build.ps1) generates theme.css as, in order:
+     1. base       – the whole "light transparnt theme - combined fixed"
+     2. excalibrain – scoped plugin styling
+     3. features    – everything in this file below the FEATURES-BELOW marker
+   Everything is UNLAYERED: order is controlled by SOURCE POSITION (features
+   come after base, so they override it). We do NOT use @layer, because a
+   layered theme loses the cascade to unlayered snippets and Obsidian's
+   app.css, which was making backgrounds/transparency get overridden.
+
+   FEATURE ORDER (later overrides earlier):
+     dark-mode, background, chrome (tabs/sidebars/vault/gradient), embeds,
+     tables, statusbar, scrollbars, plugins (copilot/extlinks), overrides.
+
+   Feature toggles live in Style Settings (search "Translucid").
+   Each optional feature is gated behind a body class (e.g. body.tld-zebra)
+   that Style Settings adds when the toggle is on.
+   ===================================================================== */
+
+/* =====================================================================
+   STYLE SETTINGS
+   ===================================================================== */
+/* @settings
+
+name: Translucid
+id: translucid
+settings:
+  -
+    id: translucid-glass-header
+    title: Glass & colour
+    type: heading
+    level: 1
+    collapsed: false
+  -
+    id: settings-glass-color
+    title: Settings glass colour
+    description: Overlay colour for the Settings window (light mode).
+    type: variable-color
+    format: hex
+    default: '#323232'
+  -
+    id: settings-glass-opacity
+    title: Settings glass opacity
+    description: Higher is more solid; lower shows more background.
+    type: variable-number-slider
+    default: 28
+    min: 0
+    max: 80
+    step: 1
+    format: '%'
+  -
+    id: settings-item-opacity
+    title: Settings row tint opacity
+    description: Overlay strength for setting rows and left nav items.
+    type: variable-number-slider
+    default: 18
+    min: 0
+    max: 60
+    step: 1
+    format: '%'
+  -
+    id: settings-glass-brightness
+    title: Settings brightness (light)
+    description: Brightness of the blurred Settings glass in light mode.
+    type: variable-number-slider
+    default: 1.35
+    min: 0.5
+    max: 1.8
+    step: 0.01
+  -
+    id: tld-dark-luminosity
+    title: Dark mode glass luminosity
+    description: In dark mode, how light the glass sits over the background (6% = near-black glass, image still shows through).
+    type: variable-number-slider
+    default: 6
+    min: 0
+    max: 40
+    step: 1
+    format: '%'
+  -
+    id: translucid-bg-header
+    title: Background image
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-background
+    title: Enable background image
+    type: class-toggle
+    default: true
+  -
+    id: tld-bg-image
+    title: Background image URL
+    description: Full CSS url() value — keep the url("…") wrapper, e.g. url("https://site/photo.jpg").
+    type: variable-text
+    default: 'url("https://images.unsplash.com/photo-1602076172058-08ca551bad2b?q=80&w=1176&auto=format&fit=crop")'
+  -
+    id: bg-pos-x
+    title: Background focus X
+    type: variable-text
+    default: '70%'
+  -
+    id: bg-pos-y
+    title: Background focus Y
+    type: variable-text
+    default: '0%'
+  -
+    id: bg-zoom
+    title: Background zoom
+    type: variable-number-slider
+    default: 1
+    min: 0.8
+    max: 1.6
+    step: 0.01
+  -
+    id: bg-saturate
+    title: Background saturation
+    type: variable-number-slider
+    default: 1
+    min: 0
+    max: 2
+    step: 0.05
+  -
+    id: bg-brightness
+    title: Background brightness
+    type: variable-number-slider
+    default: 1
+    min: 0.3
+    max: 1.6
+    step: 0.05
+  -
+    id: translucid-chrome-header
+    title: Tabs, titlebar & vault
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-safari-tabs
+    title: Safari-style tab pills
+    type: class-toggle
+    default: true
+  -
+    id: tld-tab-pushdown
+    title: Full-width tab bar, expand on hover (push-down)
+    type: class-toggle
+    default: true
+  -
+    id: tld-hide-vault
+    title: Hide vault selector (reveal on hover)
+    type: class-toggle
+    default: true
+  -
+    id: tld-titlebar-hover
+    title: Show window buttons on hover only
+    description: Hide the min/max/close controls until you hover the titlebar (the original push-down behaviour).
+    type: class-toggle
+    default: false
+  -
+    id: translucid-sidebar-gradient-header
+    title: Sidebar gradient
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-sidebar-gradient
+    title: Enable sidebar gradient
+    type: class-toggle
+    default: false
+  -
+    id: tld-sidebar-gradient-color
+    title: Gradient colour
+    type: variable-color
+    format: hex
+    default: '#9c9c9c'
+  -
+    id: tld-sidebar-gradient-shade
+    title: Gradient shade (minus = darker, plus = lighter)
+    description: Shift the gradient lighter or darker than the picked colour.
+    type: variable-number-slider
+    default: 0
+    min: -60
+    max: 60
+    step: 5
+  -
+    id: tld-sidebar-gradient-angle
+    title: Gradient angle
+    description: Direction of the sweep, 0-360 degrees.
+    type: variable-number-slider
+    default: 180
+    min: 0
+    max: 360
+    step: 5
+    format: 'deg'
+  -
+    id: tld-sidebar-gradient-strength
+    title: Gradient strength
+    type: variable-number-slider
+    default: 22
+    min: 0
+    max: 100
+    step: 1
+    format: '%'
+  -
+    id: tld-sidebar-gradient-both
+    title: Apply to both sidebars
+    description: Off = left sidebar only.
+    type: class-toggle
+    default: true
+  -
+    id: translucid-embeds-header
+    title: Embeds
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-embeds
+    title: Embed styling (note embeds only)
+    description: Borderless note embeds with a hover fill. Image/PDF/plugin embeds untouched.
+    type: class-toggle
+    default: true
+  -
+    id: tld-embed-hover-strength
+    title: Embed hover fill strength
+    type: variable-number-slider
+    default: 3
+    min: 0
+    max: 15
+    step: 1
+    format: '%'
+  -
+    id: translucid-tables-header
+    title: Tables
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-zebra
+    title: Translucent zebra tables
+    type: class-toggle
+    default: true
+  -
+    id: translucid-statusbar-header
+    title: Status bar
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-statusbar
+    title: Status bar pill
+    type: class-toggle
+    default: true
+  -
+    id: tld-statusbar-offset
+    title: Status bar right offset
+    description: Distance from the right edge — set this to your right sidebar's width so the pill sits just left of it. Snaps to 0 when the sidebar is collapsed.
+    type: variable-number-slider
+    default: 320
+    min: 0
+    max: 700
+    step: 10
+    format: 'px'
+  -
+    id: translucid-scrollbars-header
+    title: Scrollbars
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-scrollbar-width
+    title: Scrollbar width
+    description: Total bar width; the visible thumb is inset ~3px inside it.
+    type: variable-number-slider
+    default: 12
+    min: 6
+    max: 20
+    step: 1
+    format: 'px'
+  -
+    id: tld-scrollbar-hover-grow
+    title: Grow 2px on hover
+    type: class-toggle
+    default: false
+  -
+    id: translucid-plugins-header
+    title: Plugins
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-copilot
+    title: Copilot borderless glass
+    type: class-toggle
+    default: true
+  -
+    id: tld-extlinks
+    title: External-link icon on hover only
+    type: class-toggle
+    default: true
+*/
+
+/* ==FEATURES-BELOW== */
+
+/* =====================================================================
+   DARK MODE — luminosity engine
+   The single --tld-dark-luminosity knob (default 6%) drives how light the
+   glass sits over the background in dark mode. It feeds both the glass
+   colour and the note-surface tint, so the background image keeps showing
+   through while everything reads dark.
+   ===================================================================== */
+@layer base {
+  .theme-dark {
+    --tld-dark-luminosity: 6%;
+    /* Frosted-element tint whose lightness == the luminosity knob. ONLY the
+       frosted glass surfaces (settings + sidebars) use this — the main note
+       area is untouched, so dark mode does not darken everything. */
+    --tld-frost-tint: hsl(0 0% var(--tld-dark-luminosity));
+    --settings-glass-color: var(--tld-frost-tint);
+  }
+
+  /* Sidebars only: dark-mode frosted tint from the luminosity knob. */
+  body.theme-dark .workspace-split.mod-left-split .workspace-leaf-content,
+  body.theme-dark .workspace-split.mod-right-split .workspace-leaf-content {
+    background-color: color-mix(in srgb, var(--tld-frost-tint) 55%, transparent) !important;
+  }
+}
+
+/* =====================================================================
+   BACKGROUND — toggle the base theme's ::before image
+   The image itself is defined in the base section (from combined fixed). Here
+   we only wire the on/off switch and the Style Settings knobs.
+   ===================================================================== */
+@layer background {
+  /* When the toggle is OFF (class absent) hide the image. */
+  body:not(.tld-background)::before {
+    display: none !important;
+  }
+
+  /* Style-Settings driven image URL + guaranteed full-window coverage.
+     Overrides the base ::before so the picked URL wins and the image
+     always covers, not just peeks through the ribbon. */
+  body.tld-background::before {
+    background-image: var(--tld-bg-image,
+      url("https://images.unsplash.com/photo-1602076172058-08ca551bad2b?q=80&w=1176&auto=format&fit=crop")) !important;
+    background-size: cover !important;
+    background-position: var(--bg-pos-x, 50%) var(--bg-pos-y, 50%) !important;
+    background-repeat: no-repeat !important;
+  }
+
+  /* Reinforce transparency of the STRUCTURAL containers (not the frosted
+     leaf-content) so the fixed background image shows through everywhere
+     rather than being covered by an opaque pane wrapper. */
+  body.tld-background .app-container,
+  body.tld-background .horizontal-main-container,
+  body.tld-background .workspace,
+  body.tld-background .workspace-split,
+  body.tld-background .workspace-tabs,
+  body.tld-background .workspace-tab-container,
+  body.tld-background .workspace-leaf {
+    background-color: transparent !important;
+  }
+}
+
+/* =====================================================================
+   CHROME — tabs, titlebar, sidebars
+   ===================================================================== */
+@layer chrome {
+
+  /* -------- Safari-style tab pills (safaritabs styling.css) -------- */
+  body.tld-safari-tabs.theme-light {
+    --tab-background: rgba(0, 0, 0, 0.05);
+    --tab-background-active: rgba(0, 0, 0, 0.08);
+  }
+  body.tld-safari-tabs.theme-dark {
+    --tab-background: rgba(255, 255, 255, 0.05);
+    --tab-background-active: rgba(255, 255, 255, 0.1);
+  }
+  body.tld-safari-tabs .workspace-tab-header-container-inner {
+    margin-bottom: 6px;
+    gap: 8px;
+    width: 100%;
+  }
+  body.tld-safari-tabs .workspace-tab-header[data-type="markdown"],
+  body.tld-safari-tabs .workspace-tab-header[data-type="empty"] {
+    max-width: 100% !important;
+    border-radius: 6px;
+    padding: 0 !important;
+    box-shadow: none !important;
+    background: var(--tab-background);
+    transition: flex-grow 0.25s ease-in-out !important;
+  }
+  body.tld-safari-tabs .workspace-tab-header[data-type="markdown"].is-active.mod-active,
+  body.tld-safari-tabs .workspace-tab-header[data-type="empty"].is-active.mod-active {
+    background-color: var(--tab-background-active);
+    flex-grow: 2 !important;
+  }
+  body.tld-safari-tabs .workspace-tab-header-inner::after,
+  body.tld-safari-tabs .workspace-tab-header::after,
+  body.tld-safari-tabs .workspace-tab-header::before {
+    display: none;
+  }
+  body.tld-safari-tabs .workspace-tab-header:not(.is-active) .workspace-tab-header-inner-close-button {
+    display: none;
+  }
+  body.tld-safari-tabs .workspace-tab-header:hover .workspace-tab-header-inner-close-button {
+    display: flex;
+  }
+  body.tld-safari-tabs .workspace-tab-header-tab-list {
+    display: none !important;
+  }
+
+  /* -------- Full-width push-down tab bar (Tab_Header_Hover_PushDown.css) -------- */
+  body.tld-tab-pushdown:not(.is-mobile) {
+    --titlebar-button-container-width: 0px;
+    --window-controls-width: 0px;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-tabs.mod-top,
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-tabs.mod-top-right-space {
+    padding-right: 0 !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-right-split .workspace-tabs {
+    width: 100% !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-tab-header-container::after,
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-tab-header-container-inner::after {
+    display: none !important;
+  }
+  /* collapsed + invisible base state */
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-tab-header-container {
+    max-height: 0px !important;
+    opacity: 0;
+    overflow: hidden !important;
+    border: none !important;
+    pointer-events: none !important;
+    width: 100% !important;
+    padding-right: 0 !important;
+    transition:
+      max-height 250ms ease-in-out 400ms,
+      opacity 200ms ease-in-out 400ms !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-tab-header-container:hover,
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-tabs:hover:not(:has(.view-content:hover)) > .workspace-tab-header-container,
+  body.tld-tab-pushdown:not(.is-mobile):has(.titlebar:hover) .workspace-tab-header-container {
+    max-height: 40px !important;
+    opacity: 1;
+    pointer-events: all !important;
+    position: relative;
+    overflow: visible !important;
+    transition:
+      max-height 250ms ease-in-out 0ms,
+      opacity 200ms ease-in-out 0ms !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-container::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    z-index: 0;
+    background: transparent;
+    pointer-events: all !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-container {
+    background-color: var(--background-secondary) !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100vw !important;
+    z-index: 60;
+    display: flex !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-container-inner {
+    display: flex !important;
+    flex: 0 1 auto !important;
+    width: auto !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header {
+    margin: 0 !important;
+    flex-grow: 0 !important;
+    flex-shrink: 0 !important;
+    width: max-content !important;
+    max-width: 220px !important;
+    padding: 0 12px !important;
+    overflow: hidden !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .mod-left-split .workspace-tabs,
+  body.tld-tab-pushdown:not(.is-mobile) .mod-right-split .workspace-tabs {
+    position: relative;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .mod-left-split .workspace-tabs::before,
+  body.tld-tab-pushdown:not(.is-mobile) .mod-right-split .workspace-tabs::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 24px;
+    z-index: 50;
+    background: transparent;
+    pointer-events: all;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .mod-left-split .workspace-tab-header-container,
+  body.tld-tab-pushdown:not(.is-mobile) .mod-right-split .workspace-tab-header-container {
+    position: relative;
+    z-index: 51;
+  }
+  /* push-down: slide main-pane content under the expanded bar */
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-leaf-content {
+    padding-top: 0 !important;
+    transition: padding-top 250ms ease-in-out 400ms;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(.workspace-tab-header-container:hover) .workspace-leaf-content,
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tabs:hover:not(:has(.view-content:hover)) .workspace-leaf-content,
+  body.tld-tab-pushdown:not(.is-mobile):has(.titlebar:hover) .workspace-split.mod-root .workspace-leaf-content {
+    padding-top: 40px !important;
+    transition: padding-top 250ms ease-in-out 0ms;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .titlebar {
+    max-height: 24px;
+    overflow: visible !important;
+    z-index: 62;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .titlebar-button {
+    /* Keep the window controls visible (was opacity:0, which hid them). */
+    opacity: 1;
+    transition: opacity 0.2s ease;
+    margin-left: -2.2px !important;
+    margin-right: -2.2px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  /* -------- Hide vault selector (hide vault slecetor.css) -------- */
+  @keyframes tld-expandFromBottom {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  body.tld-hide-vault .workspace-sidedock-vault-profile {
+    display: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+  }
+  body.tld-hide-vault .workspace-split.mod-left-split:hover .workspace-sidedock-vault-profile,
+  body.tld-hide-vault:has(.menu:hover) .workspace-sidedock-vault-profile {
+    display: flex !important;
+    pointer-events: auto;
+    animation: tld-expandFromBottom 250ms ease 16ms both;
+  }
+  body.tld-hide-vault .workspace-split.mod-left-split {
+    pointer-events: auto !important;
+  }
+  body.tld-hide-vault .workspace-split.mod-root .workspace-tabs::before {
+    content: "";
+    position: absolute;
+    top: 30px;
+    left: 0;
+    right: 0;
+    height: 12px;
+    z-index: 1;
+    background: transparent;
+    pointer-events: all;
+  }
+
+  /* -------- Remove sidebar pane borders / side dividers --------
+     Kills the boxes around panes, the lines between stacked panes, and the
+     divider between a sidebar and the main area — always on (not gated). */
+  body .workspace-split.mod-left-split,
+  body .workspace-split.mod-right-split,
+  body .mod-left-split .workspace-tabs,
+  body .mod-right-split .workspace-tabs,
+  body .mod-left-split .workspace-tab-container,
+  body .mod-right-split .workspace-tab-container,
+  body .mod-left-split .workspace-leaf,
+  body .mod-right-split .workspace-leaf,
+  body .mod-left-split .workspace-leaf-content,
+  body .mod-right-split .workspace-leaf-content,
+  body .mod-left-split .view-content,
+  body .mod-right-split .view-content {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  body .workspace-leaf-resize-handle {
+    background-color: transparent !important;
+  }
+
+  /* -------- Sidebar gradient (new feature) --------
+     ONE continuous sweep over the whole sidebar. Painted on the split
+     container's background so it spans all stacked panes as a single
+     gradient; the translucent frosted panes let it show through. (The old
+     per-pane ::before restarted the fade in every pane -> "split up".) */
+  body.tld-sidebar-gradient .workspace-split.mod-left-split,
+  body.tld-sidebar-gradient.tld-sidebar-gradient-both .workspace-split.mod-right-split {
+    /* Shade the picked colour lighter (+) or darker (-) via one signed slider:
+       positive mixes toward white, negative toward black. */
+    --tld-grad-shaded: color-mix(in srgb,
+      color-mix(in srgb,
+        var(--tld-sidebar-gradient-color, #9c9c9c),
+        white calc(max(var(--tld-sidebar-gradient-shade, 0) * 1%, 0%))),
+      black calc(max(var(--tld-sidebar-gradient-shade, 0) * -1%, 0%)));
+    background-image: linear-gradient(
+      var(--tld-sidebar-gradient-angle, 180deg),
+      color-mix(in srgb, var(--tld-grad-shaded) var(--tld-sidebar-gradient-strength, 22%), transparent),
+      transparent
+    ) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+    background-attachment: local !important;
+  }
+}
+
+/* =====================================================================
+   EMBEDS — note embeds only (note Embed overhaul 2 + embed-outline-hover)
+   Scoped so image/PDF/plugin embeds are left alone.
+   ===================================================================== */
+@layer embeds {
+  /* Live Preview wrapper: borderless */
+  body.tld-embeds .cm-embed-block,
+  body.tld-embeds .cm-embed-block:focus-within {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Note-embed container overhaul (exclude image/media/pdf embeds) */
+  body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed) {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: rgba(0, 0, 0, 0.15) !important;
+  }
+  /* Nested note-embed zebra */
+  body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed) .markdown-embed:not(.image-embed):not(.media-embed) {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+  }
+  body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed) .markdown-embed .markdown-embed:not(.image-embed):not(.media-embed) {
+    background-color: rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* Long-embed scroll cap + width cleanup (note embeds) */
+  body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed) .markdown-embed-content {
+    max-height: 900px !important;
+    overflow-y: auto !important;
+  }
+  body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed) .markdown-preview-sizer,
+  body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed) .markdown-preview-section {
+    margin: 0 !important;
+    max-width: none !important;
+    min-width: 100% !important;
+    width: calc(100% + 11.4px) !important;
+    margin-right: -11.4px !important;
+  }
+  body.tld-embeds .markdown-embed-title {
+    display: block !important;
+    padding: 4px 8px !important;
+    background-color: transparent !important;
+  }
+
+  /* Outline removal + hover fill (embed-outline-hover.css) */
+  body.tld-embeds .cm-embed-block:hover,
+  body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed):hover,
+  body.tld-embeds .internal-embed:not(.image-embed):not(.media-embed):hover {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background-color: color-mix(in srgb, white var(--tld-embed-hover-strength, 3%), transparent) !important;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+  }
+}
+
+/* =====================================================================
+   TABLES — translucent zebra (translucent-zebra-tables.css)
+   ===================================================================== */
+@layer tables {
+  body.tld-zebra .markdown-rendered table,
+  body.tld-zebra .bases-table,
+  body.tld-zebra [class*="bases-table"] {
+    background: transparent !important;
+    border-spacing: 0 !important;
+    border-collapse: collapse !important;
+  }
+  body.tld-zebra .markdown-rendered thead th,
+  body.tld-zebra .bases-table-header,
+  body.tld-zebra .bases-th {
+    background-color: rgba(30, 30, 30, 0.9) !important;
+    border-bottom: 0px solid var(--divider-color) !important;
+    border-right: 0px solid var(--divider-color) !important;
+    padding: 12px !important;
+  }
+  body.tld-zebra .markdown-rendered tbody tr:nth-child(even),
+  body.tld-zebra .bases-tr:nth-child(even),
+  body.tld-zebra [class*="bases-row"]:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+  body.tld-zebra .markdown-rendered tbody tr:nth-child(odd),
+  body.tld-zebra .bases-tr:nth-child(odd),
+  body.tld-zebra [class*="bases-row"]:nth-child(odd) {
+    background-color: transparent !important;
+  }
+  body.tld-zebra .markdown-rendered td,
+  body.tld-zebra .bases-td,
+  body.tld-zebra [class*="bases-cell"],
+  body.tld-zebra .dbfolder-cell {
+    border-bottom: 1px solid var(--divider-color) !important;
+    border-right: 1px solid var(--divider-color) !important;
+    display: table-cell !important;
+    vertical-align: middle !important;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+  body.tld-zebra .markdown-rendered td:first-child,
+  body.tld-zebra .bases-td:first-child,
+  body.tld-zebra .markdown-rendered th:first-child,
+  body.tld-zebra .bases-table-header:first-child {
+    border-left: 1px solid var(--divider-color) !important;
+  }
+  body.tld-zebra .markdown-rendered td:focus,
+  body.tld-zebra .bases-td:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    background-clip: padding-box !important;
+    transform: none !important;
+  }
+  body.tld-zebra .markdown-rendered tbody tr:hover,
+  body.tld-zebra .bases-tr:hover,
+  body.tld-zebra [class*="bases-row"]:hover {
+    filter: brightness(1.4) !important;
+    transition: filter 0.15s ease !important;
+  }
+  body.tld-zebra .markdown-rendered tbody tr:hover td,
+  body.tld-zebra .bases-tr:hover td,
+  body.tld-zebra [class*="bases-row"]:hover td {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+  }
+  body.tld-zebra .markdown-rendered tr:last-child td {
+    border-bottom: 2px solid var(--divider-color) !important;
+  }
+}
+
+/* =====================================================================
+   STATUS BAR — pill anchored to the sidebar edge (root-cause rework of
+   status-bar-left-of-sidebar2 - Copy.css)
+   The status bar is a viewport-level element (sibling of the splits), NOT a
+   child of the main split, so it cannot be auto-positioned relative to the
+   sidebar in pure CSS. We fix it (position: fixed) and offset its right edge
+   by --tld-statusbar-offset, which you set once to your right-sidebar width
+   in Style Settings. When the right sidebar is collapsed it snaps to the
+   far right (offset 0). */
+@layer statusbar {
+  body.tld-statusbar .status-bar {
+    position: fixed !important;
+    right: var(--tld-statusbar-offset, 320px) !important;
+    left: auto !important;
+    bottom: 0 !important;
+    margin: 0 !important;
+    width: auto !important;
+    height: 27px !important;
+    max-width: fit-content !important;
+    background-color: var(--background-primary) !important;
+    border: 1px solid transparent !important;
+    background-image:
+      linear-gradient(var(--background-primary), var(--background-primary)),
+      linear-gradient(90deg, rgba(156, 156, 156, 0.2), transparent) !important;
+    background-origin: border-box !important;
+    background-clip: padding-box, border-box !important;
+    border-radius: 6px 0 0 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    box-shadow: -3px 3px 10px rgba(0, 0, 0, 0.2) !important;
+    z-index: 15;
+  }
+  /* Snap to the far right when the right sidebar is collapsed (no sidebar to
+     sit left of). Fallback path only — anchor mode below handles this too. */
+  body.tld-statusbar.is-right-sidedock-collapsed .status-bar,
+  body.tld-statusbar .app-container.is-right-sidebar-collapsed .status-bar {
+    right: 0 !important;
+    border-radius: 2px 0 0 0 !important;
+  }
+
+  /* DYNAMIC: where CSS anchor positioning is supported, anchor the pill's
+     RIGHT edge to the right sidebar's LEFT edge so it tracks the real width
+     automatically — no manual offset needed. Collapsing the sidebar moves its
+     left edge to the window edge, so the pill snaps right on its own. */
+  @supports (anchor-name: --a) {
+    body.tld-statusbar .workspace-split.mod-right-split {
+      anchor-name: --tld-right-sidebar;
+    }
+    body.tld-statusbar .status-bar {
+      right: anchor(--tld-right-sidebar left) !important;
+    }
+  }
+  body.tld-statusbar .status-bar::before,
+  body.tld-statusbar .status-bar::after {
+    display: none !important;
+  }
+  body.tld-statusbar .status-bar-item {
+    font-size: 11px !important;
+    color: var(--text-muted) !important;
+    margin: 0 -1px !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* =====================================================================
+   SCROLLBARS — frosted, width-adjustable, optional grow-on-hover
+   (rework of Thin Scrollbars.css) — always on; width via Style Settings.
+   ===================================================================== */
+@layer scrollbars {
+  body {
+    /* Per-theme frosted thumb colour, reused below. */
+    --tld-scroll-thumb: rgba(120, 120, 120, 0.45);
+  }
+  body.theme-dark {
+    --tld-scroll-thumb: rgba(210, 210, 210, 0.38);
+  }
+
+  body ::-webkit-scrollbar {
+    width: var(--tld-scrollbar-width, 12px);
+    height: var(--tld-scrollbar-width, 12px);
+  }
+  body ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  /* Frosted translucent thumb. Padding via a transparent border shrinks the
+     visible thumb inside the track so a wider bar still looks slim/rounded. */
+  body ::-webkit-scrollbar-thumb {
+    background-color: var(--tld-scroll-thumb);
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+  body ::-webkit-scrollbar-thumb:hover {
+    filter: brightness(1.25);
+  }
+
+  /* Optional: grow the bar by 2px while hovering it. */
+  body.tld-scrollbar-hover-grow ::-webkit-scrollbar:hover {
+    width: calc(var(--tld-scrollbar-width, 12px) + 2px);
+    height: calc(var(--tld-scrollbar-width, 12px) + 2px);
+  }
+}
+
+/* =====================================================================
+   PLUGINS — Copilot glass + external-link hover
+   (Excalibrain is appended by the build ahead of this section; it is scoped
+   to Excalibrain panes and always on in v0.1.)
+   ===================================================================== */
+@layer plugins {
+  :root {
+    --copilot-glass-fill: rgba(255, 255, 255, 0.045);
+    --copilot-glass-fill-hover: rgba(255, 255, 255, 0.09);
+    --copilot-glass-muted: rgba(255, 255, 255, 0.035);
+  }
+
+  /* Copilot borderless light glass ([copilot] borderless light glass.css) */
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) {
+    --background-primary: transparent;
+    --background-secondary: transparent;
+  }
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) :is(
+    [class~="tw-border"],
+    [class~="tw-border-border"],
+    [class~="tw-border-solid"],
+    [class~="tw-border-transparent"],
+    [class~="tw-border-b-border"],
+    [class~="tw-ring-1"],
+    [class~="tw-ring-ring"]
+  ) {
+    border-color: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) :is(
+    [class~="tw-rounded-xl"][class~="tw-border-border"],
+    [class~="tw-rounded-lg"][class~="tw-border-border"]
+  ) {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+    [class~="tw-flex"][class~="tw-justify-between"][class~="tw-gap-2"][class~="tw-rounded-md"] {
+    background: var(--copilot-glass-fill) !important;
+    background-color: var(--copilot-glass-fill) !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+    [class~="tw-flex"][class~="tw-justify-between"][class~="tw-gap-2"][class~="tw-rounded-md"]:hover {
+    background: var(--copilot-glass-fill-hover) !important;
+    background-color: var(--copilot-glass-fill-hover) !important;
+  }
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+    [class~="tw-rounded-xl"][class~="tw-border-border"]:has(textarea),
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+    [class~="tw-rounded-xl"][class~="tw-border-border"]:has([contenteditable="true"]),
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+    [class*="@container/chat"][class~="tw-rounded-md"] {
+    background: var(--copilot-glass-muted) !important;
+    background-color: var(--copilot-glass-muted) !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) :is(
+    textarea, input, select, button, [contenteditable="true"],
+    [class~="tw-bg-transparent"][class~="tw-outline-none"]
+  ) {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) [class~="tw-border-b-border"] {
+    border-bottom: none !important;
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.055) !important;
+  }
+
+  /* External-link icon only on hover (extnertal links hover.css) */
+  body.tld-extlinks .external-link:not(:hover):not(.cm-line:has(.cm-link:hover, .cm-url:hover, .cm-formatting-link:hover) .external-link) {
+    background-image: none !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+  }
+}
+
+
+/* =====================================================================
+   OVERRIDES — root-cause form-control fixes
+   ===================================================================== */
+@layer overrides {
+  /* ROOT-CAUSE checkbox fix: the base theme's `input { background: ... }`
+     shorthand (in the base section) wiped the native tick's background-image on
+     checkboxes. The build step now excludes [type=checkbox]/[type=radio]
+     from those base fill rules, so native rendering returns and the old
+     "check box tick fix" snippet is gone. This block is only insurance for
+     the checked tick and does NOT reset appearance (radios stay native). */
+  input[type="checkbox"]:checked {
+    background-color: var(--checkbox-color-checked, var(--interactive-accent)) !important;
+    border-color: var(--checkbox-border-color-checked, var(--interactive-accent)) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpolyline points='1.5 6 4.5 9 10.5 1' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+    background-position: center !important;
+    background-size: 70% !important;
+    background-repeat: no-repeat !important;
+  }
+
+  /* Windows window controls (min / max / close): visible & readable by default.
+     With "Show window buttons on hover only" (tld-titlebar-hover) they hide
+     until the titlebar is hovered — the original push-down behaviour. */
+  body:not(.is-mobile) .titlebar-button {
+    color: var(--text-normal) !important;
+    transition: opacity 0.2s ease;
+  }
+  body:not(.is-mobile):not(.tld-titlebar-hover) .titlebar-button-container,
+  body:not(.is-mobile):not(.tld-titlebar-hover) .titlebar-button {
+    opacity: 1 !important;
+  }
+  /* Reveal-on-hover mode */
+  body.tld-titlebar-hover:not(.is-mobile) .titlebar-button {
+    opacity: 0 !important;
+  }
+  body.tld-titlebar-hover:not(.is-mobile) .titlebar:hover .titlebar-button,
+  body.tld-titlebar-hover:not(.is-mobile) .titlebar-button-container:hover .titlebar-button {
+    opacity: 1 !important;
+  }
+
+  /* LIGHT-MODE READABILITY for plugin (Tailwind / Svelte) surfaces.
+     This theme renders light text even in light mode (dark background image),
+     so plugin elements using --background-primary-alt / --background-secondary
+     (transparent here) end up as light text on a light element. Give them a
+     dark translucent fill so the text stays legible. Covers the Copilot badge
+     buttons and Svelte meters reported unreadable. */
+  body.theme-light :is(
+    [class~="tw-bg-primary-alt"],
+    [class~="tw-bg-primary"],
+    [class~="tw-bg-secondary"],
+    [class~="tw-bg-secondary-alt"],
+    button[class*="tw-bg-"]
+  ) {
+    background-color: rgba(0, 0, 0, 0.42) !important;
+    color: var(--text-normal) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+  }
+  body.theme-light :is([class~="tw-bg-primary-alt"], button[class*="tw-bg-"]):hover {
+    background-color: rgba(0, 0, 0, 0.55) !important;
+  }
+  body.theme-light :is(meter, .meter) {
+    background-color: rgba(0, 0, 0, 0.35) !important;
+    border-radius: 4px;
+  }
+}
+
+/* =====================================================================
+   Base theme and Excalibrain are appended below this line by the build
+   step (see _build.ps1). Do not add rules past here manually.
+   ===================================================================== */

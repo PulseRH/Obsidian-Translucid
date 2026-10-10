@@ -1,0 +1,3042 @@
+/* =====================================================================
+   TRANSLUCID  —  a translucent glass theme for Obsidian
+   ---------------------------------------------------------------------
+   Consolidated from 13 personal snippets. This is the AUTHORED SOURCE.
+   The build (_build.ps1) generates theme.css as, in order:
+     1. base       – the whole "light transparnt theme - combined fixed"
+     2. excalibrain – scoped plugin styling
+     3. features    – everything in this file below the FEATURES-BELOW marker
+   Everything is UNLAYERED: order is controlled by SOURCE POSITION (features
+   come after base, so they override it). We do NOT use @layer, because a
+   layered theme loses the cascade to unlayered snippets and Obsidian's
+   app.css, which was making backgrounds/transparency get overridden.
+
+   FEATURE ORDER (later overrides earlier):
+     dark-mode, background, chrome (tabs/sidebars/vault/gradient), embeds,
+     tables, statusbar, scrollbars, plugins (copilot/extlinks), overrides.
+
+   Feature toggles live in Style Settings (search "Translucid").
+   Each optional feature is gated behind a body class (e.g. body.tld-zebra)
+   that Style Settings adds when the toggle is on.
+   ===================================================================== */
+
+/* =====================================================================
+   STYLE SETTINGS
+   ===================================================================== */
+/* @settings
+
+name: Translucid
+id: translucid
+settings:
+  -
+    id: translucid-glass-header
+    title: Glass & colour
+    type: heading
+    level: 1
+    collapsed: false
+  -
+    id: settings-glass-color
+    title: Settings glass colour
+    description: Overlay colour for the Settings window (light mode).
+    type: variable-color
+    format: hex
+    default: '#323232'
+  -
+    id: settings-glass-opacity
+    title: Settings glass opacity
+    description: Higher is more solid; lower shows more background.
+    type: variable-number-slider
+    default: 28
+    min: 0
+    max: 80
+    step: 1
+    format: '%'
+  -
+    id: settings-item-opacity
+    title: Settings row tint opacity
+    description: Overlay strength for setting rows and left nav items.
+    type: variable-number-slider
+    default: 18
+    min: 0
+    max: 60
+    step: 1
+    format: '%'
+  -
+    id: settings-glass-brightness
+    title: Settings brightness (light)
+    description: Brightness of the blurred Settings glass in light mode.
+    type: variable-number-slider
+    default: 1.35
+    min: 0.5
+    max: 1.8
+    step: 0.01
+  -
+    id: tld-dark-luminosity
+    title: Dark mode glass luminosity
+    description: In dark mode, how light the glass sits over the background (6% = near-black glass, image still shows through).
+    type: variable-number-slider
+    default: 6
+    min: 0
+    max: 40
+    step: 1
+    format: '%'
+  -
+    id: translucid-bg-header
+    title: Background image
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-background
+    title: Enable background image
+    type: class-toggle
+    default: true
+  -
+    id: tld-bg-image
+    title: Background image URL
+    description: Full CSS url() value — keep the url("…") wrapper, e.g. url("https://site/photo.jpg").
+    type: variable-text
+    default: 'url("https://images.unsplash.com/photo-1602076172058-08ca551bad2b?q=80&w=1176&auto=format&fit=crop")'
+  -
+    id: bg-pos-x
+    title: Background focus X
+    type: variable-text
+    default: '70%'
+  -
+    id: bg-pos-y
+    title: Background focus Y
+    type: variable-text
+    default: '0%'
+  -
+    id: bg-zoom
+    title: Background zoom
+    type: variable-number-slider
+    default: 1
+    min: 0.8
+    max: 1.6
+    step: 0.01
+  -
+    id: bg-saturate
+    title: Background saturation
+    type: variable-number-slider
+    default: 1
+    min: 0
+    max: 2
+    step: 0.05
+  -
+    id: bg-brightness
+    title: Background brightness
+    type: variable-number-slider
+    default: 1
+    min: 0.3
+    max: 1.6
+    step: 0.05
+  -
+    id: translucid-chrome-header
+    title: Tabs, titlebar & vault
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-safari-tabs
+    title: Safari-style tab pills
+    type: class-toggle
+    default: true
+  -
+    id: tld-tab-pushdown
+    title: Full-width tab bar, expand on hover (push-down)
+    type: class-toggle
+    default: true
+  -
+    id: tld-hide-vault
+    title: Hide vault selector (reveal on hover)
+    type: class-toggle
+    default: true
+  -
+    id: tld-titlebar-hover
+    title: Show window buttons on hover only
+    description: Hide the min/max/close controls until you hover the titlebar (the original push-down behaviour).
+    type: class-toggle
+    default: false
+  -
+    id: translucid-sidebar-gradient-header
+    title: Sidebar gradient
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-sidebar-gradient
+    title: Enable sidebar gradient
+    type: class-toggle
+    default: false
+  -
+    id: tld-sidebar-gradient-color
+    title: Gradient colour
+    type: variable-color
+    format: hex
+    default: '#9c9c9c'
+  -
+    id: tld-sidebar-gradient-shade
+    title: Gradient shade (minus = darker, plus = lighter)
+    description: Shift the gradient lighter or darker than the picked colour.
+    type: variable-number-slider
+    default: 0
+    min: -60
+    max: 60
+    step: 5
+  -
+    id: tld-sidebar-gradient-angle
+    title: Gradient angle
+    description: Direction of the sweep, 0-360 degrees.
+    type: variable-number-slider
+    default: 180
+    min: 0
+    max: 360
+    step: 5
+    format: 'deg'
+  -
+    id: tld-sidebar-gradient-strength
+    title: Gradient strength
+    type: variable-number-slider
+    default: 22
+    min: 0
+    max: 100
+    step: 1
+    format: '%'
+  -
+    id: tld-sidebar-gradient-both
+    title: Apply to both sidebars
+    description: Off = left sidebar only.
+    type: class-toggle
+    default: true
+  -
+    id: translucid-embeds-header
+    title: Embeds
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-embeds
+    title: Embed styling (note embeds only)
+    description: Borderless note embeds with a hover fill. Image/PDF/plugin embeds untouched.
+    type: class-toggle
+    default: true
+  -
+    id: tld-embed-hover-strength
+    title: Embed hover fill strength
+    type: variable-number-slider
+    default: 3
+    min: 0
+    max: 15
+    step: 1
+    format: '%'
+  -
+    id: translucid-tables-header
+    title: Tables
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-zebra
+    title: Translucent zebra tables
+    type: class-toggle
+    default: true
+  -
+    id: translucid-statusbar-header
+    title: Status bar
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-statusbar
+    title: Status bar pill
+    type: class-toggle
+    default: true
+  -
+    id: tld-statusbar-offset
+    title: Status bar right offset
+    description: Distance from the right edge — set this to your right sidebar's width so the pill sits just left of it. Snaps to 0 when the sidebar is collapsed.
+    type: variable-number-slider
+    default: 320
+    min: 0
+    max: 700
+    step: 10
+    format: 'px'
+  -
+    id: translucid-scrollbars-header
+    title: Scrollbars
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-scrollbar-width
+    title: Scrollbar width
+    description: Total bar width; the visible thumb is inset ~3px inside it.
+    type: variable-number-slider
+    default: 12
+    min: 6
+    max: 20
+    step: 1
+    format: 'px'
+  -
+    id: tld-scrollbar-hover-grow
+    title: Grow 2px on hover
+    type: class-toggle
+    default: false
+  -
+    id: translucid-plugins-header
+    title: Plugins
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-copilot
+    title: Copilot borderless glass
+    type: class-toggle
+    default: true
+  -
+    id: tld-extlinks
+    title: External-link icon on hover only
+    type: class-toggle
+    default: true
+*/
+
+/* ===== BASE (light transparnt theme - combined fixed) ===== */
+/* =====================================================================
+   LIGHT TRANSPARENT THEME — COMBINED & FIXED
+   ---------------------------------------------------------------------
+   Merges:
+     • [light transparnt theme] - Copy.css          (base transparent theme)
+     • zcomplex settings gradient stronger - light transparent edit 2
+       complex red orange top-left.css               (red/orange settings gradient)
+     • settings gradient - ghg Copy.css              (borderless settings rows concept)
+     • MinerDT - Cmobile2.css                        (mobile + multi-column settings layout)
+
+   Fixes applied to resolve conflicts between them:
+     1. Hover/focus DROP SHADOW on inputs removed.
+     2. Input fields stay FILLED — excluded from the "transparent nuke"
+        rule and given a guaranteed solid dark fill.
+     3. Single red/orange radial gradient wins; ghg's linear-gradient
+        (which read the now-transparent --background-primary) dropped.
+     4. --settings-item-opacity no longer forces 99% (would have hidden
+        the gradient); a separate row-opacity var drives only row tint.
+     5. MinerDT's var(--background-primary) references on settings chrome
+        swapped for the glass-color so they don't go transparent.
+   ===================================================================== */
+
+/* ======= SETTINGS-SCREEN CONTROLS ======= */
+
+
+:root {
+  --bg-zoom: 1;           /* zoom: 1 = cover, 1.2 = zoomed in, 0.9 = zoomed out        */
+  --bg-pos-x: 70%;        /* zoom center X: 0% = left edge, 50% = center, 100% = right */
+  --bg-pos-y: 0%;         /* zoom center Y: 0% = top edge,  50% = center, 100% = bottom */
+  --bg-saturate: 1;       /* vibrancy: 0 = greyscale, 1 = normal, 2 = very vivid        */
+  --bg-brightness: 1;     /* brightness: < 1 darker, > 1 lighter                        */
+
+  --settings-glass-color: #3a3a3a;
+  /* Keep close to original Copy (20%) so background image isn't over-darkened. */
+  --settings-glass-opacity: 20%;
+  /* FIX #4: was 99% — that would have flattened the gradient under an almost-solid tint.
+     Kept low so the red/orange gradient shows through. */
+  --settings-item-opacity: 18%;
+
+  --sidebar-active-tab-color: #ffffff;
+  --sidebar-active-tab-opacity: 24%;
+  --sidebar-active-tab-bg: rgba(255, 255, 255, 0.18);
+
+  --dropdown-glass-bg: rgba(71, 71, 71, 0.28);
+  --dropdown-glass-hover-bg: rgba(255, 255, 255, 0.42);
+  --dropdown-glass-text: rgba(241, 241, 241, 0.96);
+  --dropdown-glass-muted-text: rgba(255, 255, 255, 0.68);
+  --dropdown-glass-hover-text: rgba(255, 255, 255, 1);
+
+  /* Matches [light transparnt theme] - Copy (1.35) so glass isn't over-darkened. */
+  --settings-glass-brightness: 1.35;
+
+  /* Red/orange radial gradient palette (zcomplex edit 2 — top-left accent) */
+  --settings-gradient-base: var(--settings-glass-color);
+  --settings-gradient-row-opacity: var(--settings-item-opacity);
+  --settings-gradient-tint-1: #ff4f5f;
+  --settings-gradient-tint-2: #ff8a72;
+  --settings-gradient-tint-3: #e986b8;
+  --settings-gradient-tint-4: #b96cff;
+  --settings-gradient-tint-5: #ff5d9e;
+  --settings-gradient-tint-6: #ff5a1f;
+}
+/* ===================================================================== */
+
+
+/* ===================== APP BACKGROUND (transparent) ================== */
+html,
+body,
+.app-container {
+  background: transparent !important;
+}
+
+body {
+  --background-primary: transparent;
+  --background-secondary: transparent;
+  --background-secondary-alt: transparent;
+  --titlebar-background-focused: transparent;
+  --tab-container-background: transparent;
+  --notice-background: transparent;
+  --divider-width: 0px;
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.app-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Background image via ::before (works on desktop + mobile) */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  background: url(https://images.unsplash.com/photo-1602076172058-08ca551bad2b?q=80&w=1176&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
+  background-size: cover;
+  background-position: var(--bg-pos-x) var(--bg-pos-y);
+  background-repeat: no-repeat;
+  filter: saturate(var(--bg-saturate)) brightness(var(--bg-brightness));
+  transform: scale(var(--bg-zoom));
+  transform-origin: var(--bg-pos-x) var(--bg-pos-y);
+  will-change: transform;
+}
+
+/* Mobile: force cover so image doesn't tile on narrow screens */
+body.is-mobile::before {
+  background-size: cover !important;
+}
+
+/* Workspace transparent */
+.theme-light .workspace,
+.theme-dark .workspace {
+  background-color: transparent;
+}
+
+.horizontal-main-container {
+  background: transparent;
+}
+
+/* Make all chrome transparent */
+.workspace-split.mod-root,
+.titlebar,
+.titlebar-inner,
+.titlebar-button-container,
+.workspace-ribbon,
+.workspace-ribbon.mod-left,
+.side-dock-ribbon,
+.side-dock-ribbon.mod-left,
+.sidebar-toggle-button.mod-left {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Sidebar tabs fill full width */
+.workspace-split.mod-left-split .workspace-tab-header-container-inner,
+.workspace-split.mod-right-split .workspace-tab-header-container-inner {
+  display: flex !important;
+  width: 100% !important;
+  padding: 2px 0 !important;
+  margin: 2px 0 !important;
+}
+
+/* Tab containers */
+.workspace-split.mod-root .workspace-tab-header-container {
+  background-color: transparent !important;
+  backdrop-filter: brightness(0.9) blur(5px) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.workspace-split.mod-left-split .workspace-tab-header-container,
+.workspace-split.mod-right-split .workspace-tab-header-container {
+  background-color: transparent !important;
+  backdrop-filter: brightness(0.9) blur(5px) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  gap: 0 !important;
+}
+
+.workspace-tab-header-container-inner,
+.mod-top .workspace-tab-header-container {
+  background-color: transparent !important;
+}
+
+/* Keep inner container from pushing buttons off screen */
+.workspace-split.mod-root .workspace-tab-header-container-inner {
+  min-width: 0 !important;
+  flex-shrink: 1 !important;
+  overflow-x: auto !important;
+}
+
+/* Ensure new tab and tab list buttons stay visible */
+.workspace-split.mod-root .workspace-tab-header-new-tab,
+.workspace-split.mod-root .workspace-tab-header-tab-list {
+  flex-shrink: 0 !important;
+}
+
+/* Allow curves to show */
+.workspace-split.mod-left-split .workspace-tab-header-container-inner,
+.workspace-split.mod-left-split .workspace-tab-header-container,
+.workspace-split.mod-right-split .workspace-tab-header-container-inner,
+.workspace-split.mod-right-split .workspace-tab-header-container {
+  overflow: visible !important;
+}
+
+/* Note content area blur */
+.workspace-split.mod-root .workspace-leaf-content {
+  backdrop-filter: brightness(0.9) blur(5px);
+}
+
+/* Lighter sidebar content blur */
+.workspace-split.mod-left-split .workspace-leaf-content,
+.workspace-split.mod-right-split .workspace-leaf-content {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background-color: rgba(40, 39, 40, 0.2) !important;
+}
+
+/* All tab pills in main area (notes, bases, plugins) */
+.workspace-split.mod-root .workspace-tab-header {
+  backdrop-filter: brightness(0.7) blur(40px);
+  background-color: rgba(34, 34, 34, 0.2) !important;
+  margin: 0 1px !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Active tab pill in main area */
+.workspace-split.mod-root .workspace-tab-header.is-active,
+.workspace-split.mod-root .workspace-tab-header-inner.is-active {
+  backdrop-filter: brightness(0.8) blur(20px);
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Only hide spacer in sidebars, keep it in main tab bar for the new tab button */
+.workspace-split.mod-left-split .workspace-tab-header-spacer,
+.workspace-split.mod-right-split .workspace-tab-header-spacer {
+  display: none !important;
+}
+
+/* Sidebar tab pills */
+.workspace-split.mod-left-split .workspace-tab-header,
+.workspace-split.mod-right-split .workspace-tab-header {
+  flex: 1 !important;
+  justify-content: center !important;
+  backdrop-filter: brightness(0.96) blur(20px);
+  -webkit-backdrop-filter: brightness(0.96) blur(20px);
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  margin: 0 !important;
+}
+
+/* Active sidebar tab pill */
+.workspace-split.mod-left-split .workspace-tab-header-container-inner .workspace-tab-header.is-active,
+.workspace-split.mod-right-split .workspace-tab-header-container-inner .workspace-tab-header.is-active {
+  --sidebar-active-tab-bg: rgba(255, 255, 255, 0.18);
+  backdrop-filter: brightness(1.02) blur(20px);
+  -webkit-backdrop-filter: brightness(1.02) blur(20px);
+  background-color: transparent !important;
+  border-radius: 12px 12px 0 0;
+  position: relative;
+  z-index: 2;
+  flex: 1.5 !important;
+  margin: 0 !important;
+}
+
+.workspace-split.mod-left-split .workspace-tab-header-container-inner .workspace-tab-header.is-active .workspace-tab-header-inner,
+.workspace-split.mod-right-split .workspace-tab-header-container-inner .workspace-tab-header.is-active .workspace-tab-header-inner {
+  background-color: var(--sidebar-active-tab-bg) !important;
+  background: var(--sidebar-active-tab-bg) !important;
+  backdrop-filter: brightness(1.02) blur(20px);
+  -webkit-backdrop-filter: brightness(1.02) blur(20px);
+  border-radius: 12px 12px 0 0;
+}
+
+.workspace-split.mod-left-split .workspace-tab-header-container-inner .workspace-tab-header.is-active .workspace-tab-header-inner::before,
+.workspace-split.mod-left-split .workspace-tab-header-container-inner .workspace-tab-header.is-active .workspace-tab-header-inner::after,
+.workspace-split.mod-right-split .workspace-tab-header-container-inner .workspace-tab-header.is-active .workspace-tab-header-inner::before,
+.workspace-split.mod-right-split .workspace-tab-header-container-inner .workspace-tab-header.is-active .workspace-tab-header-inner::after {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Outer curve left */
+.workspace-split.mod-left-split .workspace-tab-header-container-inner .workspace-tab-header.is-active::before,
+.workspace-split.mod-right-split .workspace-tab-header-container-inner .workspace-tab-header.is-active::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -24px;
+  width: 24px;
+  height: 24px;
+  background: var(--sidebar-active-tab-bg);
+  backdrop-filter: brightness(1.02) blur(20px);
+  -webkit-backdrop-filter: brightness(1.02) blur(20px);
+  border-bottom-right-radius: 24px;
+  box-shadow: none !important;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 92%, 12% 82%, 25% 72%, 40% 65%, 58% 58%, 76% 54%, 100% 52%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Outer curve right */
+.workspace-split.mod-left-split .workspace-tab-header-container-inner .workspace-tab-header.is-active::after,
+.workspace-split.mod-right-split .workspace-tab-header-container-inner .workspace-tab-header.is-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: -24px;
+  width: 24px;
+  height: 24px;
+  background: var(--sidebar-active-tab-bg);
+  backdrop-filter: brightness(1.02) blur(20px);
+  -webkit-backdrop-filter: brightness(1.02) blur(20px);
+  border-bottom-left-radius: 24px;
+  box-shadow: none !important;
+  clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 92%, 88% 82%, 75% 72%, 60% 65%, 42% 58%, 24% 54%, 0 52%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Active sidebar tab icon */
+.workspace-split.mod-left-split .workspace-tab-header.is-active .workspace-tab-header-inner svg,
+.workspace-split.mod-right-split .workspace-tab-header.is-active .workspace-tab-header-inner svg {
+  color: rgba(255, 255, 255, 1) !important;
+}
+
+/* Modals and popups */
+.modal-content,
+.vertical-tabs-container,
+.modal-container .modal,
+.prompt,
+.suggestion-container,
+.menu,
+.popover,
+.tooltip,
+.notice,
+.dropdown {
+  --background-primary: var(--dropdown-glass-bg);
+  --background-secondary: var(--dropdown-glass-bg);
+  --background-secondary-alt: var(--dropdown-glass-hover-bg);
+  background-color: var(--dropdown-glass-bg) !important;
+  background: var(--dropdown-glass-bg) !important;
+  color: var(--dropdown-glass-text) !important;
+  backdrop-filter: brightness(0.98) blur(60px);
+  -webkit-backdrop-filter: brightness(0.98) blur(60px);
+}
+
+.menu,
+.suggestion-container,
+.prompt,
+.popover,
+.dropdown,
+select.dropdown,
+.menu-item,
+.suggestion-item {
+  color: var(--dropdown-glass-text) !important;
+}
+
+.menu-item.mod-disabled,
+.suggestion-item.mod-disabled,
+.dropdown option:disabled,
+select.dropdown option:disabled {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+.menu-item:hover,
+.menu-item.is-selected,
+.suggestion-item.is-selected,
+.suggestion-item:hover,
+.dropdown:hover,
+select.dropdown:hover {
+  background-color: var(--dropdown-glass-hover-bg) !important;
+  background: var(--dropdown-glass-hover-bg) !important;
+  color: var(--dropdown-glass-hover-text) !important;
+}
+
+select.dropdown option {
+  background-color: rgb(0, 0, 0) !important;
+  color: rgb(255, 255, 255) !important;
+}
+
+select.dropdown option:checked {
+  background-color: rgb(46, 46, 46) !important;
+  color: rgb(255, 255, 255) !important;
+}
+
+
+/* ============ INPUT FIELDS — FILLED, NO HOVER SHADOW (FIX #1 & #2) ============ */
+input:not([type=checkbox]):not([type=radio]),
+textarea,
+select,
+.dropdown,
+.text-input,
+.search-input-container input,
+.prompt-input,
+.setting-item-control input,
+.setting-item-control textarea {
+  background-color: rgba(0, 0, 0, 0.52) !important;
+  background: rgba(0, 0, 0, 0.52) !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  color: var(--text-normal) !important;
+}
+
+input:not([type=checkbox]):not([type=radio]):hover,
+textarea:hover,
+select:hover,
+.dropdown:hover,
+.text-input:hover,
+.search-input-container input:hover,
+.prompt-input:hover,
+.setting-item-control input:hover,
+.setting-item-control textarea:hover,
+input:not([type=checkbox]):not([type=radio]):focus,
+textarea:focus,
+select:focus,
+.dropdown:focus,
+.text-input:focus,
+.search-input-container input:focus,
+.prompt-input:focus,
+.setting-item-control input:focus,
+.setting-item-control textarea:focus {
+  background-color: rgba(34, 34, 34, 0.64) !important;
+  background: rgba(34, 34, 34, 0.64) !important;
+  border: none !important;
+  outline: none !important;
+  /* FIX #1: box-shadow removed (was 1px 1px 4px rgba(0,0,0,0.20)) */
+  box-shadow: none !important;
+}
+
+/* Stronger Settings inputs (inside modals) */
+.modal.mod-settings input,
+.modal.mod-settings textarea,
+.modal.mod-settings select,
+.modal.mod-settings .dropdown,
+.modal.mod-settings .text-input,
+.modal.mod-settings input[type="text"],
+.modal.mod-settings input[type="url"],
+.modal.mod-settings input[type="number"],
+.modal.mod-settings input[type="search"],
+.modal.mod-settings input[type="color"],
+.modal.mod-settings .setting-item-control input,
+.modal.mod-settings .setting-item-control textarea,
+.modal.mod-settings .setting-item-control select,
+.modal:has(.vertical-tabs-container) input,
+.modal:has(.vertical-tabs-container) textarea,
+.modal:has(.vertical-tabs-container) select,
+.modal:has(.vertical-tabs-container) .dropdown,
+.modal:has(.vertical-tabs-container) .text-input,
+.modal:has(.vertical-tabs-container) .setting-item-control input,
+.modal:has(.vertical-tabs-container) .setting-item-control textarea,
+.modal:has(.vertical-tabs-container) .setting-item-control select {
+  background-color: rgba(0, 0, 0, 0.52) !important;
+  background: rgba(0, 0, 0, 0.52) !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  color: var(--text-normal) !important;
+}
+
+.modal.mod-settings input:hover,
+.modal.mod-settings textarea:hover,
+.modal.mod-settings select:hover,
+.modal.mod-settings .dropdown:hover,
+.modal.mod-settings input:focus,
+.modal.mod-settings textarea:focus,
+.modal.mod-settings select:focus,
+.modal.mod-settings .dropdown:focus,
+.modal:has(.vertical-tabs-container) input:hover,
+.modal:has(.vertical-tabs-container) textarea:hover,
+.modal:has(.vertical-tabs-container) select:hover,
+.modal:has(.vertical-tabs-container) .dropdown:hover,
+.modal:has(.vertical-tabs-container) input:focus,
+.modal:has(.vertical-tabs-container) textarea:focus,
+.modal:has(.vertical-tabs-container) select:focus,
+.modal:has(.vertical-tabs-container) .dropdown:focus {
+  background-color: rgba(34, 34, 34, 0.64) !important;
+  background: rgba(34, 34, 34, 0.64) !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+/* ===================== SETTINGS GRADIENT (FIX #3) ===================== */
+/* Red/orange radial gradient (zcomplex edit 2). This is the single source
+   of truth for the settings background — ghg's linear-gradient is dropped
+   because it referenced --background-primary, which is transparent here. */
+
+body .modal.mod-settings,
+body .modal.mod-community-modal,
+body .modal.mod-community-plugin,
+body .modal:has(.vertical-tabs-container),
+body .modal-container:has(.vertical-tabs-container) .modal {
+  /* FIX: do NOT override --background-primary/secondary here. Setting them to
+     opaque dark values made every plugin row read as a bordered card (Obsidian
+     uses these vars for row/control backgrounds). Leaving them transparent keeps
+     rows borderless, exactly like MinerDT - Cmobile2. */
+  background:
+    /* Top layer: angled light sweep — warm-white highlight from top-left,
+       fading to transparent toward bottom-right. Brightens without darkening. */
+    linear-gradient(135deg,
+      rgba(255, 250, 235, 0.10) 0%,
+      rgba(255, 250, 235, 0.04) 28%,
+      transparent 58%) 0,
+    radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--settings-gradient-tint-6) 42%, transparent) 0%, transparent 30%),
+    radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--settings-gradient-tint-1) 34%, transparent) 0%, transparent 55%),
+    radial-gradient(circle at 42% 42%, color-mix(in srgb, var(--settings-gradient-tint-2) 30%, transparent) 0%, transparent 32%),
+    radial-gradient(circle at 60% 44%, color-mix(in srgb, var(--settings-gradient-tint-3) 28%, transparent) 0%, transparent 34%),
+    radial-gradient(circle at 45% 62%, color-mix(in srgb, var(--settings-gradient-tint-5) 26%, transparent) 0%, transparent 36%),
+    radial-gradient(circle at 62% 62%, color-mix(in srgb, var(--settings-gradient-tint-4) 24%, transparent) 0%, transparent 38%),
+    /* Bottom layer = the SAME translucent glass as [light transparnt theme] - Copy,
+       so the background image shows through and brightness matches the original. */
+    color-mix(in srgb, var(--settings-glass-color) var(--settings-glass-opacity), transparent) !important;
+  /* Modal edge border — the "lines curving into the sidelines". Kept subtle so it
+     doesn't fight the translucent gradient. */
+  border: 1px solid color-mix(in srgb, var(--settings-glass-color) 42%, white 12%) !important;
+  backdrop-filter: brightness(var(--settings-glass-brightness, 1.35)) blur(24px) saturate(124%) !important;
+  -webkit-backdrop-filter: brightness(var(--settings-glass-brightness, 1.35)) blur(24px) saturate(124%) !important;
+}
+
+/* Inner settings surfaces stay transparent so the gradient shows through */
+body .modal.mod-settings .modal-content,
+body .modal.mod-settings .vertical-tabs-container,
+body .modal.mod-settings .vertical-tab-header,
+body .modal.mod-settings .vertical-tab-content-container,
+body .modal.mod-settings .vertical-tab-content,
+body .modal:has(.vertical-tabs-container) .modal-content,
+body .modal:has(.vertical-tabs-container) .vertical-tabs-container,
+body .modal:has(.vertical-tabs-container) .vertical-tab-header,
+body .modal:has(.vertical-tabs-container) .vertical-tab-content-container,
+body .modal:has(.vertical-tabs-container) .vertical-tab-content,
+body .modal-container:has(.vertical-tabs-container) .modal-content,
+body .modal-container:has(.vertical-tabs-container) .vertical-tabs-container,
+body .modal-container:has(.vertical-tabs-container) .vertical-tab-header,
+body .modal-container:has(.vertical-tabs-container) .vertical-tab-content-container,
+body .modal-container:has(.vertical-tabs-container) .vertical-tab-content {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Setting rows — borderless card fill, but KEEP a single bottom divider line
+   (the "line underneath" each plugin). No side/top borders, so it's not a box.
+   Lighter than --background-modifier-border (which reads dark in this theme). */
+body .modal.mod-settings .setting-item,
+body .modal:has(.vertical-tabs-container) .setting-item,
+body .modal-container:has(.vertical-tabs-container) .setting-item {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  margin-bottom: 0 !important;
+  padding: 16px 12px !important;
+}
+
+/* Last row in a group shouldn't get a trailing divider */
+body .modal.mod-settings .setting-item:last-child,
+body .modal:has(.vertical-tabs-container) .setting-item:last-child,
+body .modal-container:has(.vertical-tabs-container) .setting-item:last-child {
+  border-bottom: none !important;
+}
+
+/* Nuke stray backgrounds inside settings — but EXCLUDE inputs (FIX #2).
+   (Original ghg rule did not exclude inputs → empty fields.) */
+.modal.mod-settings *:not(.checkbox-container):not(.checkbox-container *):not(button):not(input):not(textarea):not(select):not(.text-input):not(.settings-search-input):not(.settings-search-container):not(.vertical-tab-header-search):not(.is-active):not(.is-active *):not(.dropdown):not(.menu):not(.menu *):not(.vertical-tab-nav-item:hover) {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+body .modal.mod-settings .vertical-tab-nav-item,
+body .modal:has(.vertical-tabs-container) .vertical-tab-nav-item,
+body .modal-container:has(.vertical-tabs-container) .vertical-tab-nav-item {
+  background: transparent !important;
+}
+
+body .modal.mod-settings .vertical-tab-nav-item:hover:not(.is-active),
+body .modal:has(.vertical-tabs-container) .vertical-tab-nav-item:hover:not(.is-active),
+body .modal-container:has(.vertical-tabs-container) .vertical-tab-nav-item:hover:not(.is-active) {
+  background: color-mix(in srgb, white 12%, transparent) !important;
+  cursor: pointer !important;
+}
+
+body .modal.mod-settings .vertical-tab-nav-item.is-active,
+body .modal.mod-settings div.vertical-tab-nav-item.is-active,
+body .modal:has(.vertical-tabs-container) .vertical-tab-nav-item.is-active,
+body .modal-container:has(.vertical-tabs-container) .vertical-tab-nav-item.is-active {
+  background: color-mix(in srgb, var(--text-accent) 82%, white 18%) !important;
+  color: rgba(0, 0, 0, 0.95) !important;
+  opacity: 1 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.32) !important;
+  font-weight: 600 !important;
+}
+
+body .modal.mod-settings .vertical-tab-nav-item.is-active svg,
+body .modal.mod-settings div.vertical-tab-nav-item.is-active svg,
+body .modal:has(.vertical-tabs-container) .vertical-tab-nav-item.is-active svg,
+body .modal-container:has(.vertical-tabs-container) .vertical-tab-nav-item.is-active svg {
+  color: rgba(0, 0, 0, 0.95) !important;
+}
+
+body .modal.mod-settings .setting-item-heading .setting-item-name,
+body .modal.mod-settings .vertical-tab-header-group-title,
+body .modal:has(.vertical-tabs-container) .setting-item-heading .setting-item-name,
+body .modal:has(.vertical-tabs-container) .vertical-tab-header-group-title {
+  color: var(--text-normal) !important;
+  font-weight: 600 !important;
+}
+
+body .modal.mod-settings .vertical-tab-header-search,
+body .modal.mod-settings .settings-search-container,
+body .modal:has(.vertical-tabs-container) .vertical-tab-header-search,
+body .modal:has(.vertical-tabs-container) .settings-search-container {
+  background-color: color-mix(in srgb, var(--settings-gradient-base) 28%, transparent) !important;
+  backdrop-filter: blur(18px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(135%) !important;
+}
+
+body .modal.mod-settings input[type='range'],
+body .modal:has(.vertical-tabs-container) input[type='range'] {
+  background: rgba(255, 255, 255, 0.14) !important;
+  height: 3px !important;
+  appearance: none !important;
+}
+
+body .modal.mod-settings input[type='range']::-webkit-slider-runnable-track,
+body .modal:has(.vertical-tabs-container) input[type='range']::-webkit-slider-runnable-track {
+  background: rgba(255, 255, 255, 0.2) !important;
+  height: 3px !important;
+}
+
+/* Settings sidebar header divider removed (ghg) */
+.modal.mod-settings .vertical-tab-header {
+  border-right: none !important;
+}
+
+.modal-close-button {
+  color: var(--text-normal) !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  z-index: 10;
+}
+
+
+/* ===================== EMBEDS / STATUS / NOTICES ===================== */
+.cm-embed-block,
+.cm-embed-block:focus-within {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.cm-embed-block:hover {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.status-bar {
+  border: none !important;
+  background-color: transparent !important;
+  backdrop-filter: brightness(0.7) blur(15px);
+}
+
+div.notice-container {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  gap: 0 !important;
+  border-radius: 12px !important;
+}
+
+div.notice {
+  border-radius: 12px !important;
+  border: none !important;
+  box-shadow: none !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: brightness(0.5) blur(20px);
+  margin: 0 !important;
+}
+
+
+/* ===================== BASES CARDS ===================== */
+.bases-cards-group,
+.dynamic-views-group {
+  background: transparent !important;
+  gap: 12px !important;
+}
+
+.bases-cards-group .card,
+.masonry-container .card {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: brightness(0.5) blur(20px);
+  border-radius: 12px !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+.bases-cards-group .card:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  transition: background-color 0.2s ease;
+}
+
+.bases-cards-group .card .card-content,
+.bases-cards-group .card .card-header {
+  background: transparent !important;
+}
+
+.bases-cards-group .card .card-thumbnail-crop img {
+  border-radius: 8px !important;
+  object-fit: cover !important;
+}
+
+.bases-cards-group .card-title-text {
+  color: var(--text-normal) !important;
+}
+
+.dynamic-views-masonry,
+.masonry-container {
+  background: transparent !important;
+}
+
+
+/* ===================== MINERDT LAYOUT (mobile + multi-column) ===================== */
+/* FIX #5: every var(--background-primary) below was transparent here, so
+   the mobile drawers / nav items would have been see-through. We point
+   them at the settings glass color (with a touch of darken) instead. */
+
+/* Clean Glass blur for modal background overlay */
+.modal-bg {
+  backdrop-filter: blur(15px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(15px) saturate(130%) !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  opacity: 1 !important;
+}
+
+/*滚轮不占宽度*/
+.markdown-preview-view {
+  font-size: var(--font-text-size);
+  font-family: var(--font-text);
+  line-height: var(--line-height-normal);
+  width: 100%;
+  height: 100%;
+  padding: var(--file-margins);
+  position: relative;
+  overflow-y: auto;
+  overflow-wrap: break-word;
+  color: var(--text-normal);
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* Sidebar and Modal Widths - Desktop Only */
+@media (min-width: 768px) {
+  .modal.mod-settings .vertical-tab-header {
+    width: 340px !important;
+    min-width: 340px !important;
+    overflow-y: auto;
+    border-right: 1px solid var(--divider-color);
+    overflow-wrap: break-word;
+    padding-top: 0 !important;
+  }
+
+  .modal.mod-settings .vertical-tab-content-container {
+    width: 1100px !important;
+    max-width: none !important;
+  }
+
+  .modal.mod-settings.mod-sidebar-layout {
+    width: 95% !important;
+    max-width: 1300px !important;
+    height: 85% !important;
+  }
+}
+
+.modal.mod-settings .vertical-tab-content {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/*顶栏移动到下方*/
+/*左侧顶栏*/
+body.is-mobile > .app-container > .horizontal-main-container > .workspace > .workspace-drawer.mod-left {
+  right: 0;
+  padding-left: var(--safe-area-inset-right);
+  border-top-right-radius: unset;
+  border-bottom-right-radius: unset;
+}
+
+body.is-mobile > .app-container > .horizontal-main-container > .workspace > .workspace-drawer.mod-left > .workspace-drawer-inner {
+  flex: 1 1 auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: color-mix(in srgb, var(--settings-glass-color) 40%, transparent);
+  position: relative;
+  transition: width ease-out 150ms;
+}
+
+/*手机平板右侧顶栏*/
+body.is-mobile > .app-container > .horizontal-main-container > .workspace > .workspace-drawer.mod-right {
+  right: 0;
+  padding-right: var(--safe-area-inset-right);
+  border-top-left-radius: unset;
+  border-bottom-left-radius: unset;
+}
+
+body.is-mobile > .app-container > .horizontal-main-container > .workspace > .workspace-drawer.mod-right > .workspace-drawer-inner {
+  flex: 1 1 auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: color-mix(in srgb, var(--settings-glass-color) 40%, transparent);
+  position: relative;
+  transition: width ease-out 150ms;
+}
+
+/*手机双列菜单*/
+body.is-phone > .menu {
+  background-color: var(--dropdown-glass-bg);
+  max-height: 60vh;
+  width: calc(100% - var(--safe-area-inset-left) - var(--safe-area-inset-right));
+  min-width: unset;
+  position: absolute;
+  padding-bottom: var(--safe-area-inset-bottom);
+  margin-left: var(--safe-area-inset-left);
+  margin-right: var(--safe-area-inset-right);
+  border-radius: var(--radius-l) var(--radius-l) 0 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  top: unset !important;
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+body.is-phone > .menu > .menu-item {
+  padding: var(--size-4-3) var(--size-4-3);
+  height: unset;
+  line-height: unset;
+  width: 50%;
+}
+
+body.is-phone > .menu > .menu-separator {
+  height: 0;
+  margin: var(--size-2-3) calc(var(--size-2-3) * -1);
+  border-bottom: 1px solid var(--background-modifier-border);
+  display: flex;
+  width: 100%;
+}
+
+/* Desktop settings column layout */
+@media (min-width: 768px) {
+  .vertical-tab-header-group-items,
+  .settings-search-results,
+  .vertical-tab-header-search-results,
+  .modal.mod-settings .vertical-tab-header-group-items,
+  .modal.mod-settings .settings-search-results,
+  .vertical-tabs-container .vertical-tab-header-group-items,
+  .modal-content .vertical-tab-header-group-items,
+  .vertical-tab-header .vertical-tab-header-group-items,
+  div.vertical-tab-header-group-items,
+  div.settings-search-results {
+    display: block !important;
+    column-count: 2 !important;
+    column-gap: 8px !important;
+    background-color: color-mix(in srgb, var(--settings-glass-color) var(--settings-item-opacity), transparent);
+    padding: 2px !important;
+  }
+}
+
+/* Mobile Settings Layout — Miner.css style (long selectors) */
+body.is-phone div.modal-container.mod-dim > .modal.mod-settings.mod-sidebar-layout > .modal-content.vertical-tabs-container > .vertical-tab-header {
+  overflow: auto;
+  overflow: overlay;
+  overflow-y: 0;
+  overflow-wrap: break-word;
+}
+
+/* Phone: single-row flex wrap instead of columns */
+body.is-phone div.modal-container.mod-dim > .modal.mod-settings.mod-sidebar-layout > .modal-content.vertical-tabs-container > .vertical-tab-header > .vertical-tab-header-group > .vertical-tab-header-group-items {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  background-color: color-mix(in srgb, var(--settings-glass-color) var(--settings-item-opacity), transparent) !important;
+  columns: unset !important;
+  column-count: unset !important;
+}
+
+body.is-phone div.modal-container.mod-dim > .modal.mod-settings.mod-sidebar-layout > .modal-content.vertical-tabs-container > .vertical-tab-header > .vertical-tab-header-group > .vertical-tab-header-group-items > .vertical-tab-nav-item {
+  display: flex !important;
+  align-items: center !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  background-color: color-mix(in srgb, var(--settings-glass-color) var(--settings-item-opacity), transparent);
+  padding: 0 var(--size-4-2) 0 var(--size-4-3) !important;
+  margin: 0 !important;
+  border-radius: 7px;
+  border-bottom: unset;
+  transition: background-color 200ms ease-in-out, color 200ms ease-in-out;
+  min-width: 50% !important;
+  max-width: 100% !important;
+  flex-grow: 1 !important;
+  width: auto !important;
+  break-inside: auto !important;
+}
+
+body.is-phone div.modal-container.mod-dim > .modal.mod-settings.mod-sidebar-layout > .modal-content.vertical-tabs-container > .vertical-tab-header > .vertical-tab-header-group > .vertical-tab-header-group-items > .vertical-tab-nav-item.is-active {
+  display: flex !important;
+  align-items: center !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  background-color: var(--interactive-accent) !important;
+  padding: 0 var(--size-4-2) 0 var(--size-4-3) !important;
+  margin: 0 !important;
+  border-radius: 7px;
+  border-bottom: unset;
+  transition: background-color 200ms ease-in-out, color 200ms ease-in-out;
+  min-width: 50% !important;
+  max-width: 100% !important;
+  flex-grow: 1 !important;
+}
+
+/* Reduce vertical padding for group headers */
+.vertical-tab-header-group-title {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  margin-top: 0 !important;
+  transition: background-color 200ms ease, color 200ms ease;
+  border-radius: 4px;
+}
+
+/* Highlight all group headers (Core/Community) */
+.vertical-tab-header-group-title:hover {
+  text-decoration: underline !important;
+  color: var(--text-accent) !important;
+  cursor: pointer !important;
+}
+
+/* Exclude Options header (typically first or second child depending on search bar) */
+.vertical-tab-header > .vertical-tab-header-group:first-of-type .vertical-tab-header-group-title:hover,
+.vertical-tab-header .vertical-tab-header-group:nth-child(1) .vertical-tab-header-group-title:hover,
+.vertical-tab-header .vertical-tab-header-group:nth-child(2) .vertical-tab-header-group-title:hover {
+  text-decoration: none !important;
+  color: var(--text-muted) !important;
+  background-color: transparent !important;
+  cursor: default !important;
+}
+
+/* Target individual tab items - Normal state */
+.vertical-tab-nav-item,
+.modal.mod-settings .vertical-tab-nav-item,
+.vertical-tab-header-group-items .vertical-tab-nav-item,
+.vertical-tabs-container .vertical-tab-nav-item,
+.vertical-tab-header .vertical-tab-nav-item,
+div.vertical-tab-nav-item {
+  display: flex !important;
+  align-items: center;
+  height: auto !important;
+  min-height: 32px !important;
+  background-color: color-mix(in srgb, var(--settings-glass-color) var(--settings-item-opacity), transparent);
+  padding: 4px 8px !important;
+  margin: 0 0 6px 0 !important;
+  border-radius: 7px;
+  border-bottom: unset;
+  transition: background-color 200ms ease-in-out, color 200ms ease-in-out;
+  width: 100% !important;
+  box-sizing: border-box;
+  justify-content: flex-start;
+  white-space: normal !important;
+  line-height: 1.2 !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  break-inside: avoid-column;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* Force internal labels and text to wrap */
+.vertical-tab-nav-item *,
+.modal.mod-settings .vertical-tab-nav-item * {
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  text-overflow: clip !important;
+}
+
+/* Javalent Settings Search - Full Width Results */
+@media (min-width: 768px) {
+  .vertical-tab-header-search,
+  .vertical-tab-header-search-container,
+  .settings-search-container,
+  .settings-search-input {
+    column-span: all !important;
+    width: calc(100% + 20px) !important;
+    margin-bottom: 2px !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
+    background-color: color-mix(in srgb, var(--settings-glass-color) 20%, transparent) !important;
+    backdrop-filter: blur(20px) saturate(130%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(130%) !important;
+    padding: 12px 10px 10px 10px !important;
+    margin-top: 0 !important;
+    margin-left: -10px !important;
+    margin-right: -10px !important;
+    border-bottom: none !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.settings-search-results {
+  display: block !important;
+  width: 100% !important;
+}
+
+/* Hover state for settings toolbar items */
+.vertical-tab-nav-item:hover:not(.is-active),
+.modal.mod-settings .vertical-tab-nav-item:hover:not(.is-active),
+.vertical-tab-header-group-items .vertical-tab-nav-item:hover:not(.is-active),
+.vertical-tabs-container .vertical-tab-nav-item:hover:not(.is-active),
+.vertical-tab-header .vertical-tab-nav-item:hover:not(.is-active),
+div.vertical-tab-nav-item:hover:not(.is-active) {
+  background-color: var(--background-modifier-hover) !important;
+  cursor: pointer;
+}
+
+/* Active tab styling - Must match normal state dimensions exactly */
+.vertical-tab-nav-item.is-active,
+.modal.mod-settings .vertical-tab-nav-item.is-active,
+.vertical-tab-header-group-items .vertical-tab-nav-item.is-active,
+.vertical-tab-header .vertical-tab-nav-item.is-active,
+div.vertical-tab-nav-item.is-active {
+  display: flex !important;
+  align-items: center;
+  height: auto !important;
+  min-height: 32px !important;
+  background-color: var(--interactive-accent) !important;
+  padding: 4px 8px !important;
+  margin: 0 0 6px 0 !important;
+  border-radius: 7px;
+  border-bottom: unset;
+  transition: background-color 200ms ease-in-out, color 200ms ease-in-out;
+  width: 100% !important;
+  box-sizing: border-box;
+  justify-content: flex-start;
+  white-space: normal !important;
+  line-height: 1.2 !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  break-inside: avoid-column;
+}
+
+
+/* ===================== MOBILE BACKGROUND SUPPORT ===================== */
+body.is-mobile .workspace {
+  backdrop-filter: brightness(0.8) blur(5px) !important;
+  -webkit-backdrop-filter: brightness(0.8) blur(5px) !important;
+  background-color: transparent !important;
+}
+
+/* Make every layer transparent on phone so background shows through */
+body.is-phone .app-container,
+body.is-phone .workspace,
+body.is-phone .workspace-split,
+body.is-phone .workspace-split.mod-root,
+body.is-phone .workspace-tabs,
+body.is-phone .workspace-tab-container,
+body.is-phone .workspace-leaf,
+body.is-phone .view-content,
+body.is-phone .markdown-source-view,
+body.is-phone .markdown-preview-view,
+body.is-phone .cm-editor,
+body.is-phone .cm-scroller {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Frosted note content on phone */
+body.is-phone .workspace-split.mod-root .workspace-leaf-content {
+  backdrop-filter: brightness(0.7) blur(16px) !important;
+  -webkit-backdrop-filter: brightness(0.7) blur(16px) !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Lighter translucent sidebars on mobile */
+body.is-mobile .workspace-split.mod-left-split .workspace-leaf-content,
+body.is-mobile .workspace-split.mod-right-split .workspace-leaf-content,
+body.is-phone .workspace-split.mod-left-split .workspace-leaf-content,
+body.is-phone .workspace-split.mod-right-split .workspace-leaf-content,
+body.is-tablet .workspace-split.mod-left-split .workspace-leaf-content,
+body.is-tablet .workspace-split.mod-right-split .workspace-leaf-content {
+  backdrop-filter: brightness(0.98) blur(16px) !important;
+  -webkit-backdrop-filter: brightness(0.98) blur(16px) !important;
+  background-color: rgba(0, 0, 0, 0.26) !important;
+}
+
+body.is-mobile .workspace-split.mod-left-split .workspace-tab-header-container,
+body.is-mobile .workspace-split.mod-right-split .workspace-tab-header-container,
+body.is-phone .workspace-split.mod-left-split .workspace-tab-header-container,
+body.is-phone .workspace-split.mod-right-split .workspace-tab-header-container,
+body.is-tablet .workspace-split.mod-left-split .workspace-tab-header-container,
+body.is-tablet .workspace-split.mod-right-split .workspace-tab-header-container {
+  backdrop-filter: brightness(0.98) blur(16px) !important;
+  -webkit-backdrop-filter: brightness(0.98) blur(16px) !important;
+  background-color: rgba(0, 0, 0, 0.26) !important;
+}
+
+/* Sidebar drawers on mobile */
+body.is-mobile .workspace-drawer,
+body.is-phone .workspace-drawer,
+body.is-tablet .workspace-drawer {
+  background-color: rgba(43, 43, 43, 0.46) !important;
+  backdrop-filter: brightness(0.98) blur(16px) !important;
+  -webkit-backdrop-filter: brightness(0.98) blur(16px) !important;
+}
+
+/* Settings modal translucent on mobile */
+body.is-mobile .modal.mod-settings,
+body.is-mobile .modal.mod-settings .vertical-tabs-container,
+body.is-mobile .modal.mod-settings .vertical-tab-header,
+body.is-mobile .modal.mod-settings .vertical-tab-content-container,
+body.is-mobile .modal.mod-settings .vertical-tab-content,
+body.is-mobile .modal.mod-settings .modal-content,
+body.is-mobile .modal.mod-settings .setting-item,
+body.is-mobile .modal.mod-settings .vertical-tab-header-group {
+  background-color: color-mix(in srgb, var(--settings-glass-color) var(--settings-glass-opacity), transparent) !important;
+  background: color-mix(in srgb, var(--settings-glass-color) var(--settings-glass-opacity), transparent) !important;
+  backdrop-filter: brightness(var(--settings-glass-brightness)) blur(24px) !important;
+  -webkit-backdrop-filter: brightness(var(--settings-glass-brightness)) blur(24px) !important;
+}
+
+body.is-mobile .modal.mod-settings .setting-item,
+body.is-mobile .modal.mod-settings .vertical-tab-header-group,
+body.is-mobile .modal.mod-settings .vertical-tab-nav-item {
+  background-color: color-mix(in srgb, var(--settings-glass-color) var(--settings-item-opacity), transparent) !important;
+}
+
+
+/* ===== FINAL INPUT FILL SAFETY NET (wins over any transparent-nuke rule) ===== */
+body input:not([type=checkbox]):not([type=radio]),
+body textarea,
+body select,
+body .dropdown,
+body .text-input,
+body .prompt-input,
+body .search-input-container input,
+body .setting-item-control input,
+body .setting-item-control textarea,
+body .setting-item-control select,
+body .modal input,
+body .modal textarea,
+body .modal select,
+body .modal .dropdown,
+body .modal .text-input {
+  background-color: rgba(0, 0, 0, 0.52) !important;
+  background: rgba(0, 0, 0, 0.52) !important;
+  border: 0 !important;
+  outline: 0 !important;
+  /* FIX #1: no drop shadow on hover/focus */
+  box-shadow: none !important;
+  color: var(--text-normal) !important;
+}
+
+body input:not([type=checkbox]):not([type=radio]):hover,
+body textarea:hover,
+body select:hover,
+body .dropdown:hover,
+body .text-input:hover,
+body .prompt-input:hover,
+body .search-input-container input:hover,
+body .setting-item-control input:hover,
+body .setting-item-control textarea:hover,
+body .setting-item-control select:hover,
+body input:not([type=checkbox]):not([type=radio]):focus,
+body textarea:focus,
+body select:focus,
+body .dropdown:focus,
+body .text-input:focus,
+body .prompt-input:focus,
+body .search-input-container input:focus,
+body .setting-item-control input:focus,
+body .setting-item-control textarea:focus,
+body .setting-item-control select:focus {
+  background-color: rgba(34, 34, 34, 0.64) !important;
+  background: rgba(34, 34, 34, 0.64) !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Make all embeds borderless and filled in on hover */
+.cm-embed-block,
+.cm-embed-block:focus-within {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.cm-embed-block:hover {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+
+/* ===== EXCALIBRAIN (scoped) ===== */
+/* ===== Excalibrain + Embedded Notes for [light ttransparnt theme] edit (2).css ===== */
+/* Enable this alongside [light ttransparnt theme] edit (2).css. */
+
+:root {
+  --lt-excalibrain-glass-bg: rgba(40, 39, 40, 0.2);
+  --lt-excalibrain-glass-bg-strong: rgba(0, 0, 0, 0.3);
+  --lt-excalibrain-glass-hover: rgba(255, 255, 255, 0.08);
+  --lt-excalibrain-glass-border: rgba(255, 255, 255, 0.08);
+  --lt-excalibrain-glass-blur: brightness(0.96) blur(18px);
+  --lt-excalibrain-card-radius: 8px;
+  --lt-excalibrain-embed-panel-bg: rgba(6, 10, 8, 0.1);
+  --lt-excalibrain-embed-panel-bg-strong: rgba(6, 10, 8, 0.14);
+  --lt-excalibrain-embed-panel-border: transparent;
+  --lt-excalibrain-embed-panel-blur: none;
+  --lt-excalibrain-embed-text: rgba(245, 245, 245, 0.94);
+  --lt-excalibrain-embed-muted: rgba(245, 245, 245, 0.68);
+  --lt-excalibrain-embed-link: rgba(255, 221, 92, 0.96);
+}
+
+/* Excalibrain pane background */
+.workspace-leaf-content[data-type="excalibrain"],
+.workspace-leaf-content[data-type="excalibrain"] .view-content,
+.workspace-leaf-content[data-type="excalibrain-view"],
+.workspace-leaf-content[data-type="excalibrain-view"] .view-content,
+.workspace-leaf-content[data-type*="excalibrain" i],
+.workspace-leaf-content[data-type*="excalibrain" i] .view-content,
+.workspace-leaf-content:has([class*="excalibrain" i]),
+.workspace-leaf-content:has([id*="excalibrain" i]),
+.workspace-leaf-content:has([class*="excalibrain" i]) .view-content,
+.workspace-leaf-content:has([id*="excalibrain" i]) .view-content,
+.view-content:has(.excalibrain),
+.view-content:has(.excalibrain-view),
+.view-content:has([class*="excalibrain" i]),
+.view-content:has([id*="excalibrain" i]),
+.excalibrain,
+.excalibrain-view,
+.excalibrain-container,
+.excalibrain-workspace,
+.excalibrain-canvas,
+[class*="excalibrain" i],
+[id*="excalibrain" i] {
+  --background-primary: transparent;
+  --background-secondary: transparent;
+  --background-secondary-alt: transparent;
+  --canvas-background: transparent;
+  --excalidraw-background-color: transparent;
+  --excalidraw-bg-color: transparent;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Frosted layer over the Excalibrain workspace */
+.workspace-leaf-content[data-type="excalibrain"] .view-content,
+.workspace-leaf-content[data-type="excalibrain-view"] .view-content,
+.workspace-leaf-content[data-type*="excalibrain" i] .view-content,
+.workspace-leaf-content:has([class*="excalibrain" i]) .view-content,
+.workspace-leaf-content:has([id*="excalibrain" i]) .view-content,
+.view-content:has(.excalibrain),
+.view-content:has(.excalibrain-view),
+.view-content:has([class*="excalibrain" i]),
+.view-content:has([id*="excalibrain" i]) {
+  backdrop-filter: var(--lt-excalibrain-glass-blur) !important;
+  -webkit-backdrop-filter: var(--lt-excalibrain-glass-blur) !important;
+}
+
+/* Excalibrain nodes/cards/controls */
+.excalibrain .excalibrain-node,
+.excalibrain .excalibrain-card,
+.excalibrain .excalibrain-note,
+.excalibrain .excalibrain-control,
+.excalibrain .excalibrain-menu,
+.excalibrain-view .excalibrain-node,
+.excalibrain-view .excalibrain-card,
+.excalibrain-view .excalibrain-note,
+.excalibrain-view .excalibrain-control,
+.excalibrain-view .excalibrain-menu,
+.workspace-leaf-content[data-type="excalibrain"] .workspace-leaf-content,
+.workspace-leaf-content[data-type="excalibrain"] .graph-controls,
+.workspace-leaf-content[data-type="excalibrain"] .graph-control,
+.workspace-leaf-content[data-type="excalibrain-view"] .graph-controls,
+.workspace-leaf-content[data-type="excalibrain-view"] .graph-control,
+.workspace-leaf-content[data-type*="excalibrain" i] .graph-controls,
+.workspace-leaf-content[data-type*="excalibrain" i] .graph-control,
+.workspace-leaf-content:has([class*="excalibrain" i]) .graph-controls,
+.workspace-leaf-content:has([class*="excalibrain" i]) .graph-control,
+[class*="excalibrain" i] [class*="node" i],
+[class*="excalibrain" i] [class*="card" i],
+[class*="excalibrain" i] [class*="control" i],
+[class*="excalibrain" i] [class*="menu" i] {
+  background: var(--lt-excalibrain-glass-bg) !important;
+  background-color: var(--lt-excalibrain-glass-bg) !important;
+  backdrop-filter: var(--lt-excalibrain-glass-blur) !important;
+  -webkit-backdrop-filter: var(--lt-excalibrain-glass-blur) !important;
+  border: 1px solid var(--lt-excalibrain-glass-border) !important;
+  border-radius: var(--lt-excalibrain-card-radius) !important;
+  box-shadow: none !important;
+}
+
+.excalibrain .excalibrain-node:hover,
+.excalibrain .excalibrain-card:hover,
+.excalibrain .excalibrain-note:hover,
+.excalibrain-view .excalibrain-node:hover,
+.excalibrain-view .excalibrain-card:hover,
+.excalibrain-view .excalibrain-note:hover {
+  background: var(--lt-excalibrain-glass-hover) !important;
+  background-color: var(--lt-excalibrain-glass-hover) !important;
+}
+
+/* Keep SVG/canvas layers clear so the vault background shows through */
+.workspace-leaf-content[data-type="excalibrain"] svg,
+.workspace-leaf-content[data-type="excalibrain"] canvas,
+.workspace-leaf-content[data-type="excalibrain-view"] svg,
+.workspace-leaf-content[data-type="excalibrain-view"] canvas,
+.workspace-leaf-content[data-type*="excalibrain" i] svg,
+.workspace-leaf-content[data-type*="excalibrain" i] canvas,
+.workspace-leaf-content:has([class*="excalibrain" i]) svg,
+.workspace-leaf-content:has([class*="excalibrain" i]) canvas,
+.excalibrain svg,
+.excalibrain canvas,
+.excalibrain-view svg,
+.excalibrain-view canvas,
+[class*="excalibrain" i] svg,
+[class*="excalibrain" i] canvas {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Excalibrain/Excalidraw-style SVG background rectangles */
+.workspace-leaf-content[data-type*="excalibrain" i] svg > rect:first-child,
+.workspace-leaf-content:has([class*="excalibrain" i]) svg > rect:first-child,
+.view-content:has([class*="excalibrain" i]) svg > rect:first-child,
+[class*="excalibrain" i] svg > rect:first-child,
+[id*="excalibrain" i] svg > rect:first-child {
+  fill: transparent !important;
+}
+
+/* Some builds use an Excalidraw canvas/root inside Excalibrain. */
+.workspace-leaf-content[data-type*="excalibrain" i] .excalidraw,
+.workspace-leaf-content[data-type*="excalibrain" i] .excalidraw-container,
+.workspace-leaf-content[data-type*="excalibrain" i] .excalidraw-wrapper,
+.workspace-leaf-content:has([class*="excalibrain" i]) .excalidraw,
+.workspace-leaf-content:has([class*="excalibrain" i]) .excalidraw-container,
+.workspace-leaf-content:has([class*="excalibrain" i]) .excalidraw-wrapper {
+  --background-primary: transparent;
+  --background-secondary: transparent;
+  --excalidraw-background-color: transparent;
+  --excalidraw-bg-color: transparent;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Note embeds / transclusions */
+.markdown-preview-view .markdown-embed,
+.markdown-preview-view .internal-embed,
+.markdown-rendered .markdown-embed,
+.markdown-rendered .internal-embed,
+.cm-embed-block,
+.cm-embed-block:focus-within {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid var(--lt-excalibrain-glass-border) !important;
+  border-radius: var(--lt-excalibrain-card-radius) !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+.markdown-preview-view .markdown-embed:hover,
+.markdown-preview-view .internal-embed:hover,
+.markdown-rendered .markdown-embed:hover,
+.markdown-rendered .internal-embed:hover,
+.cm-embed-block:hover {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  outline: none !important;
+}
+
+.markdown-embed .markdown-embed-content,
+.markdown-embed .markdown-preview-view,
+.markdown-embed .markdown-preview-sizer,
+.markdown-embed .markdown-preview-section,
+.internal-embed .markdown-preview-view,
+.internal-embed .markdown-preview-sizer,
+.internal-embed .markdown-preview-section,
+.cm-embed-block .markdown-rendered {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.markdown-embed-title,
+.markdown-embed-link {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Nested embeds get a little more structure without becoming solid. */
+.markdown-embed .markdown-embed,
+.internal-embed .internal-embed,
+.markdown-embed .internal-embed,
+.internal-embed .markdown-embed {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Excalibrain note previews can carry plugin/inline node colours. Clear those layers too. */
+[class*="excalibrain" i] .markdown-embed,
+[class*="excalibrain" i] .internal-embed,
+[class*="excalibrain" i] .markdown-embed *,
+[class*="excalibrain" i] .internal-embed *,
+[class*="excalibrain" i] .markdown-preview-view,
+[class*="excalibrain" i] .markdown-preview-sizer,
+[class*="excalibrain" i] .markdown-preview-section,
+[class*="excalibrain" i] .markdown-rendered,
+[class*="excalibrain" i] .markdown-embed-content,
+[class*="excalibrain" i] foreignObject,
+[class*="excalibrain" i] foreignObject > *,
+[class*="excalibrain" i] foreignObject div {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+[class*="excalibrain" i] .markdown-embed,
+[class*="excalibrain" i] .internal-embed {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none !important;
+}
+
+/* CDP: Excalibrain note previews are Excalidraw canvas-node embeddables. */
+.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node,
+.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node-container,
+.workspace-leaf-content[data-type*="excalibrain" i] .excalidraw-mdEmbed-hideFilename,
+.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node,
+.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node-container,
+.workspace-leaf-content:has([class*="excalibrain" i]) .excalidraw-mdEmbed-hideFilename,
+.view-content:has([class*="excalibrain" i]) .canvas-node,
+.view-content:has([class*="excalibrain" i]) .canvas-node-container,
+.view-content:has([class*="excalibrain" i]) .excalidraw-mdEmbed-hideFilename,
+[class*="excalibrain" i] .canvas-node,
+[class*="excalibrain" i] .canvas-node-container,
+[class*="excalibrain" i] .excalidraw-mdEmbed-hideFilename {
+  --canvas-background: transparent !important;
+  --background-primary: transparent !important;
+  --background-secondary: transparent !important;
+  --background-secondary-alt: transparent !important;
+  --canvas-color: transparent !important;
+  --canvas-border: transparent !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node table,
+.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node thead,
+.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node tbody,
+.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node tr,
+.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node th,
+.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node td,
+.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node table,
+.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node thead,
+.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node tbody,
+.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node tr,
+.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node th,
+.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node td,
+[class*="excalibrain" i] .canvas-node table,
+[class*="excalibrain" i] .canvas-node thead,
+[class*="excalibrain" i] .canvas-node tbody,
+[class*="excalibrain" i] .canvas-node tr,
+[class*="excalibrain" i] .canvas-node th,
+[class*="excalibrain" i] .canvas-node td {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.canvas-node.excalidraw-mdEmbed-hideFilename,
+.canvas-node.excalidraw-mdEmbed-hideFilename *,
+.canvas-node-container,
+.canvas-node-container *,
+.excalidraw-mdEmbed-hideFilename,
+.excalidraw-mdEmbed-hideFilename * {
+  --canvas-background: transparent !important;
+  --background-primary: transparent !important;
+  --background-secondary: transparent !important;
+  --background-secondary-alt: transparent !important;
+  background-color: transparent !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.canvas-node-content.markdown-embed .dataview.table-view-table,
+.canvas-node-content.markdown-embed .dataview.table-view-table *,
+.canvas-node-content.markdown-embed .block-language-dataview,
+.canvas-node-content.markdown-embed .block-language-dataview *,
+.excalidraw__embeddable__content .dataview.table-view-table,
+.excalidraw__embeddable__content .dataview.table-view-table *,
+.excalidraw__embeddable__content .block-language-dataview,
+.excalidraw__embeddable__content .block-language-dataview * {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Keep Excalibrain embedded note text readable in preview and interact mode. */
+.canvas-node.excalidraw-mdEmbed-hideFilename,
+.canvas-node.excalidraw-mdEmbed-hideFilename *,
+.canvas-node-content.markdown-embed,
+.canvas-node-content.markdown-embed *,
+.excalidraw__embeddable__content .markdown-embed,
+.excalidraw__embeddable__content .markdown-embed *,
+.excalidraw__embeddable__content .markdown-preview-view,
+.excalidraw__embeddable__content .markdown-preview-view * {
+  color: var(--lt-excalibrain-embed-text) !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow: none !important;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+.canvas-node.excalidraw-mdEmbed-hideFilename a,
+.canvas-node.excalidraw-mdEmbed-hideFilename .internal-link,
+.canvas-node-content.markdown-embed a,
+.canvas-node-content.markdown-embed .internal-link,
+.excalidraw__embeddable__content .markdown-embed a,
+.excalidraw__embeddable__content .markdown-embed .internal-link {
+  color: var(--lt-excalibrain-embed-link) !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow: none !important;
+  text-decoration-color: color-mix(in srgb, var(--lt-excalibrain-embed-link) 55%, transparent) !important;
+}
+
+.canvas-node.excalidraw-mdEmbed-hideFilename .tag,
+.canvas-node-content.markdown-embed .tag,
+.excalidraw__embeddable__content .markdown-embed .tag,
+.canvas-node.excalidraw-mdEmbed-hideFilename .metadata-property-key,
+.canvas-node.excalidraw-mdEmbed-hideFilename .metadata-property-value,
+.canvas-node-content.markdown-embed .metadata-property-key,
+.canvas-node-content.markdown-embed .metadata-property-value {
+  color: var(--lt-excalibrain-embed-muted) !important;
+}
+
+/* Interact/edit mode can reintroduce Obsidian light-theme text variables. */
+body .excalidraw__embeddable__content,
+body .excalidraw__embeddable__content *,
+body .canvas-node.theme-light.excalidraw-mdEmbed-hideFilename,
+body .canvas-node.theme-light.excalidraw-mdEmbed-hideFilename *,
+body .canvas-node.excalidraw-mdEmbed-hideFilename.is-editing,
+body .canvas-node.excalidraw-mdEmbed-hideFilename.is-editing *,
+body .canvas-node.excalidraw-mdEmbed-hideFilename.is-focused,
+body .canvas-node.excalidraw-mdEmbed-hideFilename.is-focused * {
+  --text-normal: var(--lt-excalibrain-embed-text) !important;
+  --text-muted: var(--lt-excalibrain-embed-muted) !important;
+  --text-faint: rgba(245, 245, 245, 0.48) !important;
+  --h1-color: var(--lt-excalibrain-embed-text) !important;
+  --h2-color: var(--lt-excalibrain-embed-text) !important;
+  --h3-color: var(--lt-excalibrain-embed-text) !important;
+  --h4-color: var(--lt-excalibrain-embed-text) !important;
+  --h5-color: var(--lt-excalibrain-embed-text) !important;
+  --h6-color: var(--lt-excalibrain-embed-muted) !important;
+  --link-color: var(--lt-excalibrain-embed-link) !important;
+  --link-color-hover: rgba(255, 233, 140, 0.98) !important;
+  --link-unresolved-color: var(--lt-excalibrain-embed-link) !important;
+  --link-external-color: var(--lt-excalibrain-embed-link) !important;
+  --code-normal: var(--lt-excalibrain-embed-text) !important;
+  caret-color: var(--lt-excalibrain-embed-text) !important;
+}
+
+body .excalidraw__embeddable__content :is(
+  .markdown-preview-view,
+  .markdown-preview-section,
+  .markdown-preview-sizer,
+  .markdown-rendered,
+  .markdown-embed-content,
+  .markdown-source-view,
+  .cm-editor,
+  .cm-scroller,
+  .cm-content,
+  .cm-line,
+  .cm-line *,
+  .HyperMD-header,
+  .HyperMD-header *,
+  .cm-header,
+  .cm-strong,
+  .cm-em,
+  .cm-formatting,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  li,
+  ul,
+  ol,
+  blockquote,
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td,
+  pre,
+  code,
+  span,
+  div
+),
+body .canvas-node.excalidraw-mdEmbed-hideFilename :is(
+  .markdown-preview-view,
+  .markdown-preview-section,
+  .markdown-preview-sizer,
+  .markdown-rendered,
+  .markdown-embed-content,
+  .markdown-source-view,
+  .cm-editor,
+  .cm-scroller,
+  .cm-content,
+  .cm-line,
+  .cm-line *,
+  .HyperMD-header,
+  .HyperMD-header *,
+  .cm-header,
+  .cm-strong,
+  .cm-em,
+  .cm-formatting,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  li,
+  ul,
+  ol,
+  blockquote,
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td,
+  pre,
+  code,
+  span,
+  div
+) {
+  color: var(--lt-excalibrain-embed-text) !important;
+  -webkit-text-fill-color: var(--lt-excalibrain-embed-text) !important;
+  text-shadow: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  opacity: 1 !important;
+}
+
+body .excalidraw__embeddable__content :is(
+  a,
+  a *,
+  .internal-link,
+  .internal-link *,
+  .external-link,
+  .external-link *,
+  .cm-link,
+  .cm-url,
+  .cm-hmd-internal-link,
+  .cm-hmd-internal-link *
+),
+body .canvas-node.excalidraw-mdEmbed-hideFilename :is(
+  a,
+  a *,
+  .internal-link,
+  .internal-link *,
+  .external-link,
+  .external-link *,
+  .cm-link,
+  .cm-url,
+  .cm-hmd-internal-link,
+  .cm-hmd-internal-link *
+) {
+  color: var(--lt-excalibrain-embed-link) !important;
+  -webkit-text-fill-color: var(--lt-excalibrain-embed-link) !important;
+}
+
+/* Extra paint-level guard for Excalidraw interactive markdown clones. */
+body .view-content.excalidraw-view :is(
+  .canvas-node-content.markdown-embed,
+  .markdown-embed-content,
+  .markdown-preview-view,
+  .markdown-rendered,
+  .markdown-source-view,
+  .cm-editor,
+  .cm-scroller,
+  .cm-content,
+  .cm-line,
+  .cm-line *,
+  .el-h1,
+  .el-h2,
+  .el-h3,
+  .el-h4,
+  .el-h5,
+  .el-h6,
+  .el-p,
+  .el-ul,
+  .el-ol,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  li,
+  span,
+  div
+),
+body .excalibrain-contentEl :is(
+  .canvas-node-content.markdown-embed,
+  .markdown-embed-content,
+  .markdown-preview-view,
+  .markdown-rendered,
+  .markdown-source-view,
+  .cm-editor,
+  .cm-scroller,
+  .cm-content,
+  .cm-line,
+  .cm-line *,
+  .el-h1,
+  .el-h2,
+  .el-h3,
+  .el-h4,
+  .el-h5,
+  .el-h6,
+  .el-p,
+  .el-ul,
+  .el-ol,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  li,
+  span,
+  div
+) {
+  color: var(--lt-excalibrain-embed-text) !important;
+  -webkit-text-fill-color: var(--lt-excalibrain-embed-text) !important;
+  fill: var(--lt-excalibrain-embed-text) !important;
+}
+
+body .view-content.excalidraw-view :is(
+  .canvas-node-content.markdown-embed,
+  .markdown-embed-content,
+  .markdown-preview-view,
+  .markdown-rendered,
+  .markdown-source-view,
+  .cm-editor
+) :is(a, a *, .internal-link, .internal-link *, .external-link, .external-link *, .cm-link, .cm-url),
+body .excalibrain-contentEl :is(
+  .canvas-node-content.markdown-embed,
+  .markdown-embed-content,
+  .markdown-preview-view,
+  .markdown-rendered,
+  .markdown-source-view,
+  .cm-editor
+) :is(a, a *, .internal-link, .internal-link *, .external-link, .external-link *, .cm-link, .cm-url) {
+  color: var(--lt-excalibrain-embed-link) !important;
+  -webkit-text-fill-color: var(--lt-excalibrain-embed-link) !important;
+  fill: var(--lt-excalibrain-embed-link) !important;
+}
+
+/* Excalidraw interact mode renders the embedded note inside its own theme-light iframe. */
+body.theme-light {
+  --lt-excalibrain-embed-panel-bg: rgba(6, 10, 8, 0.1);
+  --lt-excalibrain-embed-panel-bg-strong: rgba(6, 10, 8, 0.14);
+  --lt-excalibrain-embed-panel-border: transparent;
+  --lt-excalibrain-embed-panel-blur: none;
+  --lt-excalibrain-embed-text: rgba(245, 245, 245, 0.94);
+  --lt-excalibrain-embed-muted: rgba(245, 245, 245, 0.68);
+  --lt-excalibrain-embed-link: rgba(255, 221, 92, 0.96);
+}
+
+body.theme-light :is(
+  .markdown-source-view,
+  .markdown-preview-view,
+  .markdown-rendered,
+  .markdown-preview-sizer,
+  .markdown-preview-section,
+  .cm-editor,
+  .cm-scroller,
+  .cm-content,
+  .cm-line,
+  .cm-line *,
+  .cm-active,
+  .HyperMD-header,
+  .HyperMD-header *,
+  .cm-header,
+  .cm-strong,
+  .cm-em,
+  .cm-formatting,
+  .metadata-container,
+  .metadata-container *,
+  .metadata-properties-title,
+  .metadata-property,
+  .metadata-property *,
+  .inline-title,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  li,
+  ul,
+  ol,
+  blockquote,
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td,
+  pre,
+  code,
+  span,
+  div
+) {
+  --text-normal: var(--lt-excalibrain-embed-text) !important;
+  --text-muted: var(--lt-excalibrain-embed-muted) !important;
+  --text-faint: rgba(245, 245, 245, 0.48) !important;
+  --h1-color: var(--lt-excalibrain-embed-text) !important;
+  --h2-color: var(--lt-excalibrain-embed-text) !important;
+  --h3-color: var(--lt-excalibrain-embed-text) !important;
+  --h4-color: var(--lt-excalibrain-embed-text) !important;
+  --h5-color: var(--lt-excalibrain-embed-text) !important;
+  --h6-color: var(--lt-excalibrain-embed-muted) !important;
+  --link-color: var(--lt-excalibrain-embed-link) !important;
+  --link-color-hover: rgba(255, 233, 140, 0.98) !important;
+  --link-unresolved-color: var(--lt-excalibrain-embed-link) !important;
+  --link-external-color: var(--lt-excalibrain-embed-link) !important;
+  --code-normal: var(--lt-excalibrain-embed-text) !important;
+  color: var(--lt-excalibrain-embed-text) !important;
+  -webkit-text-fill-color: var(--lt-excalibrain-embed-text) !important;
+  fill: var(--lt-excalibrain-embed-text) !important;
+  caret-color: var(--lt-excalibrain-embed-text) !important;
+  text-shadow: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}
+
+body.theme-light :is(
+  .metadata-properties-title,
+  .metadata-property-key,
+  .metadata-property-value,
+  .cm-formatting,
+  .cm-formatting-header,
+  .cm-hashtag-begin,
+  .cm-hashtag-end
+) {
+  color: var(--lt-excalibrain-embed-muted) !important;
+  -webkit-text-fill-color: var(--lt-excalibrain-embed-muted) !important;
+  fill: var(--lt-excalibrain-embed-muted) !important;
+}
+
+body.theme-light :is(
+  a,
+  a *,
+  .internal-link,
+  .internal-link *,
+  .external-link,
+  .external-link *,
+  .cm-link,
+  .cm-url,
+  .cm-hmd-internal-link,
+  .cm-hmd-internal-link *
+) {
+  color: var(--lt-excalibrain-embed-link) !important;
+  -webkit-text-fill-color: var(--lt-excalibrain-embed-link) !important;
+  fill: var(--lt-excalibrain-embed-link) !important;
+}
+
+/* Frosted panel so Excalibrain embeds remain distinct from busy image backgrounds. */
+body .excalidraw__embeddable-container,
+body .excalidraw__embeddable-container__inner,
+body .excalidraw__embeddable__outer,
+body .excalidraw__embeddable__content {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: transparent !important;
+  outline: none !important;
+  overflow: hidden !important;
+}
+
+body .canvas-node.excalidraw-mdEmbed-hideFilename,
+body .canvas-node.excalidraw-mdEmbed-hideFilename .canvas-node-container,
+body .canvas-node.excalidraw-mdEmbed-hideFilename .canvas-node-content.markdown-embed {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+}
+
+body .excalidraw__embeddable-container,
+body .excalidraw__embeddable__outer,
+body .canvas-node.excalidraw-mdEmbed-hideFilename {
+  border: none !important;
+  border-radius: 12px !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+body .canvas-node.excalidraw-mdEmbed-hideFilename.is-editing,
+body .canvas-node.excalidraw-mdEmbed-hideFilename.is-focused {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+body .excalidraw__embeddable-container {
+  position: relative !important;
+}
+
+body .excalidraw__embeddable-container::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 12px;
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      transparent 58%,
+      rgba(6, 10, 8, 0.055) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(6, 10, 8, 0.11),
+      transparent 10%,
+      transparent 90%,
+      rgba(6, 10, 8, 0.11)
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.04),
+      transparent 12%,
+      transparent 88%,
+      rgba(0, 0, 0, 0.07)
+    );
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.13) !important;
+}
+
+body .excalidraw__embeddable-container__inner,
+body .excalidraw__embeddable__outer,
+body .excalidraw__embeddable__content,
+body .canvas-node.excalidraw-mdEmbed-hideFilename {
+  position: relative !important;
+  z-index: 1 !important;
+  border-radius: 12px !important;
+  border: none !important;
+  outline: none !important;
+}
+
+body .canvas-node.excalidraw-mdEmbed-hideFilename .canvas-node-content.markdown-embed,
+body .canvas-node.excalidraw-mdEmbed-hideFilename .markdown-embed-content,
+body .canvas-node.excalidraw-mdEmbed-hideFilename .markdown-preview-view,
+body .canvas-node.excalidraw-mdEmbed-hideFilename .markdown-source-view,
+body .excalidraw__embeddable__content iframe.embed-iframe.is-controlled {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 12px !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.theme-light {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+
+/* ===== FEATURES (override base by source order) ===== */
+
+/* =====================================================================
+   DARK MODE — luminosity engine
+   The single --tld-dark-luminosity knob (default 6%) drives how light the
+   glass sits over the background in dark mode. It feeds both the glass
+   colour and the note-surface tint, so the background image keeps showing
+   through while everything reads dark.
+   ===================================================================== */
+  .theme-dark {
+    --tld-dark-luminosity: 6%;
+    /* Frosted-element tint whose lightness == the luminosity knob. ONLY the
+       frosted glass surfaces (settings + sidebars) use this — the main note
+       area is untouched, so dark mode does not darken everything. */
+    --tld-frost-tint: hsl(0 0% var(--tld-dark-luminosity));
+    --settings-glass-color: var(--tld-frost-tint);
+  }
+
+  /* Sidebars only: dark-mode frosted tint from the luminosity knob. */
+  body.theme-dark .workspace-split.mod-left-split .workspace-leaf-content,
+  body.theme-dark .workspace-split.mod-right-split .workspace-leaf-content {
+    background-color: color-mix(in srgb, var(--tld-frost-tint) 55%, transparent) !important;
+  }
+
+/* =====================================================================
+   BACKGROUND — toggle the base theme's ::before image
+   The image itself is defined in the base section (from combined fixed). Here
+   we only wire the on/off switch and the Style Settings knobs.
+   ===================================================================== */
+  /* When the toggle is OFF (class absent) hide the image. */
+  body:not(.tld-background)::before {
+    display: none !important;
+  }
+
+  /* Style-Settings driven image URL + guaranteed full-window coverage.
+     Overrides the base ::before so the picked URL wins and the image
+     always covers, not just peeks through the ribbon. */
+  body.tld-background::before {
+    background-image: var(--tld-bg-image,
+      url("https://images.unsplash.com/photo-1602076172058-08ca551bad2b?q=80&w=1176&auto=format&fit=crop")) !important;
+    background-size: cover !important;
+    background-position: var(--bg-pos-x, 50%) var(--bg-pos-y, 50%) !important;
+    background-repeat: no-repeat !important;
+  }
+
+  /* Reinforce transparency of the STRUCTURAL containers (not the frosted
+     leaf-content) so the fixed background image shows through everywhere
+     rather than being covered by an opaque pane wrapper. */
+  body.tld-background .app-container,
+  body.tld-background .horizontal-main-container,
+  body.tld-background .workspace,
+  body.tld-background .workspace-split,
+  body.tld-background .workspace-tabs,
+  body.tld-background .workspace-tab-container,
+  body.tld-background .workspace-leaf {
+    background-color: transparent !important;
+  }
+
+/* =====================================================================
+   CHROME — tabs, titlebar, sidebars
+   ===================================================================== */
+
+  /* -------- Safari-style tab pills (safaritabs styling.css) -------- */
+  body.tld-safari-tabs.theme-light {
+    --tab-background: rgba(0, 0, 0, 0.05);
+    --tab-background-active: rgba(0, 0, 0, 0.08);
+  }
+  body.tld-safari-tabs.theme-dark {
+    --tab-background: rgba(255, 255, 255, 0.05);
+    --tab-background-active: rgba(255, 255, 255, 0.1);
+  }
+  body.tld-safari-tabs .workspace-tab-header-container-inner {
+    margin-bottom: 6px;
+    gap: 8px;
+    width: 100%;
+  }
+  body.tld-safari-tabs .workspace-tab-header[data-type="markdown"],
+  body.tld-safari-tabs .workspace-tab-header[data-type="empty"] {
+    max-width: 100% !important;
+    border-radius: 6px;
+    padding: 0 !important;
+    box-shadow: none !important;
+    background: var(--tab-background);
+    transition: flex-grow 0.25s ease-in-out !important;
+  }
+  body.tld-safari-tabs .workspace-tab-header[data-type="markdown"].is-active.mod-active,
+  body.tld-safari-tabs .workspace-tab-header[data-type="empty"].is-active.mod-active {
+    background-color: var(--tab-background-active);
+    flex-grow: 2 !important;
+  }
+  body.tld-safari-tabs .workspace-tab-header-inner::after,
+  body.tld-safari-tabs .workspace-tab-header::after,
+  body.tld-safari-tabs .workspace-tab-header::before {
+    display: none;
+  }
+  body.tld-safari-tabs .workspace-tab-header:not(.is-active) .workspace-tab-header-inner-close-button {
+    display: none;
+  }
+  body.tld-safari-tabs .workspace-tab-header:hover .workspace-tab-header-inner-close-button {
+    display: flex;
+  }
+  body.tld-safari-tabs .workspace-tab-header-tab-list {
+    display: none !important;
+  }
+
+  /* -------- Full-width push-down tab bar (Tab_Header_Hover_PushDown.css) -------- */
+  body.tld-tab-pushdown:not(.is-mobile) {
+    --titlebar-button-container-width: 0px;
+    --window-controls-width: 0px;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-tabs.mod-top,
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-tabs.mod-top-right-space {
+    padding-right: 0 !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-right-split .workspace-tabs {
+    width: 100% !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-tab-header-container::after,
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-tab-header-container-inner::after {
+    display: none !important;
+  }
+  /* collapsed + invisible base state */
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-tab-header-container {
+    max-height: 0px !important;
+    opacity: 0;
+    overflow: hidden !important;
+    border: none !important;
+    pointer-events: none !important;
+    width: 100% !important;
+    padding-right: 0 !important;
+    transition:
+      max-height 250ms ease-in-out 400ms,
+      opacity 200ms ease-in-out 400ms !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-tab-header-container:hover,
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-tabs:hover:not(:has(.view-content:hover)) > .workspace-tab-header-container,
+  body.tld-tab-pushdown:not(.is-mobile):has(.titlebar:hover) .workspace-tab-header-container {
+    max-height: 40px !important;
+    opacity: 1;
+    pointer-events: all !important;
+    position: relative;
+    overflow: visible !important;
+    transition:
+      max-height 250ms ease-in-out 0ms,
+      opacity 200ms ease-in-out 0ms !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-container::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    z-index: 0;
+    background: transparent;
+    pointer-events: all !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-container {
+    background-color: var(--background-secondary) !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100vw !important;
+    z-index: 60;
+    display: flex !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-container-inner {
+    display: flex !important;
+    flex: 0 1 auto !important;
+    width: auto !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header {
+    margin: 0 !important;
+    flex-grow: 0 !important;
+    flex-shrink: 0 !important;
+    width: max-content !important;
+    max-width: 220px !important;
+    padding: 0 12px !important;
+    overflow: hidden !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .mod-left-split .workspace-tabs,
+  body.tld-tab-pushdown:not(.is-mobile) .mod-right-split .workspace-tabs {
+    position: relative;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .mod-left-split .workspace-tabs::before,
+  body.tld-tab-pushdown:not(.is-mobile) .mod-right-split .workspace-tabs::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 24px;
+    z-index: 50;
+    background: transparent;
+    pointer-events: all;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .mod-left-split .workspace-tab-header-container,
+  body.tld-tab-pushdown:not(.is-mobile) .mod-right-split .workspace-tab-header-container {
+    position: relative;
+    z-index: 51;
+  }
+  /* push-down: slide main-pane content under the expanded bar */
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-leaf-content {
+    padding-top: 0 !important;
+    transition: padding-top 250ms ease-in-out 400ms;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(.workspace-tab-header-container:hover) .workspace-leaf-content,
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tabs:hover:not(:has(.view-content:hover)) .workspace-leaf-content,
+  body.tld-tab-pushdown:not(.is-mobile):has(.titlebar:hover) .workspace-split.mod-root .workspace-leaf-content {
+    padding-top: 40px !important;
+    transition: padding-top 250ms ease-in-out 0ms;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .titlebar {
+    max-height: 24px;
+    overflow: visible !important;
+    z-index: 62;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .titlebar-button {
+    /* Keep the window controls visible (was opacity:0, which hid them). */
+    opacity: 1;
+    transition: opacity 0.2s ease;
+    margin-left: -2.2px !important;
+    margin-right: -2.2px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  /* -------- Hide vault selector (hide vault slecetor.css) -------- */
+  @keyframes tld-expandFromBottom {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  body.tld-hide-vault .workspace-sidedock-vault-profile {
+    display: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+  }
+  body.tld-hide-vault .workspace-split.mod-left-split:hover .workspace-sidedock-vault-profile,
+  body.tld-hide-vault:has(.menu:hover) .workspace-sidedock-vault-profile {
+    display: flex !important;
+    pointer-events: auto;
+    animation: tld-expandFromBottom 250ms ease 16ms both;
+  }
+  body.tld-hide-vault .workspace-split.mod-left-split {
+    pointer-events: auto !important;
+  }
+  body.tld-hide-vault .workspace-split.mod-root .workspace-tabs::before {
+    content: "";
+    position: absolute;
+    top: 30px;
+    left: 0;
+    right: 0;
+    height: 12px;
+    z-index: 1;
+    background: transparent;
+    pointer-events: all;
+  }
+
+  /* -------- Remove sidebar pane borders / side dividers --------
+     Kills the boxes around panes, the lines between stacked panes, and the
+     divider between a sidebar and the main area — always on (not gated). */
+  body .workspace-split.mod-left-split,
+  body .workspace-split.mod-right-split,
+  body .mod-left-split .workspace-tabs,
+  body .mod-right-split .workspace-tabs,
+  body .mod-left-split .workspace-tab-container,
+  body .mod-right-split .workspace-tab-container,
+  body .mod-left-split .workspace-leaf,
+  body .mod-right-split .workspace-leaf,
+  body .mod-left-split .workspace-leaf-content,
+  body .mod-right-split .workspace-leaf-content,
+  body .mod-left-split .view-content,
+  body .mod-right-split .view-content {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  body .workspace-leaf-resize-handle {
+    background-color: transparent !important;
+  }
+
+  /* -------- Sidebar gradient (new feature) --------
+     ONE continuous sweep over the whole sidebar. Painted on the split
+     container's background so it spans all stacked panes as a single
+     gradient; the translucent frosted panes let it show through. (The old
+     per-pane ::before restarted the fade in every pane -> "split up".) */
+  body.tld-sidebar-gradient .workspace-split.mod-left-split,
+  body.tld-sidebar-gradient.tld-sidebar-gradient-both .workspace-split.mod-right-split {
+    /* Shade the picked colour lighter (+) or darker (-) via one signed slider:
+       positive mixes toward white, negative toward black. */
+    --tld-grad-shaded: color-mix(in srgb,
+      color-mix(in srgb,
+        var(--tld-sidebar-gradient-color, #9c9c9c),
+        white calc(max(var(--tld-sidebar-gradient-shade, 0) * 1%, 0%))),
+      black calc(max(var(--tld-sidebar-gradient-shade, 0) * -1%, 0%)));
+    background-image: linear-gradient(
+      var(--tld-sidebar-gradient-angle, 180deg),
+      color-mix(in srgb, var(--tld-grad-shaded) var(--tld-sidebar-gradient-strength, 22%), transparent),
+      transparent
+    ) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+    background-attachment: local !important;
+  }
+
+/* =====================================================================
+   EMBEDS — note embeds only (note Embed overhaul 2 + embed-outline-hover)
+   Scoped so image/PDF/plugin embeds are left alone.
+   ===================================================================== */
+  /* Live Preview wrapper: borderless */
+  body.tld-embeds .cm-embed-block,
+  body.tld-embeds .cm-embed-block:focus-within {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Note-embed container overhaul (exclude image/media/pdf embeds) */
+  body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed) {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: rgba(0, 0, 0, 0.15) !important;
+  }
+  /* Nested note-embed zebra */
+  body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed) .markdown-embed:not(.image-embed):not(.media-embed) {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+  }
+  body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed) .markdown-embed .markdown-embed:not(.image-embed):not(.media-embed) {
+    background-color: rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* Long-embed scroll cap + width cleanup (note embeds) */
+  body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed) .markdown-embed-content {
+    max-height: 900px !important;
+    overflow-y: auto !important;
+  }
+  body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed) .markdown-preview-sizer,
+  body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed) .markdown-preview-section {
+    margin: 0 !important;
+    max-width: none !important;
+    min-width: 100% !important;
+    width: calc(100% + 11.4px) !important;
+    margin-right: -11.4px !important;
+  }
+  body.tld-embeds .markdown-embed-title {
+    display: block !important;
+    padding: 4px 8px !important;
+    background-color: transparent !important;
+  }
+
+  /* Outline removal + hover fill (embed-outline-hover.css) */
+  body.tld-embeds .cm-embed-block:hover,
+  body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed):hover,
+  body.tld-embeds .internal-embed:not(.image-embed):not(.media-embed):hover {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background-color: color-mix(in srgb, white var(--tld-embed-hover-strength, 3%), transparent) !important;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+  }
+
+/* =====================================================================
+   TABLES — translucent zebra (translucent-zebra-tables.css)
+   ===================================================================== */
+  body.tld-zebra .markdown-rendered table,
+  body.tld-zebra .bases-table,
+  body.tld-zebra [class*="bases-table"] {
+    background: transparent !important;
+    border-spacing: 0 !important;
+    border-collapse: collapse !important;
+  }
+  body.tld-zebra .markdown-rendered thead th,
+  body.tld-zebra .bases-table-header,
+  body.tld-zebra .bases-th {
+    background-color: rgba(30, 30, 30, 0.9) !important;
+    border-bottom: 0px solid var(--divider-color) !important;
+    border-right: 0px solid var(--divider-color) !important;
+    padding: 12px !important;
+  }
+  body.tld-zebra .markdown-rendered tbody tr:nth-child(even),
+  body.tld-zebra .bases-tr:nth-child(even),
+  body.tld-zebra [class*="bases-row"]:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+  body.tld-zebra .markdown-rendered tbody tr:nth-child(odd),
+  body.tld-zebra .bases-tr:nth-child(odd),
+  body.tld-zebra [class*="bases-row"]:nth-child(odd) {
+    background-color: transparent !important;
+  }
+  body.tld-zebra .markdown-rendered td,
+  body.tld-zebra .bases-td,
+  body.tld-zebra [class*="bases-cell"],
+  body.tld-zebra .dbfolder-cell {
+    border-bottom: 1px solid var(--divider-color) !important;
+    border-right: 1px solid var(--divider-color) !important;
+    display: table-cell !important;
+    vertical-align: middle !important;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+  body.tld-zebra .markdown-rendered td:first-child,
+  body.tld-zebra .bases-td:first-child,
+  body.tld-zebra .markdown-rendered th:first-child,
+  body.tld-zebra .bases-table-header:first-child {
+    border-left: 1px solid var(--divider-color) !important;
+  }
+  body.tld-zebra .markdown-rendered td:focus,
+  body.tld-zebra .bases-td:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    background-clip: padding-box !important;
+    transform: none !important;
+  }
+  body.tld-zebra .markdown-rendered tbody tr:hover,
+  body.tld-zebra .bases-tr:hover,
+  body.tld-zebra [class*="bases-row"]:hover {
+    filter: brightness(1.4) !important;
+    transition: filter 0.15s ease !important;
+  }
+  body.tld-zebra .markdown-rendered tbody tr:hover td,
+  body.tld-zebra .bases-tr:hover td,
+  body.tld-zebra [class*="bases-row"]:hover td {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+  }
+  body.tld-zebra .markdown-rendered tr:last-child td {
+    border-bottom: 2px solid var(--divider-color) !important;
+  }
+
+/* =====================================================================
+   STATUS BAR — pill anchored to the sidebar edge (root-cause rework of
+   status-bar-left-of-sidebar2 - Copy.css)
+   The status bar is a viewport-level element (sibling of the splits), NOT a
+   child of the main split, so it cannot be auto-positioned relative to the
+   sidebar in pure CSS. We fix it (position: fixed) and offset its right edge
+   by --tld-statusbar-offset, which you set once to your right-sidebar width
+   in Style Settings. When the right sidebar is collapsed it snaps to the
+   far right (offset 0). */
+  body.tld-statusbar .status-bar {
+    position: fixed !important;
+    right: var(--tld-statusbar-offset, 320px) !important;
+    left: auto !important;
+    bottom: 0 !important;
+    margin: 0 !important;
+    width: auto !important;
+    height: 27px !important;
+    max-width: fit-content !important;
+    background-color: var(--background-primary) !important;
+    border: 1px solid transparent !important;
+    background-image:
+      linear-gradient(var(--background-primary), var(--background-primary)),
+      linear-gradient(90deg, rgba(156, 156, 156, 0.2), transparent) !important;
+    background-origin: border-box !important;
+    background-clip: padding-box, border-box !important;
+    border-radius: 6px 0 0 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    box-shadow: -3px 3px 10px rgba(0, 0, 0, 0.2) !important;
+    z-index: 15;
+  }
+  /* Snap to the far right when the right sidebar is collapsed (no sidebar to
+     sit left of). Fallback path only — anchor mode below handles this too. */
+  body.tld-statusbar.is-right-sidedock-collapsed .status-bar,
+  body.tld-statusbar .app-container.is-right-sidebar-collapsed .status-bar {
+    right: 0 !important;
+    border-radius: 2px 0 0 0 !important;
+  }
+
+  /* DYNAMIC: where CSS anchor positioning is supported, anchor the pill's
+     RIGHT edge to the right sidebar's LEFT edge so it tracks the real width
+     automatically — no manual offset needed. Collapsing the sidebar moves its
+     left edge to the window edge, so the pill snaps right on its own. */
+  @supports (anchor-name: --a) {
+    body.tld-statusbar .workspace-split.mod-right-split {
+      anchor-name: --tld-right-sidebar;
+    }
+    body.tld-statusbar .status-bar {
+      right: anchor(--tld-right-sidebar left) !important;
+    }
+  }
+  body.tld-statusbar .status-bar::before,
+  body.tld-statusbar .status-bar::after {
+    display: none !important;
+  }
+  body.tld-statusbar .status-bar-item {
+    font-size: 11px !important;
+    color: var(--text-muted) !important;
+    margin: 0 -1px !important;
+    white-space: nowrap !important;
+  }
+
+/* =====================================================================
+   SCROLLBARS — frosted, width-adjustable, optional grow-on-hover
+   (rework of Thin Scrollbars.css) — always on; width via Style Settings.
+   ===================================================================== */
+  body {
+    /* Per-theme frosted thumb colour, reused below. */
+    --tld-scroll-thumb: rgba(120, 120, 120, 0.45);
+  }
+  body.theme-dark {
+    --tld-scroll-thumb: rgba(210, 210, 210, 0.38);
+  }
+
+  body ::-webkit-scrollbar {
+    width: var(--tld-scrollbar-width, 12px);
+    height: var(--tld-scrollbar-width, 12px);
+  }
+  body ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  /* Frosted translucent thumb. Padding via a transparent border shrinks the
+     visible thumb inside the track so a wider bar still looks slim/rounded. */
+  body ::-webkit-scrollbar-thumb {
+    background-color: var(--tld-scroll-thumb);
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+  body ::-webkit-scrollbar-thumb:hover {
+    filter: brightness(1.25);
+  }
+
+  /* Optional: grow the bar by 2px while hovering it. */
+  body.tld-scrollbar-hover-grow ::-webkit-scrollbar:hover {
+    width: calc(var(--tld-scrollbar-width, 12px) + 2px);
+    height: calc(var(--tld-scrollbar-width, 12px) + 2px);
+  }
+
+/* =====================================================================
+   PLUGINS — Copilot glass + external-link hover
+   (Excalibrain is appended by the build ahead of this section; it is scoped
+   to Excalibrain panes and always on in v0.1.)
+   ===================================================================== */
+  :root {
+    --copilot-glass-fill: rgba(255, 255, 255, 0.045);
+    --copilot-glass-fill-hover: rgba(255, 255, 255, 0.09);
+    --copilot-glass-muted: rgba(255, 255, 255, 0.035);
+  }
+
+  /* Copilot borderless light glass ([copilot] borderless light glass.css) */
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) {
+    --background-primary: transparent;
+    --background-secondary: transparent;
+  }
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) :is(
+    [class~="tw-border"],
+    [class~="tw-border-border"],
+    [class~="tw-border-solid"],
+    [class~="tw-border-transparent"],
+    [class~="tw-border-b-border"],
+    [class~="tw-ring-1"],
+    [class~="tw-ring-ring"]
+  ) {
+    border-color: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) :is(
+    [class~="tw-rounded-xl"][class~="tw-border-border"],
+    [class~="tw-rounded-lg"][class~="tw-border-border"]
+  ) {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+    [class~="tw-flex"][class~="tw-justify-between"][class~="tw-gap-2"][class~="tw-rounded-md"] {
+    background: var(--copilot-glass-fill) !important;
+    background-color: var(--copilot-glass-fill) !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+    [class~="tw-flex"][class~="tw-justify-between"][class~="tw-gap-2"][class~="tw-rounded-md"]:hover {
+    background: var(--copilot-glass-fill-hover) !important;
+    background-color: var(--copilot-glass-fill-hover) !important;
+  }
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+    [class~="tw-rounded-xl"][class~="tw-border-border"]:has(textarea),
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+    [class~="tw-rounded-xl"][class~="tw-border-border"]:has([contenteditable="true"]),
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+    [class*="@container/chat"][class~="tw-rounded-md"] {
+    background: var(--copilot-glass-muted) !important;
+    background-color: var(--copilot-glass-muted) !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) :is(
+    textarea, input, select, button, [contenteditable="true"],
+    [class~="tw-bg-transparent"][class~="tw-outline-none"]
+  ) {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) [class~="tw-border-b-border"] {
+    border-bottom: none !important;
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.055) !important;
+  }
+
+  /* External-link icon only on hover (extnertal links hover.css) */
+  body.tld-extlinks .external-link:not(:hover):not(.cm-line:has(.cm-link:hover, .cm-url:hover, .cm-formatting-link:hover) .external-link) {
+    background-image: none !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+  }
+
+/* =====================================================================
+   COMMAND PALETTE & QUICK SWITCHER — frosted glass (restored from the
+   original transparent theme).
+   Uses !important because leftover snippets (e.g. "[Transparent Theme]") load
+   AFTER the theme and set a competing backdrop-filter WITHOUT !important —
+   important always beats normal, so this wins regardless of load order.
+   ===================================================================== */
+  .prompt,
+  .modal-container .prompt,
+  .suggestion-container,
+  .prompt .suggestion-container {
+    background-color: var(--dropdown-glass-bg) !important;
+    background: var(--dropdown-glass-bg) !important;
+    backdrop-filter: brightness(0.85) blur(60px) !important;
+    -webkit-backdrop-filter: brightness(0.85) blur(60px) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35) !important;
+  }
+  /* Keep the results list clear so the glass reads through the whole panel. */
+  .prompt-results,
+  .suggestion,
+  .suggestion-item {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+  .suggestion-item.is-selected,
+  .suggestion-item:hover {
+    background-color: var(--dropdown-glass-hover-bg) !important;
+    color: var(--dropdown-glass-hover-text) !important;
+    border-radius: 6px;
+  }
+  /* Dim/blur behind the palette rather than a flat black scrim. */
+  .modal-container .modal-bg {
+    backdrop-filter: blur(15px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(15px) saturate(140%) !important;
+    background-color: rgba(0, 0, 0, 0.3) !important;
+  }
+
+/* =====================================================================
+   OVERRIDES — root-cause form-control fixes
+   ===================================================================== */
+  /* ROOT-CAUSE checkbox fix: the base theme's `input { background: ... }`
+     shorthand (in the base section) wiped the native tick's background-image on
+     checkboxes. The build step now excludes [type=checkbox]/[type=radio]
+     from those base fill rules, so native rendering returns and the old
+     "check box tick fix" snippet is gone. This block is only insurance for
+     the checked tick and does NOT reset appearance (radios stay native). */
+  input[type="checkbox"]:checked {
+    background-color: var(--checkbox-color-checked, var(--interactive-accent)) !important;
+    border-color: var(--checkbox-border-color-checked, var(--interactive-accent)) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpolyline points='1.5 6 4.5 9 10.5 1' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+    background-position: center !important;
+    background-size: 70% !important;
+    background-repeat: no-repeat !important;
+  }
+
+  /* Windows window controls (min / max / close): visible & readable by default.
+     With "Show window buttons on hover only" (tld-titlebar-hover) they hide
+     until the titlebar is hovered — the original push-down behaviour. */
+  body:not(.is-mobile) .titlebar-button {
+    color: var(--text-normal) !important;
+    transition: opacity 0.2s ease;
+  }
+  body:not(.is-mobile):not(.tld-titlebar-hover) .titlebar-button-container,
+  body:not(.is-mobile):not(.tld-titlebar-hover) .titlebar-button {
+    opacity: 1 !important;
+  }
+  /* Reveal-on-hover mode */
+  body.tld-titlebar-hover:not(.is-mobile) .titlebar-button {
+    opacity: 0 !important;
+  }
+  body.tld-titlebar-hover:not(.is-mobile) .titlebar:hover .titlebar-button,
+  body.tld-titlebar-hover:not(.is-mobile) .titlebar-button-container:hover .titlebar-button {
+    opacity: 1 !important;
+  }
+
+  /* LIGHT-MODE READABILITY for plugin (Tailwind / Svelte) surfaces.
+     This theme renders light text even in light mode (dark background image),
+     so plugin elements using --background-primary-alt / --background-secondary
+     (transparent here) end up as light text on a light element. Give them a
+     dark translucent fill so the text stays legible. Covers the Copilot badge
+     buttons and Svelte meters reported unreadable. */
+  body.theme-light :is(
+    [class~="tw-bg-primary-alt"],
+    [class~="tw-bg-primary"],
+    [class~="tw-bg-secondary"],
+    [class~="tw-bg-secondary-alt"],
+    button[class*="tw-bg-"]
+  ) {
+    background-color: rgba(0, 0, 0, 0.42) !important;
+    color: var(--text-normal) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+  }
+  body.theme-light :is([class~="tw-bg-primary-alt"], button[class*="tw-bg-"]):hover {
+    background-color: rgba(0, 0, 0, 0.55) !important;
+  }
+  body.theme-light :is(meter, .meter) {
+    background-color: rgba(0, 0, 0, 0.35) !important;
+    border-radius: 4px;
+  }
+
+/* =====================================================================
+   Base theme and Excalibrain are appended below this line by the build
+   step (see _build.ps1). Do not add rules past here manually.
+   ===================================================================== */
+
