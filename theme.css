@@ -2896,11 +2896,13 @@ body.theme-light {
   }
 
   /* Settings sidebar: the nav column with the settings/plugin list. The stock
-     min/max clamps are lifted so the slider fully controls the width. */
+     min/max clamps are lifted so the slider fully controls the width; !important
+     guards against inline styles and container-query overrides. */
   body:not(.is-phone) .modal.mod-settings .vertical-tab-header {
-    flex: 0 0 var(--tld-settings-sidebar-width, 250px);
-    min-width: 0;
-    max-width: none;
+    flex: 0 0 var(--tld-settings-sidebar-width, 250px) !important;
+    width: var(--tld-settings-sidebar-width, 250px) !important;
+    min-width: 0 !important;
+    max-width: none !important;
   }
 
 /* =====================================================================
