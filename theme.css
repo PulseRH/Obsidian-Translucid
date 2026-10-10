@@ -3012,6 +3012,21 @@ body.theme-light {
 /* =====================================================================
    OVERRIDES — root-cause form-control fixes
    ===================================================================== */
+  /* PLUGINS PAGE extra line (root cause found in Obsidian 1.13's app.css):
+     every setting row inside a .setting-group draws its top divider as an
+     absolutely-positioned ::before (`border-top` on the PSEUDO, not the
+     element), so border overrides never touch it —
+       .setting-group .setting-item:not(.setting-item-heading)::before {
+         content:''; position:absolute; top:calc(-1*var(--border-width));
+         left/right:var(--setting-items-padding-x);
+         border-top: solid var(--background-modifier-border); }
+     Kill it ONLY inside the installed-plugins list; the theme's subtle row
+     border-bottom stays as the single line there, and every other settings
+     page keeps Obsidian's divider untouched. */
+  body .installed-plugins-container .setting-item::before {
+    content: none !important;
+  }
+
   /* ROOT-CAUSE checkbox fix: the base theme's `input { background: ... }`
      shorthand (in the base section) wiped the native tick's background-image on
      checkboxes. The build step now excludes [type=checkbox]/[type=radio]
