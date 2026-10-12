@@ -1565,23 +1565,23 @@ body .setting-item-control select:focus {
 .workspace-leaf-content[data-type="excalibrain"] .view-content,
 .workspace-leaf-content[data-type="excalibrain-view"],
 .workspace-leaf-content[data-type="excalibrain-view"] .view-content,
-.workspace-leaf-content[data-type*="excalibrain" i],
-.workspace-leaf-content[data-type*="excalibrain" i] .view-content,
-.workspace-leaf-content:has([class*="excalibrain" i]),
-.workspace-leaf-content:has([id*="excalibrain" i]),
-.workspace-leaf-content:has([class*="excalibrain" i]) .view-content,
-.workspace-leaf-content:has([id*="excalibrain" i]) .view-content,
+.workspace-leaf-content[data-type="excalibrain"],
+.workspace-leaf-content[data-type="excalibrain"] .view-content,
+.workspace-leaf-content:has(.excalibrain-contentEl),
+.workspace-leaf-content:has(#excalibrain),
+.workspace-leaf-content:has(.excalibrain-contentEl) .view-content,
+.workspace-leaf-content:has(#excalibrain) .view-content,
 .view-content:has(.excalibrain),
 .view-content:has(.excalibrain-view),
-.view-content:has([class*="excalibrain" i]),
-.view-content:has([id*="excalibrain" i]),
+.view-content:has(.excalibrain-contentEl),
+.view-content:has(#excalibrain),
 .excalibrain,
 .excalibrain-view,
 .excalibrain-container,
 .excalibrain-workspace,
 .excalibrain-canvas,
-[class*="excalibrain" i],
-[id*="excalibrain" i] {
+.excalibrain-contentEl,
+#excalibrain {
   --background-primary: transparent;
   --background-secondary: transparent;
   --background-secondary-alt: transparent;
@@ -1595,13 +1595,13 @@ body .setting-item-control select:focus {
 /* Frosted layer over the Excalibrain workspace */
 .workspace-leaf-content[data-type="excalibrain"] .view-content,
 .workspace-leaf-content[data-type="excalibrain-view"] .view-content,
-.workspace-leaf-content[data-type*="excalibrain" i] .view-content,
-.workspace-leaf-content:has([class*="excalibrain" i]) .view-content,
-.workspace-leaf-content:has([id*="excalibrain" i]) .view-content,
+.workspace-leaf-content[data-type="excalibrain"] .view-content,
+.workspace-leaf-content:has(.excalibrain-contentEl) .view-content,
+.workspace-leaf-content:has(#excalibrain) .view-content,
 .view-content:has(.excalibrain),
 .view-content:has(.excalibrain-view),
-.view-content:has([class*="excalibrain" i]),
-.view-content:has([id*="excalibrain" i]) {
+.view-content:has(.excalibrain-contentEl),
+.view-content:has(#excalibrain) {
   backdrop-filter: var(--lt-excalibrain-glass-blur) !important;
   -webkit-backdrop-filter: var(--lt-excalibrain-glass-blur) !important;
 }
@@ -1622,14 +1622,14 @@ body .setting-item-control select:focus {
 .workspace-leaf-content[data-type="excalibrain"] .graph-control,
 .workspace-leaf-content[data-type="excalibrain-view"] .graph-controls,
 .workspace-leaf-content[data-type="excalibrain-view"] .graph-control,
-.workspace-leaf-content[data-type*="excalibrain" i] .graph-controls,
-.workspace-leaf-content[data-type*="excalibrain" i] .graph-control,
-.workspace-leaf-content:has([class*="excalibrain" i]) .graph-controls,
-.workspace-leaf-content:has([class*="excalibrain" i]) .graph-control,
-[class*="excalibrain" i] [class*="node" i],
-[class*="excalibrain" i] [class*="card" i],
-[class*="excalibrain" i] [class*="control" i],
-[class*="excalibrain" i] [class*="menu" i] {
+.workspace-leaf-content[data-type="excalibrain"] .graph-controls,
+.workspace-leaf-content[data-type="excalibrain"] .graph-control,
+.workspace-leaf-content:has(.excalibrain-contentEl) .graph-controls,
+.workspace-leaf-content:has(.excalibrain-contentEl) .graph-control,
+.excalibrain-contentEl [class*="node" i],
+.excalibrain-contentEl [class*="card" i],
+.excalibrain-contentEl [class*="control" i],
+.excalibrain-contentEl [class*="menu" i] {
   background: var(--lt-excalibrain-glass-bg) !important;
   background-color: var(--lt-excalibrain-glass-bg) !important;
   backdrop-filter: var(--lt-excalibrain-glass-blur) !important;
@@ -1654,36 +1654,36 @@ body .setting-item-control select:focus {
 .workspace-leaf-content[data-type="excalibrain"] canvas,
 .workspace-leaf-content[data-type="excalibrain-view"] svg,
 .workspace-leaf-content[data-type="excalibrain-view"] canvas,
-.workspace-leaf-content[data-type*="excalibrain" i] svg,
-.workspace-leaf-content[data-type*="excalibrain" i] canvas,
-.workspace-leaf-content:has([class*="excalibrain" i]) svg,
-.workspace-leaf-content:has([class*="excalibrain" i]) canvas,
+.workspace-leaf-content[data-type="excalibrain"] svg,
+.workspace-leaf-content[data-type="excalibrain"] canvas,
+.workspace-leaf-content:has(.excalibrain-contentEl) svg,
+.workspace-leaf-content:has(.excalibrain-contentEl) canvas,
 .excalibrain svg,
 .excalibrain canvas,
 .excalibrain-view svg,
 .excalibrain-view canvas,
-[class*="excalibrain" i] svg,
-[class*="excalibrain" i] canvas {
+.excalibrain-contentEl svg,
+.excalibrain-contentEl canvas {
   background: transparent !important;
   background-color: transparent !important;
 }
 
 /* Excalibrain/Excalidraw-style SVG background rectangles */
-.workspace-leaf-content[data-type*="excalibrain" i] svg > rect:first-child,
-.workspace-leaf-content:has([class*="excalibrain" i]) svg > rect:first-child,
-.view-content:has([class*="excalibrain" i]) svg > rect:first-child,
-[class*="excalibrain" i] svg > rect:first-child,
-[id*="excalibrain" i] svg > rect:first-child {
+.workspace-leaf-content[data-type="excalibrain"] svg > rect:first-child,
+.workspace-leaf-content:has(.excalibrain-contentEl) svg > rect:first-child,
+.view-content:has(.excalibrain-contentEl) svg > rect:first-child,
+.excalibrain-contentEl svg > rect:first-child,
+#excalibrain svg > rect:first-child {
   fill: transparent !important;
 }
 
 /* Some builds use an Excalidraw canvas/root inside Excalibrain. */
-.workspace-leaf-content[data-type*="excalibrain" i] .excalidraw,
-.workspace-leaf-content[data-type*="excalibrain" i] .excalidraw-container,
-.workspace-leaf-content[data-type*="excalibrain" i] .excalidraw-wrapper,
-.workspace-leaf-content:has([class*="excalibrain" i]) .excalidraw,
-.workspace-leaf-content:has([class*="excalibrain" i]) .excalidraw-container,
-.workspace-leaf-content:has([class*="excalibrain" i]) .excalidraw-wrapper {
+.workspace-leaf-content[data-type="excalibrain"] .excalidraw,
+.workspace-leaf-content[data-type="excalibrain"] .excalidraw-container,
+.workspace-leaf-content[data-type="excalibrain"] .excalidraw-wrapper,
+.workspace-leaf-content:has(.excalibrain-contentEl) .excalidraw,
+.workspace-leaf-content:has(.excalibrain-contentEl) .excalidraw-container,
+.workspace-leaf-content:has(.excalibrain-contentEl) .excalidraw-wrapper {
   --background-primary: transparent;
   --background-secondary: transparent;
   --excalidraw-background-color: transparent;
@@ -1749,43 +1749,43 @@ body .setting-item-control select:focus {
 }
 
 /* Excalibrain note previews can carry plugin/inline node colours. Clear those layers too. */
-[class*="excalibrain" i] .markdown-embed,
-[class*="excalibrain" i] .internal-embed,
-[class*="excalibrain" i] .markdown-embed *,
-[class*="excalibrain" i] .internal-embed *,
-[class*="excalibrain" i] .markdown-preview-view,
-[class*="excalibrain" i] .markdown-preview-sizer,
-[class*="excalibrain" i] .markdown-preview-section,
-[class*="excalibrain" i] .markdown-rendered,
-[class*="excalibrain" i] .markdown-embed-content,
-[class*="excalibrain" i] foreignObject,
-[class*="excalibrain" i] foreignObject > *,
-[class*="excalibrain" i] foreignObject div {
+.excalibrain-contentEl .markdown-embed,
+.excalibrain-contentEl .internal-embed,
+.excalibrain-contentEl .markdown-embed *,
+.excalibrain-contentEl .internal-embed *,
+.excalibrain-contentEl .markdown-preview-view,
+.excalibrain-contentEl .markdown-preview-sizer,
+.excalibrain-contentEl .markdown-preview-section,
+.excalibrain-contentEl .markdown-rendered,
+.excalibrain-contentEl .markdown-embed-content,
+.excalibrain-contentEl foreignObject,
+.excalibrain-contentEl foreignObject > *,
+.excalibrain-contentEl foreignObject div {
   background: transparent !important;
   background-color: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
-[class*="excalibrain" i] .markdown-embed,
-[class*="excalibrain" i] .internal-embed {
+.excalibrain-contentEl .markdown-embed,
+.excalibrain-contentEl .internal-embed {
   border-color: rgba(255, 255, 255, 0.1) !important;
   box-shadow: none !important;
 }
 
 /* CDP: Excalibrain note previews are Excalidraw canvas-node embeddables. */
-.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node,
-.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node-container,
-.workspace-leaf-content[data-type*="excalibrain" i] .excalidraw-mdEmbed-hideFilename,
-.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node,
-.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node-container,
-.workspace-leaf-content:has([class*="excalibrain" i]) .excalidraw-mdEmbed-hideFilename,
-.view-content:has([class*="excalibrain" i]) .canvas-node,
-.view-content:has([class*="excalibrain" i]) .canvas-node-container,
-.view-content:has([class*="excalibrain" i]) .excalidraw-mdEmbed-hideFilename,
-[class*="excalibrain" i] .canvas-node,
-[class*="excalibrain" i] .canvas-node-container,
-[class*="excalibrain" i] .excalidraw-mdEmbed-hideFilename {
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node,
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node-container,
+.workspace-leaf-content[data-type="excalibrain"] .excalidraw-mdEmbed-hideFilename,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node-container,
+.workspace-leaf-content:has(.excalibrain-contentEl) .excalidraw-mdEmbed-hideFilename,
+.view-content:has(.excalibrain-contentEl) .canvas-node,
+.view-content:has(.excalibrain-contentEl) .canvas-node-container,
+.view-content:has(.excalibrain-contentEl) .excalidraw-mdEmbed-hideFilename,
+.excalibrain-contentEl .canvas-node,
+.excalibrain-contentEl .canvas-node-container,
+.excalibrain-contentEl .excalidraw-mdEmbed-hideFilename {
   --canvas-background: transparent !important;
   --background-primary: transparent !important;
   --background-secondary: transparent !important;
@@ -1799,24 +1799,24 @@ body .setting-item-control select:focus {
   box-shadow: none !important;
 }
 
-.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node table,
-.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node thead,
-.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node tbody,
-.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node tr,
-.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node th,
-.workspace-leaf-content[data-type*="excalibrain" i] .canvas-node td,
-.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node table,
-.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node thead,
-.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node tbody,
-.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node tr,
-.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node th,
-.workspace-leaf-content:has([class*="excalibrain" i]) .canvas-node td,
-[class*="excalibrain" i] .canvas-node table,
-[class*="excalibrain" i] .canvas-node thead,
-[class*="excalibrain" i] .canvas-node tbody,
-[class*="excalibrain" i] .canvas-node tr,
-[class*="excalibrain" i] .canvas-node th,
-[class*="excalibrain" i] .canvas-node td {
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node table,
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node thead,
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node tbody,
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node tr,
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node th,
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node td,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node table,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node thead,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node tbody,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node tr,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node th,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node td,
+.excalibrain-contentEl .canvas-node table,
+.excalibrain-contentEl .canvas-node thead,
+.excalibrain-contentEl .canvas-node tbody,
+.excalibrain-contentEl .canvas-node tr,
+.excalibrain-contentEl .canvas-node th,
+.excalibrain-contentEl .canvas-node td {
   background: transparent !important;
   background-color: transparent !important;
   backdrop-filter: none !important;
@@ -2916,12 +2916,15 @@ body.theme-light {
     --copilot-glass-muted: rgba(255, 255, 255, 0.035);
   }
 
-  /* Copilot borderless light glass ([copilot] borderless light glass.css) */
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) {
+  /* Copilot borderless light glass ([copilot] borderless light glass.css)
+     PERF: scoped by the leaf's data-type, NOT by .workspace-leaf-content:has(...).
+     A subtree :has() on every leaf is re-evaluated whenever a note's DOM is
+     replaced, which cost ~400ms of style recalc per note switch (2026-10-12). */
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"]) {
     --background-primary: transparent;
     --background-secondary: transparent;
   }
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) :is(
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"]) :is(
     [class~="tw-border"],
     [class~="tw-border-border"],
     [class~="tw-border-solid"],
@@ -2934,7 +2937,7 @@ body.theme-light {
     outline: none !important;
     box-shadow: none !important;
   }
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) :is(
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"]) :is(
     [class~="tw-rounded-xl"][class~="tw-border-border"],
     [class~="tw-rounded-lg"][class~="tw-border-border"]
   ) {
@@ -2944,7 +2947,7 @@ body.theme-light {
     outline: none !important;
     box-shadow: none !important;
   }
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"])
     [class~="tw-flex"][class~="tw-justify-between"][class~="tw-gap-2"][class~="tw-rounded-md"] {
     background: var(--copilot-glass-fill) !important;
     background-color: var(--copilot-glass-fill) !important;
@@ -2952,16 +2955,16 @@ body.theme-light {
     outline: none !important;
     box-shadow: none !important;
   }
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"])
     [class~="tw-flex"][class~="tw-justify-between"][class~="tw-gap-2"][class~="tw-rounded-md"]:hover {
     background: var(--copilot-glass-fill-hover) !important;
     background-color: var(--copilot-glass-fill-hover) !important;
   }
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"])
     [class~="tw-rounded-xl"][class~="tw-border-border"]:has(textarea),
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"])
     [class~="tw-rounded-xl"][class~="tw-border-border"]:has([contenteditable="true"]),
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"])
     [class*="@container/chat"][class~="tw-rounded-md"] {
     background: var(--copilot-glass-muted) !important;
     background-color: var(--copilot-glass-muted) !important;
@@ -2969,7 +2972,7 @@ body.theme-light {
     outline: none !important;
     box-shadow: none !important;
   }
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) :is(
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"]) :is(
     textarea, input, select, button, [contenteditable="true"],
     [class~="tw-bg-transparent"][class~="tw-outline-none"]
   ) {
@@ -2977,7 +2980,7 @@ body.theme-light {
     outline: none !important;
     box-shadow: none !important;
   }
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) [class~="tw-border-b-border"] {
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"]) [class~="tw-border-b-border"] {
     border-bottom: none !important;
     box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.055) !important;
   }

@@ -55,6 +55,24 @@ foreach ($p in $pairs) {
 
 # 4. Excalibrain (scoped to its panes). NOT wrapped in a layer.
 $exca = ReadText (Join-Path $snips '[light ttransparnt theme] edit (2) excalibrain embeds.css')
+#    PERF rewrites (2026-10-12, measured via CDP): case-insensitive substring
+#    attribute selectors inside :has() are re-checked across the whole note DOM on
+#    every note switch. Verified against the live DOM: ExcaliBrain runs in an
+#    `excalidraw` leaf, has NO excalibrain id or data-type, and marks its UI with
+#    the `excalibrain-contentEl` class. Never-matching selectors become cheap exact
+#    matches (still never match); the :has() scopes key off the real class.
+$excaPerf = @(
+  @('[data-type*="excalibrain" i]',      '[data-type="excalibrain"]'),
+  @('[id*="excalibrain" i]',              '#excalibrain'),
+  @(':has([class*="excalibrain" i])',    ':has(.excalibrain-contentEl)'),
+  # bare ancestor form (e.g. `[class*=excalibrain i] .canvas-node td`) made every
+  # table cell in every note walk its ancestors doing a substring class match
+  @('[class*="excalibrain" i]',          '.excalibrain-contentEl')
+)
+foreach ($p in $excaPerf) {
+  if ($exca.Contains($p[0])) { $exca = $exca.Replace($p[0], $p[1]) }
+  else { Write-Warning ("excalibrain perf: pattern not found -> " + $p[0]) }
+}
 
 # 5. Emit: settings -> base -> excalibrain -> features (features override base).
 $nl = "`r`n"

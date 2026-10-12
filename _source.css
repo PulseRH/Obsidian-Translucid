@@ -926,12 +926,15 @@ settings:
     --copilot-glass-muted: rgba(255, 255, 255, 0.035);
   }
 
-  /* Copilot borderless light glass ([copilot] borderless light glass.css) */
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) {
+  /* Copilot borderless light glass ([copilot] borderless light glass.css)
+     PERF: scoped by the leaf's data-type, NOT by .workspace-leaf-content:has(...).
+     A subtree :has() on every leaf is re-evaluated whenever a note's DOM is
+     replaced, which cost ~400ms of style recalc per note switch (2026-10-12). */
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"]) {
     --background-primary: transparent;
     --background-secondary: transparent;
   }
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) :is(
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"]) :is(
     [class~="tw-border"],
     [class~="tw-border-border"],
     [class~="tw-border-solid"],
@@ -944,7 +947,7 @@ settings:
     outline: none !important;
     box-shadow: none !important;
   }
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) :is(
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"]) :is(
     [class~="tw-rounded-xl"][class~="tw-border-border"],
     [class~="tw-rounded-lg"][class~="tw-border-border"]
   ) {
@@ -954,7 +957,7 @@ settings:
     outline: none !important;
     box-shadow: none !important;
   }
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"])
     [class~="tw-flex"][class~="tw-justify-between"][class~="tw-gap-2"][class~="tw-rounded-md"] {
     background: var(--copilot-glass-fill) !important;
     background-color: var(--copilot-glass-fill) !important;
@@ -962,16 +965,16 @@ settings:
     outline: none !important;
     box-shadow: none !important;
   }
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"])
     [class~="tw-flex"][class~="tw-justify-between"][class~="tw-gap-2"][class~="tw-rounded-md"]:hover {
     background: var(--copilot-glass-fill-hover) !important;
     background-color: var(--copilot-glass-fill-hover) !important;
   }
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"])
     [class~="tw-rounded-xl"][class~="tw-border-border"]:has(textarea),
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"])
     [class~="tw-rounded-xl"][class~="tw-border-border"]:has([contenteditable="true"]),
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"])
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"])
     [class*="@container/chat"][class~="tw-rounded-md"] {
     background: var(--copilot-glass-muted) !important;
     background-color: var(--copilot-glass-muted) !important;
@@ -979,7 +982,7 @@ settings:
     outline: none !important;
     box-shadow: none !important;
   }
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) :is(
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"]) :is(
     textarea, input, select, button, [contenteditable="true"],
     [class~="tw-bg-transparent"][class~="tw-outline-none"]
   ) {
@@ -987,7 +990,7 @@ settings:
     outline: none !important;
     box-shadow: none !important;
   }
-  body.tld-copilot .workspace-leaf-content:has([class~="tw-border-border"]):has([class~="tw-size-full"]) [class~="tw-border-b-border"] {
+  body.tld-copilot .workspace-leaf-content:is([data-type^="copilot-"], [data-type="obsidian-copilot-apply-view"]) [class~="tw-border-b-border"] {
     border-bottom: none !important;
     box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.055) !important;
   }
