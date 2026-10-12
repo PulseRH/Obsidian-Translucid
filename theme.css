@@ -289,6 +289,37 @@ settings:
     step: 1
     format: '%'
   -
+    id: translucid-panels-header
+    title: Note panels
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-glass-panels
+    title: Glass list panels (all panel notes)
+    description: List items in notes using the `panel` / `mado-panel` cssclass get a frosted glass fill with no border. For single notes instead, leave this off and add the `glass-panels` cssclass next to `panel`.
+    type: class-toggle
+    default: false
+  -
+    id: tld-glass-panel-fill
+    title: Glass panel fill strength
+    type: variable-number-slider
+    default: 5
+    min: 0
+    max: 20
+    step: 1
+    format: '%'
+  -
+    id: tld-glass-panel-blur
+    title: Glass panel blur
+    description: Frost behind top-level panels. 0 turns blur off (lighter on performance).
+    type: variable-number-slider
+    default: 10
+    min: 0
+    max: 30
+    step: 1
+    format: 'px'
+  -
     id: translucid-tables-header
     title: Tables
     type: heading
@@ -2953,6 +2984,35 @@ body.theme-light {
   }
   body.styled-scrollbars.tld-scrollbar-autohide :hover::-webkit-scrollbar-thumb {
     background-color: var(--tld-scroll-thumb);
+  }
+
+/* =====================================================================
+   NOTE PANELS — glass fill, no border, for the List Panels snippet's boxes
+   (.panel / .mado-panel list items). Global: body.tld-glass-panels.
+   Per note: add the `glass-panels` cssclass alongside `panel`.
+   Blur goes on top-level items only: nested panels inside a blurred panel
+   would stack backdrop-filters (costly, and visually muddy).
+   ===================================================================== */
+  :is(body.tld-glass-panels :is(.panel, .mado-panel), .glass-panels) {
+    --tld-glass-panel-bg: rgba(255, 255, 255, var(--tld-glass-panel-fill, 5%));
+    --tld-glass-panel-bg-hover: rgba(255, 255, 255, calc(var(--tld-glass-panel-fill, 5%) + 5%));
+  }
+  .theme-light :is(body.tld-glass-panels :is(.panel, .mado-panel), .glass-panels) {
+    --tld-glass-panel-bg: rgba(255, 255, 255, calc(var(--tld-glass-panel-fill, 5%) * 3 + 5%));
+    --tld-glass-panel-bg-hover: rgba(255, 255, 255, calc(var(--tld-glass-panel-fill, 5%) * 3 + 15%));
+  }
+  :is(body.tld-glass-panels :is(.panel, .mado-panel), .glass-panels) .markdown-preview-sizer > div ul li {
+    background: var(--tld-glass-panel-bg) !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  :is(body.tld-glass-panels :is(.panel, .mado-panel), .glass-panels) .markdown-preview-sizer > div > ul > li {
+    -webkit-backdrop-filter: blur(var(--tld-glass-panel-blur, 10px)) saturate(1.15);
+    backdrop-filter: blur(var(--tld-glass-panel-blur, 10px)) saturate(1.15);
+  }
+  :is(body.tld-glass-panels :is(.panel, .mado-panel), .glass-panels) .markdown-preview-sizer > div ul li:hover,
+  :is(body.tld-glass-panels :is(.panel, .mado-panel), .glass-panels) .markdown-preview-sizer > div li.task-list-item.is-checked {
+    background: var(--tld-glass-panel-bg-hover) !important;
   }
 
 /* =====================================================================
