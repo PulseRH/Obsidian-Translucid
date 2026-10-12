@@ -2611,6 +2611,27 @@ body.theme-light {
     display: flex !important;
     align-items: center !important;
   }
+  /* Tab pill = hover area. The header's 12px side padding made the inner
+     element (which carries Obsidian's hover highlight) 24px narrower than the
+     rounded pill, with the icon on the highlight's very edge. Padding now
+     lives inside the inner so the highlight fills the pill, and the pill is
+     centred in the 40px bar (it sat 6-7px low and was clipped). */
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-container-inner {
+    margin: 0 !important;
+    height: 40px;
+    align-items: center;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header {
+    padding: 0 !important;
+    height: 32px !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-inner {
+    width: 100%;
+    height: 100%;
+    padding-inline: 12px 6px !important;
+    border-radius: inherit;
+    justify-content: flex-start;
+  }
   body.tld-tab-pushdown:not(.is-mobile) .mod-left-split .workspace-tabs,
   body.tld-tab-pushdown:not(.is-mobile) .mod-right-split .workspace-tabs {
     position: relative;
