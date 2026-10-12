@@ -206,6 +206,16 @@ settings:
     type: class-toggle
     default: true
   -
+    id: tld-tabbar-hide-delay
+    title: Tab bar hide delay
+    description: How long the push-down tab bar stays open after the pointer leaves it. The empty area right of the tabs drags the window; hovering it starts this timer, so a longer delay gives more time to grab it.
+    type: variable-number-slider
+    default: 400
+    min: 0
+    max: 2000
+    step: 50
+    format: 'ms'
+  -
     id: tld-hide-vault
     title: Hide vault selector (reveal on hover)
     type: class-toggle
@@ -591,8 +601,8 @@ settings:
     width: 100% !important;
     padding-right: 0 !important;
     transition:
-      max-height 250ms ease-in-out 400ms,
-      opacity 200ms ease-in-out 400ms !important;
+      max-height 250ms ease-in-out var(--tld-tabbar-hide-delay, 400ms),
+      opacity 200ms ease-in-out var(--tld-tabbar-hide-delay, 400ms) !important;
   }
   body.tld-tab-pushdown:not(.is-mobile) .workspace-tab-header-container:hover,
   body.tld-tab-pushdown:not(.is-mobile) .workspace-tabs:hover:not(:has(.view-content:hover)) > .workspace-tab-header-container,
@@ -606,15 +616,19 @@ settings:
       max-height 250ms ease-in-out 0ms,
       opacity 200ms ease-in-out 0ms !important;
   }
-  /* Keep the bar open while the pointer is anywhere on it. In a frameless window
+  /* Keep the bar open while the pointer is on the tabs. In a frameless window
      Electron hands `-webkit-app-region: drag` areas to the OS, so they never get
-     :hover — Obsidian marks the container, the gaps between tabs and the spacer
-     as drag, which collapsed the bar when hovering between/above the tabs.
-     Window dragging still works from the sidebar tab strips. */
+     :hover — Obsidian marks the container and the gaps between tabs as drag,
+     which collapsed the bar when hovering between/above the tabs. Those are
+     no-drag now; the empty spacer right of the tabs stays a drag handle for
+     moving the window (hovering it starts the hide delay, so grab it within
+     --tld-tabbar-hide-delay). */
   body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-container,
-  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-container-inner,
-  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-spacer {
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-container-inner {
     -webkit-app-region: no-drag !important;
+  }
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-spacer {
+    -webkit-app-region: drag !important;
   }
   body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-container::before {
     content: "";
@@ -699,7 +713,7 @@ settings:
   /* push-down: slide main-pane content under the expanded bar */
   body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-leaf-content {
     padding-top: 0 !important;
-    transition: padding-top 250ms ease-in-out 400ms;
+    transition: padding-top 250ms ease-in-out var(--tld-tabbar-hide-delay, 400ms);
   }
   body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(.workspace-tab-header-container:hover) .workspace-leaf-content,
   body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tabs:hover:not(:has(.view-content:hover)) .workspace-leaf-content,
