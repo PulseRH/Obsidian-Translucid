@@ -107,6 +107,38 @@ settings:
     step: 5
     format: 'px'
   -
+    id: tld-settings-anim
+    title: Settings open animation
+    description: How the Settings window appears when you open it.
+    type: class-select
+    allowEmpty: false
+    default: tld-settings-anim-zoom
+    options:
+      -
+        label: None
+        value: tld-settings-anim-none
+      -
+        label: Fade
+        value: tld-settings-anim-fade
+      -
+        label: Zoom (fade + grow)
+        value: tld-settings-anim-zoom
+      -
+        label: Slide up
+        value: tld-settings-anim-slide
+      -
+        label: Pop (springy)
+        value: tld-settings-anim-pop
+  -
+    id: tld-settings-anim-duration
+    title: Settings animation duration
+    type: variable-number-slider
+    default: 220
+    min: 80
+    max: 800
+    step: 10
+    format: 'ms'
+  -
     id: translucid-bg-header
     title: Background image
     type: heading
@@ -2966,6 +2998,48 @@ body.theme-light {
   }
   body .modal.mod-settings .setting-item {
     border-bottom-color: var(--tld-settings-divider) !important;
+  }
+
+  /* Settings open animation (Style Settings → Layout widths). Obsidian
+     re-attaches the Settings modal on every open, so a plain CSS animation
+     replays each time. The dimmed backdrop fades in alongside. */
+  body:is(.tld-settings-anim-fade, .tld-settings-anim-zoom, .tld-settings-anim-slide, .tld-settings-anim-pop)
+    .modal-container:has(> .modal.mod-settings) > .modal-bg {
+    animation: tld-settings-bg-in var(--tld-settings-anim-duration, 220ms) ease-out both;
+  }
+  body.tld-settings-anim-fade .modal.mod-settings {
+    animation: tld-settings-fade-in var(--tld-settings-anim-duration, 220ms) ease-out both;
+  }
+  body.tld-settings-anim-zoom .modal.mod-settings {
+    animation: tld-settings-zoom-in var(--tld-settings-anim-duration, 220ms) cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  body.tld-settings-anim-slide .modal.mod-settings {
+    animation: tld-settings-slide-in var(--tld-settings-anim-duration, 220ms) cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  body.tld-settings-anim-pop .modal.mod-settings {
+    animation: tld-settings-pop-in calc(var(--tld-settings-anim-duration, 220ms) * 1.4) cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body .modal.mod-settings,
+    body .modal-container:has(> .modal.mod-settings) > .modal-bg {
+      animation: none !important;
+    }
+  }
+  @keyframes tld-settings-bg-in {
+    from { opacity: 0; }
+  }
+  @keyframes tld-settings-fade-in {
+    from { opacity: 0; }
+  }
+  @keyframes tld-settings-zoom-in {
+    from { opacity: 0; transform: scale(0.96); }
+  }
+  @keyframes tld-settings-slide-in {
+    from { opacity: 0; transform: translateY(24px); }
+  }
+  @keyframes tld-settings-pop-in {
+    from { opacity: 0; transform: scale(0.9); }
+    60% { opacity: 1; }
   }
 
   /* Settings Management plugin grid mode (.pm-grid): each card got Obsidian's
