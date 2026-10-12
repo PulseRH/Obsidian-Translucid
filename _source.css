@@ -326,6 +326,52 @@ settings:
     step: 1
     format: 'px'
   -
+    id: translucid-dividers-header
+    title: Dividers & queries
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-glass-hr
+    title: Glass dividers
+    description: Note dividers (---) become a thin glass line, matching the Settings dividers.
+    type: class-toggle
+    default: true
+  -
+    id: tld-divider-strength
+    title: Divider strength
+    description: Opacity of the glass divider line (also used in Settings).
+    type: variable-number-slider
+    default: 6
+    min: 2
+    max: 30
+    step: 1
+    format: '%'
+  -
+    id: tld-glass-query
+    title: Glass query blocks
+    description: Embedded search (query) blocks get a glass fill instead of borders, with darker inner match boxes so the two layers stand apart.
+    type: class-toggle
+    default: true
+  -
+    id: tld-query-fill
+    title: Query outer fill
+    type: variable-number-slider
+    default: 5
+    min: 0
+    max: 20
+    step: 1
+    format: '%'
+  -
+    id: tld-query-inner-shade
+    title: Query inner box darkness
+    type: variable-number-slider
+    default: 25
+    min: 0
+    max: 60
+    step: 1
+    format: '%'
+  -
     id: translucid-tables-header
     title: Tables
     type: heading
@@ -1072,6 +1118,55 @@ settings:
 }
 
 /* =====================================================================
+   DIVIDERS & QUERY BLOCKS
+   --tld-divider is the one glass line colour shared by note dividers and the
+   Settings row dividers. Query blocks: Obsidian draws the outer box as a 1px
+   border (.search-result-container, plus a stray one on .internal-query) and
+   the inner match boxes as a 1px box-shadow ring; both become fills — glass
+   outside, darker inside — so the layers read without any outlines.
+   ===================================================================== */
+@layer dividers {
+  body {
+    --tld-divider: rgba(255, 255, 255, var(--tld-divider-strength, 6%));
+  }
+  body.theme-light {
+    --tld-divider: rgba(0, 0, 0, calc(var(--tld-divider-strength, 6%) + 2%));
+  }
+  body.tld-glass-hr {
+    --hr-color: var(--tld-divider);
+    --hr-thickness: 1px;
+  }
+
+  body.tld-glass-query .internal-query {
+    border: none !important;
+  }
+  body.tld-glass-query .internal-query .search-result-container {
+    border: none !important;
+    border-radius: var(--radius-l, 12px);
+    background-color: rgba(255, 255, 255, var(--tld-query-fill, 5%));
+  }
+  body.tld-glass-query.theme-light .internal-query .search-result-container {
+    background-color: rgba(255, 255, 255, calc(var(--tld-query-fill, 5%) * 3 + 10%));
+  }
+  body.tld-glass-query .internal-query .search-result-file-matches {
+    box-shadow: none !important;
+    border-radius: var(--radius-m, 8px);
+    background-color: rgba(0, 0, 0, var(--tld-query-inner-shade, 25%));
+    overflow: hidden;
+  }
+  body.tld-glass-query.theme-light .internal-query .search-result-file-matches {
+    background-color: rgba(0, 0, 0, calc(var(--tld-query-inner-shade, 25%) / 3));
+  }
+  body.tld-glass-query .internal-query .search-result-file-match {
+    box-shadow: none !important;
+  }
+  /* separate stacked matches inside one inner box with the glass line */
+  body.tld-glass-query .internal-query .search-result-file-match + .search-result-file-match {
+    border-top: 1px solid var(--tld-divider);
+  }
+}
+
+/* =====================================================================
    LAYOUT WIDTHS — Settings modal + Settings sidebar width knobs
    Obsidian 1.13 sizes the Settings modal via --modal-width / --modal-max-width
    on .modal.mod-settings (stock: 90vw capped at 1100px), and its left
@@ -1102,10 +1197,7 @@ settings:
      doubled up with it, so grouped rows keep only the ::before line. Rows
      outside a .setting-group (older plugin tabs) keep their bottom border. */
   .modal.mod-settings {
-    --tld-settings-divider: rgba(255, 255, 255, 0.06);
-  }
-  body.theme-light .modal.mod-settings {
-    --tld-settings-divider: rgba(0, 0, 0, 0.08);
+    --tld-settings-divider: var(--tld-divider);
   }
   .modal.mod-settings .setting-group .setting-item:not(.setting-item-heading)::before {
     border-top-color: var(--tld-settings-divider) !important;
