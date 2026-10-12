@@ -53,6 +53,21 @@ foreach ($p in $pairs) {
   else { Write-Warning ("checkbox-exclude: pattern not found -> " + $p[0].Split([char]10)[0]) }
 }
 
+#    Settings width: base hard-codes the modal to 95%/1300px and its content pane
+#    to 1100px (all !important), which defeated the Style Settings width slider.
+#    Drive the modal from --tld-settings-width and let the content pane fill it.
+$widthPairs = @(
+  @("  .modal.mod-settings .vertical-tab-content-container {`n    width: 1100px !important;",
+    "  .modal.mod-settings .vertical-tab-content-container {`n    width: auto !important;`n    flex: 1 1 auto !important;"),
+  @("  .modal.mod-settings.mod-sidebar-layout {`n    width: 95% !important;`n    max-width: 1300px !important;",
+    "  .modal.mod-settings.mod-sidebar-layout {`n    width: min(var(--tld-settings-width, 1100px), calc(100vw - 40px)) !important;`n    max-width: calc(100vw - 40px) !important;")
+)
+foreach ($p in $widthPairs) {
+  $pat = $p[0]; if (-not $base.Contains($pat)) { $pat = $pat.Replace("`n", "`r`n") }
+  if ($base.Contains($pat)) { $base = $base.Replace($pat, $p[1]) }
+  else { Write-Warning ("settings-width: pattern not found -> " + $p[0].Split([char]10)[0]) }
+}
+
 # 4. Excalibrain (scoped to its panes). NOT wrapped in a layer.
 $exca = ReadText (Join-Path $snips '[light ttransparnt theme] edit (2) excalibrain embeds.css')
 #    PERF rewrites (2026-10-12, measured via CDP): case-insensitive substring

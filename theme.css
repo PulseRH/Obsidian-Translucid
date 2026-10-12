@@ -1091,13 +1091,14 @@ div.notice {
   }
 
   .modal.mod-settings .vertical-tab-content-container {
-    width: 1100px !important;
+    width: auto !important;
+    flex: 1 1 auto !important;
     max-width: none !important;
   }
 
   .modal.mod-settings.mod-sidebar-layout {
-    width: 95% !important;
-    max-width: 1300px !important;
+    width: min(var(--tld-settings-width, 1100px), calc(100vw - 40px)) !important;
+    max-width: calc(100vw - 40px) !important;
     height: 85% !important;
   }
 }
@@ -2486,6 +2487,16 @@ body.theme-light {
       max-height 250ms ease-in-out 0ms,
       opacity 200ms ease-in-out 0ms !important;
   }
+  /* Keep the bar open while the pointer is anywhere on it. In a frameless window
+     Electron hands `-webkit-app-region: drag` areas to the OS, so they never get
+     :hover — Obsidian marks the container, the gaps between tabs and the spacer
+     as drag, which collapsed the bar when hovering between/above the tabs.
+     Window dragging still works from the sidebar tab strips. */
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-container,
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-container-inner,
+  body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-spacer {
+    -webkit-app-region: no-drag !important;
+  }
   body.tld-tab-pushdown:not(.is-mobile) .workspace-split.mod-root .workspace-tab-header-container::before {
     content: "";
     position: absolute;
@@ -2903,6 +2914,28 @@ body.theme-light {
     width: var(--tld-settings-sidebar-width, 250px) !important;
     min-width: 0 !important;
     max-width: none !important;
+  }
+
+  /* Settings Management plugin grid mode (.pm-grid): each card got Obsidian's
+     grey ::before row line on top PLUS a rounded card outline at the bottom.
+     Drop both and draw one inset divider under each card, built exactly like
+     Obsidian's own row divider so it matches the other settings pages. */
+  .modal.mod-settings .pm-grid .setting-item.mod-toggle::before {
+    content: none !important;
+  }
+  .modal.mod-settings .pm-grid .setting-item.mod-toggle {
+    position: relative;
+    border-bottom: none !important;
+    border-radius: 0 !important;
+  }
+  .modal.mod-settings .pm-grid .setting-item.mod-toggle::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: var(--setting-items-padding-x, 20px);
+    right: var(--setting-items-padding-x, 20px);
+    border-top: var(--setting-items-divider-width, 1px) solid var(--background-modifier-border);
+    pointer-events: none;
   }
 
 /* =====================================================================
