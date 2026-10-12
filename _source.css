@@ -289,6 +289,12 @@ settings:
     step: 1
     format: '%'
   -
+    id: tld-mobile-block-edit
+    title: Always show block edit button on mobile
+    description: Phones have no hover, so the edit (</>) button on code, Dataview and other rendered blocks never appeared. Keeps it visible on mobile and touch screens, with a bigger tap target.
+    type: class-toggle
+    default: true
+  -
     id: translucid-panels-header
     title: Note panels
     type: heading
@@ -1020,6 +1026,27 @@ settings:
   :is(body.tld-glass-panels :is(.panel, .mado-panel), .glass-panels) .markdown-preview-sizer > div ul li:hover,
   :is(body.tld-glass-panels :is(.panel, .mado-panel), .glass-panels) .markdown-preview-sizer > div li.task-list-item.is-checked {
     background: var(--tld-glass-panel-bg-hover) !important;
+  }
+}
+
+/* =====================================================================
+   MOBILE BLOCK EDIT BUTTON — Obsidian 1.13 hides .embed-actions (the </>
+   edit button on rendered blocks in Live Preview) at opacity 0 until the
+   block is hovered, which never happens on a touch screen. Applies on
+   .is-mobile and on any hover-less pointer (touch laptops/tablets).
+   ===================================================================== */
+@layer mobileedit {
+  body.tld-mobile-block-edit.is-mobile .markdown-source-view.mod-cm6 .cm-embed-block .embed-actions {
+    opacity: 1;
+  }
+  body.tld-mobile-block-edit.is-mobile .markdown-source-view.mod-cm6 .cm-embed-block .embed-action {
+    --icon-size: var(--icon-m);
+    padding: var(--size-4-2);
+  }
+  @media (hover: none) {
+    body.tld-mobile-block-edit .markdown-source-view.mod-cm6 .cm-embed-block .embed-actions {
+      opacity: 1;
+    }
   }
 }
 
