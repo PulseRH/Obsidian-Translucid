@@ -307,6 +307,13 @@ settings:
   -
     id: tld-scrollbar-hover-grow
     title: Grow 2px on hover
+    description: The thumb widens by 2px while you hover or drag it.
+    type: class-toggle
+    default: false
+  -
+    id: tld-scrollbar-autohide
+    title: Hide scrollbars until hover
+    description: Each scrollbar stays invisible until the pointer is over its own pane or section.
     type: class-toggle
     default: false
   -
@@ -872,29 +879,53 @@ settings:
     --tld-scroll-thumb: rgba(210, 210, 210, 0.38);
   }
 
-  body ::-webkit-scrollbar {
+  /* Selectors are `body.styled-scrollbars …` on purpose: Obsidian's own
+     scrollbar rules use that prefix, so a plain `body ::-webkit-scrollbar`
+     lost on specificity and the width slider / frosted colour were ignored. */
+  body.styled-scrollbars ::-webkit-scrollbar {
     width: var(--tld-scrollbar-width, 12px);
     height: var(--tld-scrollbar-width, 12px);
   }
-  body ::-webkit-scrollbar-track {
+  body.styled-scrollbars ::-webkit-scrollbar-track {
     background: transparent;
   }
   /* Frosted translucent thumb. Padding via a transparent border shrinks the
      visible thumb inside the track so a wider bar still looks slim/rounded. */
-  body ::-webkit-scrollbar-thumb {
+  body.styled-scrollbars ::-webkit-scrollbar-thumb {
     background-color: var(--tld-scroll-thumb);
     border-radius: 10px;
     border: 3px solid transparent;
     background-clip: padding-box;
   }
-  body ::-webkit-scrollbar-thumb:hover {
+  body.styled-scrollbars ::-webkit-scrollbar-thumb:hover,
+  body.styled-scrollbars ::-webkit-scrollbar-thumb:active {
+    background-color: var(--tld-scroll-thumb);
     filter: brightness(1.25);
   }
 
-  /* Optional: grow the bar by 2px while hovering it. */
-  body.tld-scrollbar-hover-grow ::-webkit-scrollbar:hover {
+  /* Optional: grow the thumb 2px while hovering/dragging it. Chromium never
+     re-lays-out a scrollbar's WIDTH from ::-webkit-scrollbar:hover (the old
+     rule did nothing), so reserve the 2px permanently and grow the thumb by
+     thinning its transparent border instead — same resting look. */
+  body.styled-scrollbars.tld-scrollbar-hover-grow ::-webkit-scrollbar {
     width: calc(var(--tld-scrollbar-width, 12px) + 2px);
     height: calc(var(--tld-scrollbar-width, 12px) + 2px);
+  }
+  body.styled-scrollbars.tld-scrollbar-hover-grow ::-webkit-scrollbar-thumb {
+    border-width: 4px;
+  }
+  body.styled-scrollbars.tld-scrollbar-hover-grow ::-webkit-scrollbar-thumb:hover,
+  body.styled-scrollbars.tld-scrollbar-hover-grow ::-webkit-scrollbar-thumb:active {
+    border-width: 3px;
+  }
+
+  /* Optional: hide each scrollbar until the pointer is over its own pane /
+     section. The track keeps its width, so content never shifts. */
+  body.styled-scrollbars.tld-scrollbar-autohide ::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
+  body.styled-scrollbars.tld-scrollbar-autohide :hover::-webkit-scrollbar-thumb {
+    background-color: var(--tld-scroll-thumb);
   }
 }
 
@@ -923,10 +954,30 @@ settings:
     max-width: none !important;
   }
 
+  /* One glass divider colour for every settings row line (the faint white the
+     old card outline used). Obsidian draws the row line as an inset ::before;
+     the base theme ALSO gave each grouped row a full-width bottom border, which
+     doubled up with it, so grouped rows keep only the ::before line. Rows
+     outside a .setting-group (older plugin tabs) keep their bottom border. */
+  .modal.mod-settings {
+    --tld-settings-divider: rgba(255, 255, 255, 0.06);
+  }
+  body.theme-light .modal.mod-settings {
+    --tld-settings-divider: rgba(0, 0, 0, 0.08);
+  }
+  .modal.mod-settings .setting-group .setting-item:not(.setting-item-heading)::before {
+    border-top-color: var(--tld-settings-divider) !important;
+  }
+  .modal.mod-settings .setting-group .setting-item {
+    border-bottom: none !important;
+  }
+  body .modal.mod-settings .setting-item {
+    border-bottom-color: var(--tld-settings-divider) !important;
+  }
+
   /* Settings Management plugin grid mode (.pm-grid): each card got Obsidian's
      grey ::before row line on top PLUS a rounded card outline at the bottom.
-     Drop both and draw one inset divider under each card, built exactly like
-     Obsidian's own row divider so it matches the other settings pages. */
+     Drop both and draw one inset glass divider under each card instead. */
   .modal.mod-settings .pm-grid .setting-item.mod-toggle::before {
     content: none !important;
   }
@@ -941,7 +992,7 @@ settings:
     bottom: 0;
     left: var(--setting-items-padding-x, 20px);
     right: var(--setting-items-padding-x, 20px);
-    border-top: var(--setting-items-divider-width, 1px) solid var(--background-modifier-border);
+    border-top: var(--setting-items-divider-width, 1px) solid var(--tld-settings-divider);
     pointer-events: none;
   }
 }
