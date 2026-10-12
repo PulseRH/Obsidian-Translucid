@@ -216,6 +216,36 @@ settings:
     step: 50
     format: 'ms'
   -
+    id: tld-tab-gap
+    title: Tab gap
+    description: Space between tabs in the main tab bar.
+    type: variable-number-slider
+    default: 8
+    min: 0
+    max: 24
+    step: 1
+    format: 'px'
+  -
+    id: tld-sidebar-tab-gap
+    title: Sidebar tab gap
+    description: Space between the icon tabs at the top of each sidebar.
+    type: variable-number-slider
+    default: 3
+    min: 0
+    max: 20
+    step: 1
+    format: 'px'
+  -
+    id: tld-sidebar-gap
+    title: Sidebar gap
+    description: Space between an open sidebar and the main note area.
+    type: variable-number-slider
+    default: 0
+    min: 0
+    max: 32
+    step: 1
+    format: 'px'
+  -
     id: tld-hide-vault
     title: Hide vault selector (reveal on hover)
     type: class-toggle
@@ -2546,7 +2576,7 @@ body.theme-light {
   }
   body.tld-safari-tabs .workspace-tab-header-container-inner {
     margin-bottom: 6px;
-    gap: 8px;
+    gap: var(--tld-tab-gap, 8px);
     width: 100%;
   }
   body.tld-safari-tabs .workspace-tab-header[data-type="markdown"],
@@ -3166,6 +3196,25 @@ body.theme-light {
   /* separate stacked matches inside one inner box with the glass line */
   body.tld-glass-query .internal-query .search-result-file-match + .search-result-file-match {
     border-top: 1px solid var(--tld-divider);
+  }
+
+/* =====================================================================
+   GAPS — main tab gap, sidebar icon-tab gap, sidebar-to-main gap
+   (Style Settings → tab bar section). The sidebar gap is a margin on the
+   main split, applied only on the side whose sidebar is open, so a closed
+   sidebar never leaves an empty strip; resize handles stay inside the docks.
+   ===================================================================== */
+  body .workspace-split.mod-root .workspace-tab-header-container-inner {
+    gap: var(--tld-tab-gap, 8px);
+  }
+  body :is(.mod-left-split, .mod-right-split) .workspace-tab-header-container .workspace-tab-header-container-inner {
+    gap: var(--tld-sidebar-tab-gap, 3px);
+  }
+  body:not(.is-mobile) .workspace.is-left-sidedock-open > .workspace-split.mod-root {
+    margin-left: var(--tld-sidebar-gap, 0px);
+  }
+  body:not(.is-mobile) .workspace.is-right-sidedock-open > .workspace-split.mod-root {
+    margin-right: var(--tld-sidebar-gap, 0px);
   }
 
 /* =====================================================================
