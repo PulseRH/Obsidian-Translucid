@@ -3234,9 +3234,11 @@ body.theme-light {
   /* Settings sidebar: the nav column with the settings/plugin list. The stock
      min/max clamps are lifted so the slider fully controls the width; !important
      guards against inline styles and container-query overrides. */
+  /* Capped at 40% of the modal: in a narrow window a fixed 300px sidebar left
+     the content pane only ~60px wide, so Settings looked like it hadn't opened. */
   body:not(.is-phone) .modal.mod-settings .vertical-tab-header {
-    flex: 0 0 var(--tld-settings-sidebar-width, 250px) !important;
-    width: var(--tld-settings-sidebar-width, 250px) !important;
+    flex: 0 0 min(var(--tld-settings-sidebar-width, 250px), 40%) !important;
+    width: min(var(--tld-settings-sidebar-width, 250px), 40%) !important;
     min-width: 0 !important;
     max-width: none !important;
   }
