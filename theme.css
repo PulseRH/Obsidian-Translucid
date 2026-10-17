@@ -3617,26 +3617,28 @@ body.theme-light {
     --nn-theme-divider-resize-handle-hover-bg: transparent !important;
   }
 
-  /* Frosted note properties on phones and tablets. One blur on the surface,
-     not on every property row, to avoid stacking filters on mobile. */
+  /* Frost the native mobile properties box, leaving the heading and outer
+     container unboxed. Keep Obsidian's existing spacing and corner radius. */
   body.is-mobile .metadata-container {
     --metadata-background: transparent;
     --metadata-label-background: transparent;
     --metadata-input-background: transparent;
+    background: transparent !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+  }
+  body.is-mobile .metadata-container .metadata-content {
     background: rgba(255, 255, 255, 0.08) !important;
     -webkit-backdrop-filter: blur(16px) saturate(1.2) !important;
     backdrop-filter: blur(16px) saturate(1.2) !important;
     border: none !important;
-    border-radius: 12px;
     box-shadow: none !important;
-    padding: 12px;
   }
 
-  /* Mobile gives the properties list and label/input surfaces their own solid
-     fills. Clear those layers so the outer glass can show through. Keep tag
+  /* Clear opaque row/input surfaces inside the native glass box. Keep tag
      pills, checkboxes and focus indicators styled normally. */
   body.is-mobile .metadata-container :is(
-    .metadata-content,
     .metadata-properties,
     .metadata-property,
     .metadata-property-key,
