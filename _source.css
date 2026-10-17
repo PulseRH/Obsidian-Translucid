@@ -1640,6 +1640,25 @@ settings:
 }
 
 @layer mobileproperties {
+  /* Blur the mobile note background on a sibling layer. A backdrop-filter on
+     the leaf itself creates a backdrop root and prevents nested section glass
+     from sampling that background for a second, stronger pass. */
+  body.is-mobile .workspace-split.mod-root .workspace-leaf-content[data-type="markdown"] {
+    position: relative;
+    z-index: 0;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  body.is-mobile .workspace-split.mod-root .workspace-leaf-content[data-type="markdown"]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    -webkit-backdrop-filter: brightness(0.9) blur(5px);
+    backdrop-filter: brightness(0.9) blur(5px);
+  }
+
   /* Frost the native mobile properties box, leaving the heading and outer
      container unboxed. Keep Obsidian's existing spacing and corner radius. */
   body.is-mobile .metadata-container {
