@@ -3636,6 +3636,7 @@ body.theme-light {
      fills. Clear those layers so the outer glass can show through. Keep tag
      pills, checkboxes and focus indicators styled normally. */
   body.is-mobile .metadata-container :is(
+    .metadata-content,
     .metadata-properties,
     .metadata-property,
     .metadata-property-key,
