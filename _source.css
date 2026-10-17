@@ -428,6 +428,38 @@ settings:
     step: 1
     format: '%'
   -
+    id: translucid-frost-header
+    title: Frosted blocks
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-frost-blocks
+    title: Frosted blocks (true double blur)
+    description: Embeds, callouts, Properties and query blocks get their own blur on top of the note pane's, so they read as a second frosted layer. Moves the note pane's blur onto the wallpaper so blocks inside it can blur too. Blocks nested inside a frosted block get no extra blur. Desktop only (phones have their own Properties frost).
+    type: class-toggle
+    default: true
+  -
+    id: tld-frost-block-blur
+    title: Block blur
+    description: Extra blur behind frosted blocks.
+    type: variable-number-slider
+    default: 12
+    min: 0
+    max: 40
+    step: 1
+    format: 'px'
+  -
+    id: tld-frost-pane-blur
+    title: Note pane blur
+    description: The base wallpaper blur behind the note (was the note pane's own 5px blur).
+    type: variable-number-slider
+    default: 5
+    min: 0
+    max: 30
+    step: 1
+    format: 'px'
+  -
     id: translucid-tables-header
     title: Tables
     type: heading
@@ -1294,6 +1326,70 @@ settings:
   }
   body:not(.is-mobile) .workspace.is-right-sidedock-open > .workspace-split.mod-root {
     margin-right: var(--tld-sidebar-gap, 0px);
+  }
+}
+
+/* =====================================================================
+   FROSTED BLOCKS — true double blur inside the note pane.
+   Chromium makes any element with backdrop-filter a "backdrop root": blurs
+   inside it can only see what that element paints, not the wallpaper. The
+   note pane (.mod-root .workspace-leaf-content) had backdrop-filter
+   brightness(0.9) blur(5px) — from both the Background Switcher plugin and
+   the base theme — so every block inside it could only ever be a tint.
+   Here the pane loses its backdrop-filter (an rgba(0,0,0,.1) fill is the
+   exact equivalent of brightness(0.9)), its blur moves onto the wallpaper
+   layers' own filter, and one level of blocks gets backdrop-filter.
+   Nested frosted blocks are explicitly unblurred. Desktop only: phones use
+   the separate is-mobile sibling-layer frost (leaf-content::before).
+   ===================================================================== */
+@layer frost {
+  body.tld-frost-blocks:not(.is-mobile) .workspace-split.mod-root .workspace-leaf-content {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background-color: rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* pane blur → wallpaper. Plugin layer only in its frosted mode (its
+     "background image only" mode is deliberately unblurred). The negative
+     inset hides the soft, see-through edge a blur leaves at the window edge. */
+  body.tld-frost-blocks.obsidian-rule-background-enabled:not(.is-mobile) .obsidian-rule-background-layer::before,
+  body.tld-frost-blocks.obsidian-rule-background-enabled:not(.is-mobile) .obsidian-rule-background-layer-exit::before {
+    inset: calc(var(--tld-frost-pane-blur, 5px) * -3);
+    filter:
+      saturate(var(--obs-rule-bg-saturate))
+      brightness(var(--obs-rule-bg-brightness))
+      blur(var(--tld-frost-pane-blur, 5px));
+  }
+  body.tld-frost-blocks.tld-background:not(.is-mobile)::before {
+    top: calc(var(--tld-frost-pane-blur, 5px) * -3);
+    left: calc(var(--tld-frost-pane-blur, 5px) * -3);
+    width: calc(100vw + var(--tld-frost-pane-blur, 5px) * 6);
+    height: calc(100vh + var(--tld-frost-pane-blur, 5px) * 6);
+    filter:
+      saturate(var(--bg-saturate))
+      brightness(var(--bg-brightness))
+      blur(var(--tld-frost-pane-blur, 5px));
+  }
+
+  /* one frosted level */
+  body.tld-frost-blocks:not(.is-mobile) .workspace-split.mod-root :is(
+    .markdown-embed,
+    .callout,
+    .metadata-container,
+    .internal-query .search-result-container
+  ) {
+    -webkit-backdrop-filter: blur(var(--tld-frost-block-blur, 12px));
+    backdrop-filter: blur(var(--tld-frost-block-blur, 12px));
+  }
+  /* nothing inside a frosted block blurs again (incl. glass list panels) */
+  body.tld-frost-blocks:not(.is-mobile) .workspace-split.mod-root :is(
+    .markdown-embed,
+    .callout,
+    .metadata-container,
+    .internal-query .search-result-container
+  ) :is(.markdown-embed, .callout, .metadata-container, .search-result-container, li) {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
   }
 }
 
