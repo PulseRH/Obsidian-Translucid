@@ -320,6 +320,22 @@ settings:
     type: class-toggle
     default: true
   -
+    id: tld-embed-auto-height
+    title: Disable fixed embed height
+    description: Let note embeds grow naturally. Removes the theme's 900px cap and fixed preview height so embed plugins can control height and scrolling.
+    type: class-toggle
+    default: false
+  -
+    id: tld-embed-radius
+    title: Embed corner rounding
+    description: Corner radius for note embeds when Embed styling is enabled. Set to 0 for square corners.
+    type: variable-number-slider
+    default: 8
+    min: 0
+    max: 32
+    step: 1
+    format: px
+  -
     id: tld-embed-hover-strength
     title: Embed hover fill strength
     type: variable-number-slider
@@ -471,6 +487,16 @@ settings:
     description: Each scrollbar stays invisible until the pointer is over its own pane or section.
     type: class-toggle
     default: false
+  -
+    id: tld-scrollbar-fade-delay
+    title: Scrollbar fade-out delay
+    description: How long scrollbars stay visible after the pointer leaves a scrollable pane. Requires Hide scrollbars until hover.
+    type: variable-number-slider
+    default: 750
+    min: 0
+    max: 5000
+    step: 50
+    format: ms
   -
     id: translucid-plugins-header
     title: Plugins
@@ -2863,7 +2889,7 @@ body.theme-light {
   /* Note-embed container overhaul (exclude image/media/pdf embeds) */
   body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed) {
     border: none !important;
-    border-radius: 0 !important;
+    border-radius: var(--tld-embed-radius, 8px) !important;
     box-shadow: none !important;
     padding: 0 !important;
     margin: 0 !important;
@@ -2878,7 +2904,24 @@ body.theme-light {
   }
 
   /* Long-embed scroll cap + width cleanup (note embeds) */
-  body.tld-embeds .markdown-embed:not(.image-embed):not(.media-embed) .markdown-embed-content {
+
+  /* Optional natural embed height. Foldable Embedded Notes keeps its own cap. */
+  body.tld-embed-auto-height .markdown-embed > .markdown-embed-content {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  body.tld-embed-auto-height .markdown-embed:not(.fen-embed) > .markdown-embed-content {
+    max-height: none !important;
+    overflow-y: visible !important;
+  }
+  body.tld-embed-auto-height .markdown-embed > .markdown-embed-content > .markdown-preview-view.markdown-rendered {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+  }
+
+  body.tld-embeds:not(.tld-embed-auto-height) .markdown-embed:not(.image-embed):not(.media-embed) .markdown-embed-content {
     max-height: 900px !important;
     overflow-y: auto !important;
   }
@@ -2904,7 +2947,7 @@ body.theme-light {
     outline: none !important;
     box-shadow: none !important;
     background-color: color-mix(in srgb, white var(--tld-embed-hover-strength, 3%), transparent) !important;
-    border-radius: 8px;
+    border-radius: var(--tld-embed-radius, 8px) !important;
     transition: background-color 0.2s ease;
   }
 
@@ -3102,6 +3145,29 @@ body.theme-light {
   body.styled-scrollbars.tld-scrollbar-autohide :hover::-webkit-scrollbar-thumb {
     background-color: var(--tld-scroll-thumb);
   }
+  /* Native scrollbar thumbs ignore transitions. Animate an inherited value on
+     scroll surfaces instead; keep unrelated buttons/cards out of these rules. */
+  @property --tld-scrollbar-alpha {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+  }
+  body.styled-scrollbars.tld-scrollbar-autohide :is(.view-content, .cm-scroller, .markdown-preview-view, .markdown-embed-content, .nav-files-container, .search-result-container, .vertical-tab-content, .vertical-tab-header, .suggestion-container, .nn-navigation-pane-scroller, .nn-list-pane-scroller, .nn-shortcut-pinned-scroll, [class$="-scroll"], [class$="-scroller"], [class*="scroll-container"]) {
+    --tld-scrollbar-alpha: 0;
+    transition: --tld-scrollbar-alpha 160ms ease var(--tld-scrollbar-fade-delay, 750ms);
+  }
+  body.styled-scrollbars.tld-scrollbar-autohide :is(.view-content, .cm-scroller, .markdown-preview-view, .markdown-embed-content, .nav-files-container, .search-result-container, .vertical-tab-content, .vertical-tab-header, .suggestion-container, .nn-navigation-pane-scroller, .nn-list-pane-scroller, .nn-shortcut-pinned-scroll, [class$="-scroll"], [class$="-scroller"], [class*="scroll-container"]):hover {
+    --tld-scrollbar-alpha: 1;
+    transition-duration: 0s;
+    transition-delay: 0s;
+  }
+  body.styled-scrollbars.tld-scrollbar-autohide :is(.view-content, .cm-scroller, .markdown-preview-view, .markdown-embed-content, .nav-files-container, .search-result-container, .vertical-tab-content, .vertical-tab-header, .suggestion-container, .nn-navigation-pane-scroller, .nn-list-pane-scroller, .nn-shortcut-pinned-scroll, [class$="-scroll"], [class$="-scroller"], [class*="scroll-container"])::-webkit-scrollbar-thumb {
+    background-color: color-mix(in srgb, var(--tld-scroll-thumb) calc(var(--tld-scrollbar-alpha) * 100%), transparent);
+  }
+  body.styled-scrollbars.tld-scrollbar-autohide :is(.view-content, .cm-scroller, .markdown-preview-view, .markdown-embed-content, .nav-files-container, .search-result-container, .vertical-tab-content, .vertical-tab-header, .suggestion-container, .nn-navigation-pane-scroller, .nn-list-pane-scroller, .nn-shortcut-pinned-scroll, [class$="-scroll"], [class$="-scroller"], [class*="scroll-container"])::-webkit-scrollbar-thumb:active {
+    background-color: var(--tld-scroll-thumb);
+  }
+
 
 /* =====================================================================
    NOTE PANELS — glass fill, no border, for the List Panels snippet's boxes
@@ -3542,6 +3608,25 @@ body.theme-light {
   body.theme-light :is(meter, .meter) {
     background-color: rgba(0, 0, 0, 0.35) !important;
     border-radius: 4px;
+  }
+
+  /* Notebook Navigator: invisible pane/calendar separators and drag highlights.
+     Preserve border widths and handle hit areas so layout and resizing still work. */
+  body .notebook-navigator {
+    --nn-theme-divider-border-color: transparent !important;
+    --nn-theme-divider-resize-handle-hover-bg: transparent !important;
+  }
+
+  /* Frosted note properties on phones and tablets. One blur on the surface,
+     not on every property row, to avoid stacking filters on mobile. */
+  body.is-mobile .metadata-container {
+    background: rgba(255, 255, 255, 0.08) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(1.2) !important;
+    backdrop-filter: blur(16px) saturate(1.2) !important;
+    border: none !important;
+    border-radius: 12px;
+    box-shadow: none !important;
+    padding: 12px;
   }
 
 /* =====================================================================
