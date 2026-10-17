@@ -1652,9 +1652,9 @@ settings:
     box-shadow: none !important;
   }
   body.is-mobile .metadata-container .metadata-content {
-    background: rgba(255, 255, 255, 0.08) !important;
-    -webkit-backdrop-filter: blur(16px) saturate(1.2) !important;
-    backdrop-filter: blur(16px) saturate(1.2) !important;
+    background: transparent !important;
+    -webkit-backdrop-filter: blur(28px) saturate(1.15) !important;
+    backdrop-filter: blur(28px) saturate(1.15) !important;
     border: none !important;
     box-shadow: none !important;
   }
