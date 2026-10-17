@@ -3617,6 +3617,25 @@ body.theme-light {
     --nn-theme-divider-resize-handle-hover-bg: transparent !important;
   }
 
+  /* The phone workspace also applies backdrop blur (including Background
+     Switcher). Keep that frost behind the UI, rather than making the whole
+     workspace another backdrop root that blocks section-level blur. */
+  body.is-mobile .workspace {
+    position: relative;
+    z-index: 0;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  body.is-mobile .workspace::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    -webkit-backdrop-filter: brightness(0.8) blur(5px);
+    backdrop-filter: brightness(0.8) blur(5px);
+  }
+
   /* Blur the mobile note background on a sibling layer. A backdrop-filter on
      the leaf itself creates a backdrop root and prevents nested section glass
      from sampling that background for a second, stronger pass. */
