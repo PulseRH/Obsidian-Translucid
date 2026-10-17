@@ -3620,6 +3620,9 @@ body.theme-light {
   /* Frosted note properties on phones and tablets. One blur on the surface,
      not on every property row, to avoid stacking filters on mobile. */
   body.is-mobile .metadata-container {
+    --metadata-background: transparent;
+    --metadata-label-background: transparent;
+    --metadata-input-background: transparent;
     background: rgba(255, 255, 255, 0.08) !important;
     -webkit-backdrop-filter: blur(16px) saturate(1.2) !important;
     backdrop-filter: blur(16px) saturate(1.2) !important;
@@ -3627,6 +3630,24 @@ body.theme-light {
     border-radius: 12px;
     box-shadow: none !important;
     padding: 12px;
+  }
+
+  /* Mobile gives the properties list and label/input surfaces their own solid
+     fills. Clear those layers so the outer glass can show through. Keep tag
+     pills, checkboxes and focus indicators styled normally. */
+  body.is-mobile .metadata-container :is(
+    .metadata-properties,
+    .metadata-property,
+    .metadata-property-key,
+    .metadata-property-value,
+    .metadata-input,
+    .metadata-property-key-input,
+    .metadata-property-value input:not([type="checkbox"]),
+    .metadata-property-value textarea,
+    .metadata-add-button
+  ) {
+    background: transparent !important;
+    box-shadow: none !important;
   }
 
 /* =====================================================================
