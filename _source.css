@@ -436,7 +436,7 @@ settings:
   -
     id: tld-frost-blocks
     title: Frosted blocks (true double blur)
-    description: Embeds, callouts, Properties and query blocks get their own blur on top of the note pane's, so they read as a second frosted layer. Moves the note pane's blur onto the wallpaper so blocks inside it can blur too. Blocks nested inside a frosted block get no extra blur. Desktop only (phones have their own Properties frost).
+    description: Embeds, callouts, Properties and query blocks get their own blur on top of the note pane's, so they read as a second frosted layer. Moves the note pane's blur onto the wallpaper so blocks inside it can blur too. Blocks nested inside a frosted block get no extra blur. Works on desktop and mobile (on phones, Properties keep their own stronger frost).
     type: class-toggle
     default: true
   -
@@ -457,6 +457,21 @@ settings:
     default: 5
     min: 0
     max: 30
+    step: 1
+    format: 'px'
+  -
+    id: tld-frost-tabs
+    title: Frosted tabs
+    description: Tab pills in the top tab bar and sidebar tab strips (and the mobile tab switcher cards) get a real blur over the bar's own frost, instead of a flat tint.
+    type: class-toggle
+    default: true
+  -
+    id: tld-frost-tab-blur
+    title: Tab blur
+    type: variable-number-slider
+    default: 16
+    min: 0
+    max: 40
     step: 1
     format: 'px'
   -
@@ -1339,8 +1354,9 @@ settings:
    Here the pane loses its backdrop-filter (an rgba(0,0,0,.1) fill is the
    exact equivalent of brightness(0.9)), its blur moves onto the wallpaper
    layers' own filter, and one level of blocks gets backdrop-filter.
-   Nested frosted blocks are explicitly unblurred. Desktop only: phones use
-   the separate is-mobile sibling-layer frost (leaf-content::before).
+   Nested frosted blocks are explicitly unblurred. Desktop moves the pane
+   blur onto the wallpaper; phones already blur on a sibling layer
+   (leaf-content::before), so they only need the block pass.
    ===================================================================== */
 @layer frost {
   body.tld-frost-blocks:not(.is-mobile) .workspace-split.mod-root .workspace-leaf-content {
@@ -1388,6 +1404,112 @@ settings:
     .metadata-container,
     .internal-query .search-result-container
   ) :is(.markdown-embed, .callout, .metadata-container, .search-result-container, li) {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Mobile: the note background is blurred on a sibling layer
+     (leaf-content::before, see @layer mobileproperties), so the pane is not
+     a backdrop root and blocks can stack their pass directly. Properties keep
+     their own stronger native-box frost from that layer. */
+  body.tld-frost-blocks.is-mobile .workspace-split.mod-root :is(
+    .markdown-embed,
+    .callout,
+    .internal-query .search-result-container
+  ) {
+    -webkit-backdrop-filter: blur(var(--tld-frost-block-blur, 12px));
+    backdrop-filter: blur(var(--tld-frost-block-blur, 12px));
+  }
+  body.tld-frost-blocks.is-mobile .workspace-split.mod-root :is(
+    .markdown-embed,
+    .callout,
+    .metadata-container,
+    .internal-query .search-result-container
+  ) :is(.markdown-embed, .callout, .search-result-container, li) {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+
+/* =====================================================================
+   FROSTED TABS (desktop) — the tab bar containers carried
+   backdrop-filter brightness(0.9) blur(5px) (base theme + Background
+   Switcher), which made them backdrop roots: the pills' own blur(40px) could
+   only tint. The bar's frost moves to a ::after layer painted behind the
+   tabs (same look, no root), each pill gets one real frost level, and any
+   blur nested inside a pill (active inner/pseudo layers) is switched off.
+   ===================================================================== */
+@layer frosttabs {
+  body.tld-frost-tabs:not(.is-mobile) .workspace-split:is(.mod-root, .mod-left-split, .mod-right-split) .workspace-tab-header-container {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    isolation: isolate;
+    position: relative; /* push-down mode's position: fixed !important still wins */
+  }
+  body.tld-frost-tabs:not(.is-mobile) .workspace-split:is(.mod-root, .mod-left-split, .mod-right-split) .workspace-tab-header-container::after {
+    content: "" !important;
+    display: block !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: -1 !important;
+    pointer-events: none !important;
+    background: none !important;
+    border: none !important;
+    width: auto !important;
+    height: auto !important;
+    -webkit-backdrop-filter: brightness(0.9) blur(5px);
+    backdrop-filter: brightness(0.9) blur(5px);
+  }
+  /* one frost level per pill */
+  body.tld-frost-tabs:not(.is-mobile) .workspace-split:is(.mod-root, .mod-left-split, .mod-right-split) .workspace-tab-header {
+    -webkit-backdrop-filter: blur(var(--tld-frost-tab-blur, 16px)) saturate(1.1) !important;
+    backdrop-filter: blur(var(--tld-frost-tab-blur, 16px)) saturate(1.1) !important;
+  }
+  body.tld-frost-tabs:not(.is-mobile) .workspace-split:is(.mod-root, .mod-left-split, .mod-right-split) .workspace-tab-header.is-active {
+    -webkit-backdrop-filter: blur(var(--tld-frost-tab-blur, 16px)) saturate(1.2) brightness(1.05) !important;
+    backdrop-filter: blur(var(--tld-frost-tab-blur, 16px)) saturate(1.2) brightness(1.05) !important;
+  }
+  body.tld-frost-tabs:not(.is-mobile) .workspace-split:is(.mod-root, .mod-left-split, .mod-right-split) .workspace-tab-header :is(.workspace-tab-header-inner, .workspace-tab-header-inner-icon, .workspace-tab-header-inner-title),
+  body.tld-frost-tabs:not(.is-mobile) .workspace-split:is(.mod-root, .mod-left-split, .mod-right-split) .workspace-tab-header::before,
+  body.tld-frost-tabs:not(.is-mobile) .workspace-split:is(.mod-root, .mod-left-split, .mod-right-split) .workspace-tab-header::after {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Mobile tab switcher: its opaque background and the scroll area's fade
+     mask (a mask is also a backdrop root) left nothing for cards to blur.
+     The switcher's frost moves to a ::before layer, the mask is dropped
+     (loses the small bottom fade), and each preview card gets one frost
+     level; frost inside a card's note preview is switched off. */
+  body.tld-frost-tabs.is-mobile .mobile-tab-switcher {
+    background-color: transparent !important;
+    isolation: isolate;
+  }
+  body.tld-frost-tabs.is-mobile .mobile-tab-switcher::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-color: rgba(0, 0, 0, 0.25);
+    -webkit-backdrop-filter: blur(20px) saturate(1.1);
+    backdrop-filter: blur(20px) saturate(1.1);
+  }
+  body.tld-frost-tabs.is-mobile .mobile-tab-switcher-scroll {
+    background-color: transparent !important;
+    -webkit-mask: none !important;
+    mask: none !important;
+  }
+  body.tld-frost-tabs.is-mobile .mobile-tab-preview {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    overflow: hidden;
+    -webkit-backdrop-filter: blur(var(--tld-frost-tab-blur, 16px)) saturate(1.15);
+    backdrop-filter: blur(var(--tld-frost-tab-blur, 16px)) saturate(1.15);
+  }
+  body.tld-frost-tabs.is-mobile .mobile-tab-preview :is(.mobile-tab-preview-embed, .mobile-tab-preview-empty) {
+    background: transparent !important;
+  }
+  body.tld-frost-tabs.is-mobile .mobile-tab-preview :is(.metadata-content, .markdown-embed, .callout, .search-result-container) {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
   }
