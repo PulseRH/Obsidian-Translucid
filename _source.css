@@ -1173,6 +1173,28 @@ settings:
     border-radius: var(--radius-m);
   }
 
+  /* Keep frost off the virtualized scroller. The stationary parent layer
+     samples the wallpaper once, while Bases can composite scrolling rows
+     independently. No paint containment on rows: editors can expand. */
+  body.tld-bases-frost :is(.view-content, .bases-embed, .block-language-base):has(> .bases-view) {
+    position: relative;
+    z-index: 0;
+  }
+  body.tld-bases-frost :is(.view-content, .bases-embed, .block-language-base):has(> .bases-view)::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: var(--radius-m);
+    -webkit-backdrop-filter: blur(var(--tld-bases-blur, 12px)) saturate(1.1);
+    backdrop-filter: blur(var(--tld-bases-blur, 12px)) saturate(1.1);
+  }
+  body.tld-bases-frost :is(.view-content, .bases-embed, .block-language-base) > .bases-view {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
   body.tld-bases-zebra .bases-view {
     --tld-bases-stripe: rgba(255, 255, 255, 0.04);
   }
