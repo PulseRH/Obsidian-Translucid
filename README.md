@@ -70,8 +70,10 @@ Support activates automatically when the Extended Base plugin renders its
 Notion-style table, list, board or feed views. It uses the existing Bases frost,
 zebra, text-size and alignment settings; table views also support row height,
 grid-line hiding and all zebra directions. Pill and group colors stay intact.
-Image-only table cells have no padding or inline-image baseline gap, so covers
-fill the column width at their natural aspect ratio. Text cells keep their padding.
+Image-only table cells have no padding or inline-image baseline gap. Extended
+Base covers scale with the column width at their natural aspect ratio, including
+while dragging narrower. Native Bases covers fit proportionally inside its
+fixed-height rows, allowing empty space instead of cropping. Text cells keep padding.
 Enable **Style Settings → Translucid → Bases → Disable Extended Base support**
 to keep the plugin's own view styling. No plugin files are modified.
 

@@ -3166,22 +3166,23 @@ body.theme-light {
 
 /* Bases uses virtualized, positioned flex cells. Keep those measurements,
    scroll containers, resize handles, editing and selection styles native. */
-  /* Image-only native formula cells use their full fixed cell dimensions. */
+  /* Keep the full cover proportional within native Bases' fixed-height rows.
+     Let width and height shrink naturally instead of stretching/cropping it. */
   .bases-table-cell.bases-rendered-value:has(> img:only-child) {
     padding: 0;
     line-height: 0;
   }
   .bases-table-cell.bases-rendered-value > img:only-child {
     display: block;
-    width: 100%;
-    height: 100%;
+    width: auto;
+    height: auto;
     min-width: 0;
     min-height: 0;
-    max-width: none;
-    max-height: none;
+    max-width: 100%;
+    max-height: 100%;
     margin: 0;
     border-radius: 0;
-    object-fit: cover;
+    object-fit: contain;
   }
 
   body.tld-bases-hide-lines .bases-view:not([data-view-type^="notion-"]) {
@@ -3390,16 +3391,25 @@ body.theme-light {
     padding: 0;
     line-height: 0;
   }
+  /* A percentage-width image can otherwise contribute its intrinsic width
+     to auto table layout and hold the old column width during a resize drag.
+     Inline-only containment breaks that sizing loop, preserving normal-flow
+     image height and the plugin's header-driven resize measurements. */
+  body:not(.tld-disable-extended-base) .ntn-root .ntn-table .ntn-cell:has(> img:only-child),
+  body:not(.tld-disable-extended-base) .ntn-root .ntn-table .ntn-cell:has(> p:only-child > img:only-child) {
+    contain: inline-size;
+    min-width: 0;
+  }
   body:not(.tld-disable-extended-base) .ntn-root .ntn-table .ntn-cell > img:only-child,
   body:not(.tld-disable-extended-base) .ntn-root .ntn-table .ntn-cell > p:only-child > img:only-child {
     display: block;
     width: 100%;
     height: auto;
-    max-width: none;
+    max-width: 100%;
     max-height: none;
     margin: 0;
     border-radius: 0;
-    object-fit: cover;
+    object-fit: contain;
   }
 
   body:not(.tld-disable-extended-base) .ntn-root {
