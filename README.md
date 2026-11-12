@@ -63,8 +63,10 @@ Enable **Style Settings → Translucid → Plugins → Notebook Navigator gradie
 zebra guides**, then adjust shading colour and strength. Notebook Navigator's
 **Show indent guides** setting must also be enabled. Horizontal gradients fade
 across each deeper indentation column and alternate by nesting depth. The first
-level stays unshaded, and the plugin's thin lines are replaced by full-height
-bands. Row heights, selection and click targets stay intact; RTL fades reverse.
+level stays unshaded, and the plugin's thin lines are suppressed. Gradients fade
+across three indentation widths by default; **Navigator gradient length** adjusts
+that reach. Deeper gradients overlay shallower ones beneath the labels and icons.
+Row heights, selection and click targets stay intact; RTL fades reverse.
 
 ### Extended Base
 Support activates automatically when the Extended Base plugin renders its

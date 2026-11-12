@@ -644,7 +644,7 @@ settings:
   -
     id: tld-nn-indent-zebra
     title: Notebook Navigator gradient zebra guides
-    description: Replace thin guide lines with horizontal gradient bands at deeper indentation levels. The first level stays clear. Requires Notebook Navigator's Show indent guides setting.
+    description: Gradient-only shading at deeper indentation levels, layered deepest on top. The first level stays clear. Requires Notebook Navigator's Show indent guides setting.
     type: class-toggle
     default: false
   -
@@ -656,6 +656,15 @@ settings:
     max: 60
     step: 1
     format: '%'
+  -
+    id: tld-nn-indent-length
+    title: Navigator gradient length
+    description: Fade length measured in indentation widths. Higher values overlap more nesting levels.
+    type: variable-number-slider
+    default: 3
+    min: 1
+    max: 8
+    step: 1
   -
     id: tld-nn-indent-color
     title: Navigator guide shading color
@@ -4266,16 +4275,29 @@ body.theme-light {
     --nn-theme-divider-resize-handle-hover-bg: transparent !important;
   }
 
-  /* Replace the native thin line with one full-height gradient surface.
-     No translated 0.5px line or separate pseudo-element to create seams.
-     Skip depth 0; depth 1 starts the alternating stronger/weaker pattern. */
+  /* Suppress native guide paint independently of the gradient surface. */
+  body.tld-nn-indent-zebra .notebook-navigator {
+    --nn-theme-nav-indent-guide-color: transparent !important;
+  }
+  /* A local stacking context keeps depth-ordered fades below labels, icons,
+     and the plugin's selected/search overlays while they overlap each other. */
+  body.tld-nn-indent-zebra .notebook-navigator .nn-navitem-content {
+    isolation: isolate;
+  }
+  /* Skip depth 0; depth 1 starts the stronger/weaker pattern. Longer fades
+     intentionally overlap, with each deeper layer painted above ancestors. */
   body.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide {
     --tld-nn-guide-angle: 90deg;
     --tld-nn-guide-mix: calc(var(--tld-nn-indent-strength, 20%) * (1 - 0.6 * mod(max(0, var(--nn-indent-guide-level, 0) - 1), 2)));
-    width: var(--nn-setting-nav-indent);
+    --nn-indent-guide-line-width: 0px;
+    width: calc(var(--nn-setting-nav-indent) * var(--tld-nn-indent-length, 3));
     transform: none;
     opacity: clamp(0, var(--nn-indent-guide-level, 0), 1);
     background-color: transparent;
+    border: 0;
+    outline: 0;
+    box-shadow: none;
+    z-index: calc(var(--nn-indent-guide-level, 0) - 1000);
     background-image: linear-gradient(
       var(--tld-nn-guide-angle),
       color-mix(in srgb, var(--tld-nn-indent-color, #9c9c9c) var(--tld-nn-guide-mix), transparent),
@@ -4286,8 +4308,10 @@ body.theme-light {
   body.mod-rtl.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide {
     --tld-nn-guide-angle: 270deg;
   }
+  body.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide::before,
   body.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide::after {
     content: none;
+    display: none;
   }
 
   /* The phone workspace also applies backdrop blur (including Background
