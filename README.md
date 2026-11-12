@@ -41,10 +41,9 @@ Under **Style Settings → Translucid → Bases**, enable frosted backgrounds an
 zebra rows for table, cards and list views. Adjust the blur strength and toggle
 horizontal and vertical centering independently (centering is off by default).
 Choose **Bases zebra direction** for horizontal rows, vertical columns, or both
-as a checkerboard or crosshatch bands. Crosshatch fills alternating whole rows
-and columns with a single tint, leaving their intersections the same shade.
-Each table cell receives at most one stripe tint, so crossing
-directions cannot darken each other. Cards and lists keep alternating items.
+as a checkerboard or stacked crosshatch bands. Crosshatch fills alternating
+whole rows and columns; their intersections stack two tints for a stronger shade.
+The other modes use one tint per cell. Cards and lists keep alternating items.
 Enable **Hide Bases table lines** to remove the grid and outer table borders
 while preserving zebra fills, resize handles and active-cell indicators.
 Linked aliases center on their visible label while the edit pencil stays at

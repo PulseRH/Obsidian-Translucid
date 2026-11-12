@@ -515,7 +515,7 @@ settings:
   -
     id: tld-bases-zebra-direction
     title: Bases zebra direction
-    description: Table stripes by row, column, checkerboard or combined bands. Each cell gets one tint. Cards and lists keep alternating items.
+    description: Table stripes by row, column, checkerboard or stacked crosshatch. Crosshatch crossings get a second tint. Cards and lists keep alternating items.
     type: class-select
     allowEmpty: false
     default: tld-bases-zebra-horizontal
@@ -530,7 +530,7 @@ settings:
         label: Both (checkerboard)
         value: tld-bases-zebra-both
       -
-        label: Both (crosshatch bands)
+        label: Both (stacked crosshatch)
         value: tld-bases-zebra-crosshatch
   -
     id: tld-bases-hide-lines
@@ -1179,7 +1179,7 @@ settings:
   body.theme-light.tld-bases-zebra .bases-view {
     --tld-bases-stripe: rgba(0, 0, 0, 0.04);
   }
-  /* Paint table stripes on cells only. Row and column tints never stack.
+  /* Paint table stripes on cells only. Only crosshatch crossings stack.
      No direction class preserves the earlier horizontal default. Native
      focus/editing backgrounds and selection overlays remain available. */
   body.tld-bases-zebra:not(.tld-bases-zebra-vertical):not(.tld-bases-zebra-both):not(.tld-bases-zebra-crosshatch)
@@ -1195,6 +1195,14 @@ settings:
   body.tld-bases-zebra.tld-bases-zebra-crosshatch
     .bases-tbody > .bases-tr:nth-child(odd) > .bases-td:nth-child(even of .bases-td):not(.is-measuring):not(:focus-within) {
     background-color: var(--tld-bases-stripe);
+  }
+
+  /* Composite a second copy of the stripe over the cell fill only where
+     crosshatch bands intersect. At 4% opacity, crossings become 7.84%.
+     Keep the overlay off focused/editing cells, like the underlying tint. */
+  body.tld-bases-zebra.tld-bases-zebra-crosshatch
+    .bases-tbody > .bases-tr:nth-child(even) > .bases-td:nth-child(even of .bases-td):not(.is-measuring):not(:focus-within) {
+    background-image: linear-gradient(var(--tld-bases-stripe), var(--tld-bases-stripe));
   }
 
   body.tld-bases-zebra .bases-cards-group > .bases-cards-item:nth-child(even),
