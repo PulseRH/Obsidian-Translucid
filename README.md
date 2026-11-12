@@ -48,6 +48,8 @@ row positions, so scrolling and recycled row elements do not flip their tint.
 Frost sits on a stationary layer behind the Bases scroller, reducing blur work
 as virtualized rows appear. Bases still controls when new rows and images load.
 The other modes use one tint per cell. Cards and lists keep alternating items.
+Grouped table titles alternate by group. Sticky column headers follow the
+selected zebra direction, including stacked crosshatch shading.
 Enable **Hide Bases table lines** to remove the grid and outer table borders
 while preserving zebra fills, resize handles and active-cell indicators.
 Linked aliases center on their visible label while the edit pencil stays at

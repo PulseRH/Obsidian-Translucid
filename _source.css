@@ -509,7 +509,7 @@ settings:
   -
     id: tld-bases-zebra
     title: Zebra styling in Bases
-    description: Alternating translucent fills for table rows, cards and list items.
+    description: Alternating translucent fills for table rows, group titles, column headers, cards and list items.
     type: class-toggle
     default: true
   -
@@ -1201,6 +1201,25 @@ settings:
   body.theme-light.tld-bases-zebra .bases-view {
     --tld-bases-stripe: rgba(0, 0, 0, 0.04);
   }
+
+  /* Group containers retain their logical order even when their data rows
+     are virtualized. Shade their full-width titles by group, not row nodes. */
+  body.tld-bases-zebra .bases-table-container > .bases-table:nth-child(even of .bases-table) > .bases-group-heading {
+    background-color: var(--tld-bases-stripe);
+  }
+
+  /* The sticky column header has a separate row outside all group bodies.
+     Mirror the selected direction there. Crosshatch deliberately stacks
+     the header-row tint and alternate column tints, just like data cells. */
+  body.tld-bases-zebra:not(.tld-bases-zebra-vertical):not(.tld-bases-zebra-both):not(.tld-bases-zebra-crosshatch) .bases-thead > .bases-tr,
+  body.tld-bases-zebra.tld-bases-zebra-crosshatch .bases-thead > .bases-tr {
+    background-color: var(--tld-bases-stripe);
+  }
+  body.tld-bases-zebra:is(.tld-bases-zebra-vertical, .tld-bases-zebra-both, .tld-bases-zebra-crosshatch)
+    .bases-thead > .bases-tr > .bases-td:nth-child(even of .bases-td):not(:hover):not(.has-active-menu):not(:focus-within) {
+    background-color: var(--tld-bases-stripe);
+  }
+
   /* Bases virtualizes rows: DOM sibling parity changes during scrolling.
      Paint horizontal bands on the full-height tbody, using its native row
      height (including multiline sizing), not the recycled visible row nodes. */
