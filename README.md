@@ -50,7 +50,8 @@ as virtualized rows appear. Bases still controls when new rows and images load.
 The other modes use one tint per cell. Cards and lists keep alternating items.
 Grouped table titles alternate by group. Sticky column headers follow the
 selected zebra direction, including stacked crosshatch shading.
-Zebra tables remove the default inter-group gap so group titles sit flush.
+The native inter-group gap stays intact and shares the following group title's
+shading, so the space above each heading blends into that header.
 Enable **Hide Bases table lines** to remove the grid and outer table borders
 while preserving zebra fills, resize handles and active-cell indicators.
 Linked aliases center on their visible label while the edit pencil stays at

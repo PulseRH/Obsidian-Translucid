@@ -3194,7 +3194,6 @@ body.theme-light {
 
   body.tld-bases-zebra .bases-view {
     --tld-bases-stripe: rgba(255, 255, 255, 0.04);
-    --bases-table-group-gap: 0px;
   }
   body.theme-light.tld-bases-zebra .bases-view {
     --tld-bases-stripe: rgba(0, 0, 0, 0.04);
@@ -3204,6 +3203,21 @@ body.theme-light {
      are virtualized. Shade their full-width titles by group, not row nodes. */
   body.tld-bases-zebra .bases-table-container > .bases-table:nth-child(even of .bases-table) > .bases-group-heading {
     background-color: var(--tld-bases-stripe);
+  }
+
+  /* Preserve the native space above each later group, painting that space
+     with its own heading's tint. This adds no height and takes no clicks. */
+  body.tld-bases-zebra .bases-table-container > .bases-table ~ .bases-table > .bases-group-heading {
+    position: relative;
+  }
+  body.tld-bases-zebra .bases-table-container > .bases-table ~ .bases-table > .bases-group-heading::before {
+    content: "";
+    position: absolute;
+    top: calc(var(--bases-table-group-gap, 10px) * -1);
+    inset-inline: 0;
+    height: var(--bases-table-group-gap, 10px);
+    background-color: inherit;
+    pointer-events: none;
   }
 
   /* The sticky column header has a separate row outside all group bodies.
