@@ -3176,11 +3176,25 @@ body.theme-light {
   body.theme-light.tld-bases-zebra .bases-view {
     --tld-bases-stripe: rgba(0, 0, 0, 0.04);
   }
-  /* Paint table stripes on cells only. Only crosshatch crossings stack.
-     No direction class preserves the earlier horizontal default. Native
-     focus/editing backgrounds and selection overlays remain available. */
+  /* Bases virtualizes rows: DOM sibling parity changes during scrolling.
+     Paint horizontal bands on the full-height tbody, using its native row
+     height (including multiline sizing), not the recycled visible row nodes. */
   body.tld-bases-zebra:not(.tld-bases-zebra-vertical):not(.tld-bases-zebra-both):not(.tld-bases-zebra-crosshatch)
-    .bases-tbody > .bases-tr:nth-child(even) > .bases-td:not(.is-measuring):not(:focus-within),
+    .bases-tbody,
+  body.tld-bases-zebra.tld-bases-zebra-crosshatch .bases-tbody {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent var(--bases-table-row-height),
+      var(--tld-bases-stripe) var(--bases-table-row-height),
+      var(--tld-bases-stripe) calc(var(--bases-table-row-height) * 2)
+    );
+    background-position: 0 0;
+    background-attachment: scroll;
+  }
+
+  /* Columns retain their native order while rows are recycled. Crosshatch
+     column fills composite over the body's row bands at intersections. */
   body.tld-bases-zebra.tld-bases-zebra-vertical:not(.tld-bases-zebra-both):not(.tld-bases-zebra-crosshatch)
     .bases-tbody > .bases-tr > .bases-td:nth-child(even of .bases-td):not(.is-measuring):not(:focus-within),
   body.tld-bases-zebra.tld-bases-zebra-both:not(.tld-bases-zebra-crosshatch)
@@ -3188,18 +3202,8 @@ body.theme-light {
   body.tld-bases-zebra.tld-bases-zebra-both:not(.tld-bases-zebra-crosshatch)
     .bases-tbody > .bases-tr:nth-child(even) > .bases-td:nth-child(odd of .bases-td):not(.is-measuring):not(:focus-within),
   body.tld-bases-zebra.tld-bases-zebra-crosshatch
-    .bases-tbody > .bases-tr:nth-child(even) > .bases-td:not(.is-measuring):not(:focus-within),
-  body.tld-bases-zebra.tld-bases-zebra-crosshatch
-    .bases-tbody > .bases-tr:nth-child(odd) > .bases-td:nth-child(even of .bases-td):not(.is-measuring):not(:focus-within) {
+    .bases-tbody > .bases-tr > .bases-td:nth-child(even of .bases-td):not(.is-measuring):not(:focus-within) {
     background-color: var(--tld-bases-stripe);
-  }
-
-  /* Composite a second copy of the stripe over the cell fill only where
-     crosshatch bands intersect. At 4% opacity, crossings become 7.84%.
-     Keep the overlay off focused/editing cells, like the underlying tint. */
-  body.tld-bases-zebra.tld-bases-zebra-crosshatch
-    .bases-tbody > .bases-tr:nth-child(even) > .bases-td:nth-child(even of .bases-td):not(.is-measuring):not(:focus-within) {
-    background-image: linear-gradient(var(--tld-bases-stripe), var(--tld-bases-stripe));
   }
 
   body.tld-bases-zebra .bases-cards-group > .bases-cards-item:nth-child(even),

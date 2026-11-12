@@ -43,6 +43,8 @@ horizontal and vertical centering independently (centering is off by default).
 Choose **Bases zebra direction** for horizontal rows, vertical columns, or both
 as a checkerboard or stacked crosshatch bands. Crosshatch fills alternating
 whole rows and columns; their intersections stack two tints for a stronger shade.
+Horizontal and crosshatch row bands are anchored to the table body's logical
+row positions, so scrolling and recycled row elements do not flip their tint.
 The other modes use one tint per cell. Cards and lists keep alternating items.
 Enable **Hide Bases table lines** to remove the grid and outer table borders
 while preserving zebra fills, resize handles and active-cell indicators.
