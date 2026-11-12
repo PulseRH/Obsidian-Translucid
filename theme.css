@@ -571,6 +571,12 @@ settings:
     type: class-toggle
     default: false
   -
+    id: tld-disable-extended-base
+    title: Disable Extended Base support
+    description: Support activates automatically in Extended Base table, list, board and feed views. Turn this on to keep the plugin's own appearance instead of Translucid's Bases options.
+    type: class-toggle
+    default: false
+  -
     id: translucid-statusbar-header
     title: Status bar
     type: heading
@@ -3086,26 +3092,26 @@ body.theme-light {
 /* =====================================================================
    TABLES — translucent zebra (translucent-zebra-tables.css)
    ===================================================================== */
-  body.tld-zebra .markdown-rendered table {
+  body.tld-zebra .markdown-rendered table:not(.ntn-table):not(.ntn-table *) {
     background: transparent !important;
     border-spacing: 0 !important;
     border-collapse: collapse !important;
   }
-  body.tld-zebra .markdown-rendered thead th {
+  body.tld-zebra .markdown-rendered thead th:not(.ntn-table):not(.ntn-table *) {
     background-color: rgba(30, 30, 30, 0.9) !important;
     border-bottom: 0px solid var(--divider-color) !important;
     border-right: 0px solid var(--divider-color) !important;
     padding: 12px !important;
   }
-  body.tld-zebra .markdown-rendered tbody tr:nth-child(even) {
+  body.tld-zebra .markdown-rendered tbody tr:nth-child(even):not(.ntn-table):not(.ntn-table *) {
     background-color: rgba(255, 255, 255, 0.04) !important;
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
   }
-  body.tld-zebra .markdown-rendered tbody tr:nth-child(odd) {
+  body.tld-zebra .markdown-rendered tbody tr:nth-child(odd):not(.ntn-table):not(.ntn-table *) {
     background-color: transparent !important;
   }
-  body.tld-zebra .markdown-rendered td,
+  body.tld-zebra .markdown-rendered td:not(.ntn-table):not(.ntn-table *),
   body.tld-zebra .dbfolder-cell {
     border-bottom: 1px solid var(--divider-color) !important;
     border-right: 1px solid var(--divider-color) !important;
@@ -3116,30 +3122,30 @@ body.theme-light {
     transition: none !important;
     transform: none !important;
   }
-  body.tld-zebra .markdown-rendered td:first-child,
-  body.tld-zebra .markdown-rendered th:first-child {
+  body.tld-zebra .markdown-rendered td:first-child:not(.ntn-table):not(.ntn-table *),
+  body.tld-zebra .markdown-rendered th:first-child:not(.ntn-table):not(.ntn-table *) {
     border-left: 1px solid var(--divider-color) !important;
   }
-  body.tld-zebra .markdown-rendered td:focus {
+  body.tld-zebra .markdown-rendered td:focus:not(.ntn-table):not(.ntn-table *) {
     outline: none !important;
     box-shadow: none !important;
     background-clip: padding-box !important;
     transform: none !important;
   }
-  body.tld-zebra .markdown-rendered tbody tr:hover {
+  body.tld-zebra .markdown-rendered tbody tr:hover:not(.ntn-table):not(.ntn-table *) {
     filter: brightness(1.4) !important;
     transition: filter 0.15s ease !important;
   }
-  body.tld-zebra .markdown-rendered tbody tr:hover td {
+  body.tld-zebra .markdown-rendered tbody tr:hover td:not(.ntn-table):not(.ntn-table *) {
     background-color: rgba(255, 255, 255, 0.03) !important;
   }
-  body.tld-zebra .markdown-rendered tr:last-child td {
+  body.tld-zebra .markdown-rendered tr:last-child td:not(.ntn-table):not(.ntn-table *) {
     border-bottom: 2px solid var(--divider-color) !important;
   }
 
 /* Bases uses virtualized, positioned flex cells. Keep those measurements,
    scroll containers, resize handles, editing and selection styles native. */
-  body.tld-bases-hide-lines .bases-view {
+  body.tld-bases-hide-lines .bases-view:not([data-view-type^="notion-"]) {
     --bases-table-column-border-width: 0px;
     --bases-table-row-border-width: 0px;
     --bases-table-container-border-width: 0px;
@@ -3148,17 +3154,17 @@ body.theme-light {
     --bases-embed-border-width: 0px;
   }
 
-  .bases-view {
+  .bases-view:not([data-view-type^="notion-"]) {
     --bases-table-font-size: var(--tld-bases-font-size, var(--font-smaller));
     --bases-cards-font-size: var(--tld-bases-font-size, var(--font-smaller));
     --bases-table-row-height: var(--tld-bases-row-height, 30px);
     --metadata-input-font-size: var(--tld-bases-font-size, var(--font-smaller));
   }
-  .bases-view :is(.bases-cards-line, .bases-list-item) {
+  .bases-view:not([data-view-type^="notion-"]) :is(.bases-cards-line, .bases-list-item) {
     font-size: var(--tld-bases-font-size, var(--font-smaller));
   }
 
-  body.tld-bases-frost .bases-view {
+  body.tld-bases-frost .bases-view:not([data-view-type^="notion-"]) {
     --bases-table-group-background: transparent;
     --bases-table-header-background: color-mix(in srgb, var(--settings-glass-color) 65%, transparent);
     --bases-table-summary-background: var(--bases-table-header-background);
@@ -3173,11 +3179,11 @@ body.theme-light {
   /* Keep frost off the virtualized scroller. The stationary parent layer
      samples the wallpaper once, while Bases can composite scrolling rows
      independently. No paint containment on rows: editors can expand. */
-  body.tld-bases-frost :is(.view-content, .bases-embed, .block-language-base):has(> .bases-view) {
+  body.tld-bases-frost :is(.view-content, .bases-embed, .block-language-base):has(> .bases-view:not([data-view-type^="notion-"])) {
     position: relative;
     z-index: 0;
   }
-  body.tld-bases-frost :is(.view-content, .bases-embed, .block-language-base):has(> .bases-view)::before {
+  body.tld-bases-frost :is(.view-content, .bases-embed, .block-language-base):has(> .bases-view:not([data-view-type^="notion-"]))::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -3187,15 +3193,15 @@ body.theme-light {
     -webkit-backdrop-filter: blur(var(--tld-bases-blur, 12px)) saturate(1.1);
     backdrop-filter: blur(var(--tld-bases-blur, 12px)) saturate(1.1);
   }
-  body.tld-bases-frost :is(.view-content, .bases-embed, .block-language-base) > .bases-view {
+  body.tld-bases-frost :is(.view-content, .bases-embed, .block-language-base) > .bases-view:not([data-view-type^="notion-"]) {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
 
-  body.tld-bases-zebra .bases-view {
+  body.tld-bases-zebra .bases-view:not([data-view-type^="notion-"]) {
     --tld-bases-stripe: rgba(255, 255, 255, 0.04);
   }
-  body.theme-light.tld-bases-zebra .bases-view {
+  body.theme-light.tld-bases-zebra .bases-view:not([data-view-type^="notion-"]) {
     --tld-bases-stripe: rgba(0, 0, 0, 0.04);
   }
 
@@ -3327,6 +3333,110 @@ body.theme-light {
    by --tld-statusbar-offset, which you set once to your right-sidebar width
    in Style Settings. When the right sidebar is collapsed it snaps to the
    far right (offset 0). */
+/* Extended Base 1.6: its registered notion-* views render .ntn-root.
+   Presence of those nodes activates support automatically, with no plugin JS
+   or persistent setting changes. The opt-out gates every compatibility rule. */
+  body:not(.tld-disable-extended-base) .ntn-root {
+    font-size: var(--tld-bases-font-size, 14px);
+  }
+  body:not(.tld-disable-extended-base) .ntn-root :is(.ntn-th, .ntn-cell, .ntn-list-prop-row, .ntn-feed-title) {
+    font-size: inherit;
+  }
+  body:not(.tld-disable-extended-base) .ntn-root .ntn-table :is(.ntn-th, .ntn-td) {
+    height: var(--tld-bases-row-height, 30px);
+  }
+
+  body:not(.tld-disable-extended-base).tld-bases-frost .ntn-root {
+    background: transparent;
+  }
+  body:not(.tld-disable-extended-base).tld-bases-frost .bases-view[data-view-type^="notion-"] {
+    background-color: color-mix(in srgb, var(--settings-glass-color) 28%, transparent);
+    border-radius: var(--radius-m);
+  }
+  body:not(.tld-disable-extended-base).tld-bases-frost :is(.view-content, .bases-embed, .block-language-base):has(> .bases-view[data-view-type^="notion-"]) {
+    position: relative;
+    z-index: 0;
+  }
+  body:not(.tld-disable-extended-base).tld-bases-frost :is(.view-content, .bases-embed, .block-language-base):has(> .bases-view[data-view-type^="notion-"])::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: var(--radius-m);
+    -webkit-backdrop-filter: blur(var(--tld-bases-blur, 12px)) saturate(1.1);
+    backdrop-filter: blur(var(--tld-bases-blur, 12px)) saturate(1.1);
+  }
+  body:not(.tld-disable-extended-base).tld-bases-frost .ntn-root :is(.ntn-board-card, .ntn-feed-entry, .ntn-th) {
+    background-color: color-mix(in srgb, var(--settings-glass-color) 65%, transparent);
+  }
+
+  body:not(.tld-disable-extended-base).tld-bases-hide-lines .ntn-root .ntn-table {
+    --ntn-border: transparent;
+  }
+
+  body:not(.tld-disable-extended-base).tld-bases-zebra .ntn-root {
+    --tld-bases-stripe: rgba(255, 255, 255, 0.04);
+  }
+  body.theme-light:not(.tld-disable-extended-base).tld-bases-zebra .ntn-root {
+    --tld-bases-stripe: rgba(0, 0, 0, 0.04);
+  }
+
+  /* This plugin renders real table rows rather than core's recycled rows.
+     Count data rows only so nested group titles do not shift their parity. */
+  body:not(.tld-disable-extended-base).tld-bases-zebra:not(.tld-bases-zebra-vertical):not(.tld-bases-zebra-both):not(.tld-bases-zebra-crosshatch)
+    .ntn-root .ntn-table .ntn-row:nth-child(even of .ntn-row) > .ntn-td:not(:focus-within),
+  body:not(.tld-disable-extended-base).tld-bases-zebra.tld-bases-zebra-vertical:not(.tld-bases-zebra-both):not(.tld-bases-zebra-crosshatch)
+    .ntn-root .ntn-table .ntn-row > .ntn-td:nth-child(even of .ntn-td):not(:focus-within),
+  body:not(.tld-disable-extended-base).tld-bases-zebra.tld-bases-zebra-both:not(.tld-bases-zebra-crosshatch)
+    .ntn-root .ntn-table .ntn-row:nth-child(odd of .ntn-row) > .ntn-td:nth-child(even of .ntn-td):not(:focus-within),
+  body:not(.tld-disable-extended-base).tld-bases-zebra.tld-bases-zebra-both:not(.tld-bases-zebra-crosshatch)
+    .ntn-root .ntn-table .ntn-row:nth-child(even of .ntn-row) > .ntn-td:nth-child(odd of .ntn-td):not(:focus-within),
+  body:not(.tld-disable-extended-base).tld-bases-zebra.tld-bases-zebra-crosshatch
+    .ntn-root .ntn-table .ntn-row:nth-child(even of .ntn-row) > .ntn-td:not(:focus-within),
+  body:not(.tld-disable-extended-base).tld-bases-zebra.tld-bases-zebra-crosshatch
+    .ntn-root .ntn-table .ntn-row:nth-child(odd of .ntn-row) > .ntn-td:nth-child(even of .ntn-td):not(:focus-within) {
+    background-color: var(--tld-bases-stripe);
+  }
+  body:not(.tld-disable-extended-base).tld-bases-zebra.tld-bases-zebra-crosshatch
+    .ntn-root .ntn-table .ntn-row:nth-child(even of .ntn-row) > .ntn-td:nth-child(even of .ntn-td):not(:focus-within) {
+    background-image: linear-gradient(var(--tld-bases-stripe), var(--tld-bases-stripe));
+  }
+
+  body:not(.tld-disable-extended-base).tld-bases-zebra .ntn-root .ntn-table .ntn-group-row:nth-child(even of .ntn-group-row) > td,
+  body:not(.tld-disable-extended-base).tld-bases-zebra .ntn-root .ntn-list-row:nth-child(even of .ntn-list-row),
+  body:not(.tld-disable-extended-base).tld-bases-zebra .ntn-root .ntn-board-card:nth-child(even of .ntn-board-card),
+  body:not(.tld-disable-extended-base).tld-bases-zebra .ntn-root .ntn-feed-entry:nth-child(even of .ntn-feed-entry),
+  body:not(.tld-disable-extended-base).tld-bases-zebra .ntn-root :is(.ntn-list-container, .ntn-feed-container) > .ntn-group-row:nth-child(even of .ntn-group-row) {
+    background-color: var(--tld-bases-stripe);
+  }
+
+  body:not(.tld-disable-extended-base).tld-bases-zebra:not(.tld-bases-zebra-vertical):not(.tld-bases-zebra-both):not(.tld-bases-zebra-crosshatch)
+    .ntn-root .ntn-table .ntn-th,
+  body:not(.tld-disable-extended-base).tld-bases-zebra:is(.tld-bases-zebra-vertical, .tld-bases-zebra-both, .tld-bases-zebra-crosshatch)
+    .ntn-root .ntn-table .ntn-th:nth-child(even of .ntn-th) {
+    background-image: linear-gradient(var(--tld-bases-stripe), var(--tld-bases-stripe));
+  }
+  body:not(.tld-disable-extended-base).tld-bases-zebra.tld-bases-zebra-crosshatch .ntn-root .ntn-table .ntn-th {
+    background-image: linear-gradient(var(--tld-bases-stripe), var(--tld-bases-stripe));
+  }
+  body:not(.tld-disable-extended-base).tld-bases-zebra.tld-bases-zebra-crosshatch .ntn-root .ntn-table .ntn-th:nth-child(even of .ntn-th) {
+    background-image: linear-gradient(var(--tld-bases-stripe), var(--tld-bases-stripe)), linear-gradient(var(--tld-bases-stripe), var(--tld-bases-stripe));
+  }
+
+  body:not(.tld-disable-extended-base).tld-bases-center-horizontal .ntn-root :is(.ntn-th, .ntn-td, .ntn-cell, .ntn-list-prop-value, .ntn-feed-title) {
+    text-align: center;
+  }
+  body:not(.tld-disable-extended-base).tld-bases-center-horizontal .ntn-root :is(.ntn-th-title, .ntn-title-wrap, .ntn-pills, .ntn-list-title-row, .ntn-list-prop-value, .ntn-feed-title-wrap) {
+    justify-content: center;
+  }
+  body:not(.tld-disable-extended-base).tld-bases-center-vertical .ntn-root :is(.ntn-th, .ntn-td) {
+    vertical-align: middle;
+  }
+  body:not(.tld-disable-extended-base).tld-bases-center-vertical .ntn-root :is(.ntn-title-wrap, .ntn-th-title, .ntn-list-title-row) {
+    align-items: center;
+  }
+
   body.tld-statusbar .status-bar {
     position: fixed !important;
     right: var(--tld-statusbar-offset, 320px) !important;

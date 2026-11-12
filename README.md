@@ -58,6 +58,14 @@ Linked aliases center on their visible label while the edit pencil stays at
 the cell edge. Use **Bases text size** and **Bases row height** to adjust scale.
 The table keeps native scrolling, resizing, editing and selection indicators.
 
+### Extended Base
+Support activates automatically when the Extended Base plugin renders its
+Notion-style table, list, board or feed views. It uses the existing Bases frost,
+zebra, text-size and alignment settings; table views also support row height,
+grid-line hiding and all zebra directions. Pill and group colors stay intact.
+Enable **Style Settings → Translucid → Bases → Disable Extended Base support**
+to keep the plugin's own view styling. No plugin files are modified.
+
 ### Layout widths
 The **Layout widths** section has sliders for the **Settings modal width**
 (Obsidian 1.13 sizes it with `--modal-width`/`--modal-max-width`, stock 90vw
