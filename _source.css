@@ -530,6 +530,12 @@ settings:
         label: Both (checkerboard)
         value: tld-bases-zebra-both
   -
+    id: tld-bases-hide-lines
+    title: Hide Bases table lines
+    description: Hide row, column, header and outer table borders. Keep zebra shading, resizing and active-cell indicators.
+    type: class-toggle
+    default: false
+  -
     id: tld-bases-center-horizontal
     title: Center Bases text horizontally
     description: Center table headings and values, including numbers, and card text.
@@ -1133,6 +1139,15 @@ settings:
 /* Bases uses virtualized, positioned flex cells. Keep those measurements,
    scroll containers, resize handles, editing and selection styles native. */
 @layer bases {
+  body.tld-bases-hide-lines .bases-view {
+    --bases-table-column-border-width: 0px;
+    --bases-table-row-border-width: 0px;
+    --bases-table-container-border-width: 0px;
+    --bases-table-border-color: transparent;
+    --table-border-color: transparent;
+    --bases-embed-border-width: 0px;
+  }
+
   .bases-view {
     --bases-table-font-size: var(--tld-bases-font-size, var(--font-smaller));
     --bases-cards-font-size: var(--tld-bases-font-size, var(--font-smaller));
