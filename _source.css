@@ -642,6 +642,27 @@ settings:
     level: 1
     collapsed: true
   -
+    id: tld-nn-indent-zebra
+    title: Notebook Navigator gradient zebra guides
+    description: Horizontal gradient bands alternate by indentation depth. Requires Notebook Navigator's Show indent guides setting.
+    type: class-toggle
+    default: false
+  -
+    id: tld-nn-indent-strength
+    title: Navigator guide shading strength
+    type: variable-number-slider
+    default: 20
+    min: 0
+    max: 60
+    step: 1
+    format: '%'
+  -
+    id: tld-nn-indent-color
+    title: Navigator guide shading color
+    type: variable-color
+    default: '#9c9c9c'
+    format: hex
+  -
     id: tld-copilot
     title: Copilot borderless glass
     type: class-toggle
@@ -2217,6 +2238,31 @@ settings:
   body .notebook-navigator {
     --nn-theme-divider-border-color: transparent !important;
     --nn-theme-divider-resize-handle-hover-bg: transparent !important;
+  }
+
+  /* Keep native line geometry, RTL/mobile offsets and pointer-events intact.
+     Only a decorative band is added, one indent-step wide, so adjacent depths
+     never stack. Logical guide depth, not recycled row order, sets the zebra. */
+  body.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide {
+    --tld-nn-guide-angle: 90deg;
+    --tld-nn-guide-mix: calc(var(--tld-nn-indent-strength, 20%) * (1 - 0.6 * mod(var(--nn-indent-guide-level, 0), 2)));
+  }
+  body.mod-rtl.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide {
+    --tld-nn-guide-angle: 270deg;
+  }
+  body.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 50%;
+    width: var(--nn-setting-nav-indent);
+    background: linear-gradient(
+      var(--tld-nn-guide-angle),
+      color-mix(in srgb, var(--tld-nn-indent-color, #9c9c9c) var(--tld-nn-guide-mix), transparent),
+      transparent
+    );
+    pointer-events: none;
+    z-index: -1;
   }
 }
 

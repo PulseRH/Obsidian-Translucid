@@ -58,6 +58,13 @@ Linked aliases center on their visible label while the edit pencil stays at
 the cell edge. Use **Bases text size** and **Bases row height** to adjust scale.
 The table keeps native scrolling, resizing, editing and selection indicators.
 
+### Notebook Navigator indentation guides
+Enable **Style Settings → Translucid → Plugins → Notebook Navigator gradient
+zebra guides**, then adjust shading colour and strength. Notebook Navigator's
+**Show indent guides** setting must also be enabled. Horizontal gradients fade
+across each indentation column and alternate by nesting depth. Native guide
+lines, row heights, selection and click targets are retained; RTL fades reverse.
+
 ### Extended Base
 Support activates automatically when the Extended Base plugin renders its
 Notion-style table, list, board or feed views. It uses the existing Bases frost,
