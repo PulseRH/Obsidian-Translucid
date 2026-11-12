@@ -40,6 +40,9 @@ the previous snippet setup.
 Under **Style Settings → Translucid → Bases**, enable frosted backgrounds and
 zebra rows for table, cards and list views. Adjust the blur strength and toggle
 horizontal and vertical centering independently (centering is off by default).
+Choose **Bases zebra direction** for horizontal rows, vertical columns, or both
+as a checkerboard. Each table cell receives at most one stripe tint, so crossing
+directions cannot darken each other. Cards and lists keep alternating items.
 Linked aliases center on their visible label while the edit pencil stays at
 the cell edge. Use **Bases text size** and **Bases row height** to adjust scale.
 The table keeps native scrolling, resizing, editing and selection indicators.

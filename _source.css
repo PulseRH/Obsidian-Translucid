@@ -508,10 +508,27 @@ settings:
     format: px
   -
     id: tld-bases-zebra
-    title: Zebra rows in Bases
+    title: Zebra styling in Bases
     description: Alternating translucent fills for table rows, cards and list items.
     type: class-toggle
     default: true
+  -
+    id: tld-bases-zebra-direction
+    title: Bases zebra direction
+    description: Table stripes by row, by column, or a checkerboard using one tint per cell. Cards and lists keep alternating items.
+    type: class-select
+    allowEmpty: false
+    default: tld-bases-zebra-horizontal
+    options:
+      -
+        label: Horizontal (rows)
+        value: tld-bases-zebra-horizontal
+      -
+        label: Vertical (columns)
+        value: tld-bases-zebra-vertical
+      -
+        label: Both (checkerboard)
+        value: tld-bases-zebra-both
   -
     id: tld-bases-center-horizontal
     title: Center Bases text horizontally
@@ -1144,7 +1161,20 @@ settings:
   body.theme-light.tld-bases-zebra .bases-view {
     --tld-bases-stripe: rgba(0, 0, 0, 0.04);
   }
-  body.tld-bases-zebra .bases-tbody > .bases-tr:nth-child(even):not(.is-measuring),
+  /* Paint table stripes on cells only. Row and column tints never stack.
+     No direction class preserves the earlier horizontal default. Native
+     focus/editing backgrounds and selection overlays remain available. */
+  body.tld-bases-zebra:not(.tld-bases-zebra-vertical):not(.tld-bases-zebra-both)
+    .bases-tbody > .bases-tr:nth-child(even) > .bases-td:not(.is-measuring):not(:focus-within),
+  body.tld-bases-zebra.tld-bases-zebra-vertical:not(.tld-bases-zebra-both)
+    .bases-tbody > .bases-tr > .bases-td:nth-child(even of .bases-td):not(.is-measuring):not(:focus-within),
+  body.tld-bases-zebra.tld-bases-zebra-both
+    .bases-tbody > .bases-tr:nth-child(odd) > .bases-td:nth-child(even of .bases-td):not(.is-measuring):not(:focus-within),
+  body.tld-bases-zebra.tld-bases-zebra-both
+    .bases-tbody > .bases-tr:nth-child(even) > .bases-td:nth-child(odd of .bases-td):not(.is-measuring):not(:focus-within) {
+    background-color: var(--tld-bases-stripe);
+  }
+
   body.tld-bases-zebra .bases-cards-group > .bases-cards-item:nth-child(even),
   body.tld-bases-zebra .bases-list-group-list > .bases-list-item:nth-child(even) {
     background-color: var(--tld-bases-stripe);
