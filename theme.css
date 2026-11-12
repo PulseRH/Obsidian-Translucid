@@ -3199,24 +3199,31 @@ body.theme-light {
     --tld-bases-stripe: rgba(0, 0, 0, 0.04);
   }
 
-  /* Group containers retain their logical order even when their data rows
-     are virtualized. Shade their full-width titles by group, not row nodes. */
-  body.tld-bases-zebra .bases-table-container > .bases-table:nth-child(even of .bases-table) > .bases-group-heading {
-    background-color: var(--tld-bases-stripe);
+  /* Paint the gap and title as one surface on the GROUP, not the title:
+     native title overflow:hidden would clip any paint above its own box.
+     Group order remains stable while data rows are virtualized. */
+  body.tld-bases-zebra .bases-table-container > .bases-table:has(> .bases-group-heading) {
+    --tld-bases-group-tint: transparent;
+    --tld-bases-heading-gap: 0px;
+    z-index: 0;
   }
-
-  /* Preserve the native space above each later group, painting that space
-     with its own heading's tint. This adds no height and takes no clicks. */
-  body.tld-bases-zebra .bases-table-container > .bases-table ~ .bases-table > .bases-group-heading {
-    position: relative;
+  body.tld-bases-zebra .bases-table-container > .bases-table:nth-child(even of .bases-table) {
+    --tld-bases-group-tint: var(--tld-bases-stripe);
   }
-  body.tld-bases-zebra .bases-table-container > .bases-table ~ .bases-table > .bases-group-heading::before {
+  body.tld-bases-zebra .bases-table-container > .bases-table ~ .bases-table {
+    --tld-bases-heading-gap: var(--bases-table-group-gap, 10px);
+  }
+  body.tld-bases-zebra .bases-table-container > .bases-table > .bases-group-heading {
+    background-color: transparent;
+  }
+  body.tld-bases-zebra .bases-table-container > .bases-table:has(> .bases-group-heading)::before {
     content: "";
     position: absolute;
-    top: calc(var(--bases-table-group-gap, 10px) * -1);
+    top: calc(var(--tld-bases-heading-gap) * -1);
     inset-inline: 0;
-    height: var(--bases-table-group-gap, 10px);
-    background-color: inherit;
+    height: calc(var(--bases-table-row-height) + var(--tld-bases-heading-gap));
+    z-index: -1;
+    background-color: var(--tld-bases-group-tint);
     pointer-events: none;
   }
 
