@@ -8,7 +8,9 @@ A translucent glass theme for Obsidian, consolidated from 13 personal snippets.
   marker).
 - `theme.css` — generated output that Obsidian loads. **Do not hand-edit** — it is
   overwritten by every build.
-- `_build.ps1` — assembles `theme.css` from `_source.css` + the source snippets.
+- `_base.css` — theme-owned base glass styles, with existing fixes applied.
+- `_excalibrain.css` — theme-owned, scoped Excalibrain styles.
+- `_build.ps1` — assembles `theme.css` from these three local source files.
 - `manifest.json` — theme metadata.
 
 ## Architecture
@@ -25,8 +27,9 @@ transparency to be overridden (image only showing on the ribbon/right sidebar).
 
 - **Features** live in `_source.css` below the `==FEATURES-BELOW==` marker, each
   gated behind a `body.tld-*` class that Style Settings toggles.
-- **Base** ("combined fixed") and **Excalibrain** are pulled verbatim from
-  `../snippets/` and inserted ahead of the features by the build.
+- **Base** and **Excalibrain** live in `_base.css` and `_excalibrain.css` in this
+  repository and are inserted ahead of the features by the build. No files from
+  the `.obsidian/snippets` directory are needed or read.
 
 ## Feature toggles
 Open **Settings → Style Settings → Translucid**. Each optional feature is a

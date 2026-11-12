@@ -1,0 +1,797 @@
+/* ===== Excalibrain + Embedded Notes for [light ttransparnt theme] edit (2).css ===== */
+/* Enable this alongside [light ttransparnt theme] edit (2).css. */
+
+:root {
+  --lt-excalibrain-glass-bg: rgba(40, 39, 40, 0.2);
+  --lt-excalibrain-glass-bg-strong: rgba(0, 0, 0, 0.3);
+  --lt-excalibrain-glass-hover: rgba(255, 255, 255, 0.08);
+  --lt-excalibrain-glass-border: rgba(255, 255, 255, 0.08);
+  --lt-excalibrain-glass-blur: brightness(0.96) blur(18px);
+  --lt-excalibrain-card-radius: 8px;
+  --lt-excalibrain-embed-panel-bg: rgba(6, 10, 8, 0.1);
+  --lt-excalibrain-embed-panel-bg-strong: rgba(6, 10, 8, 0.14);
+  --lt-excalibrain-embed-panel-border: transparent;
+  --lt-excalibrain-embed-panel-blur: none;
+  --lt-excalibrain-embed-text: rgba(245, 245, 245, 0.94);
+  --lt-excalibrain-embed-muted: rgba(245, 245, 245, 0.68);
+  --lt-excalibrain-embed-link: rgba(255, 221, 92, 0.96);
+}
+
+/* Excalibrain pane background */
+.workspace-leaf-content[data-type="excalibrain"],
+.workspace-leaf-content[data-type="excalibrain"] .view-content,
+.workspace-leaf-content[data-type="excalibrain-view"],
+.workspace-leaf-content[data-type="excalibrain-view"] .view-content,
+.workspace-leaf-content[data-type="excalibrain"],
+.workspace-leaf-content[data-type="excalibrain"] .view-content,
+.workspace-leaf-content:has(.excalibrain-contentEl),
+.workspace-leaf-content:has(#excalibrain),
+.workspace-leaf-content:has(.excalibrain-contentEl) .view-content,
+.workspace-leaf-content:has(#excalibrain) .view-content,
+.view-content:has(.excalibrain),
+.view-content:has(.excalibrain-view),
+.view-content:has(.excalibrain-contentEl),
+.view-content:has(#excalibrain),
+.excalibrain,
+.excalibrain-view,
+.excalibrain-container,
+.excalibrain-workspace,
+.excalibrain-canvas,
+.excalibrain-contentEl,
+#excalibrain {
+  --background-primary: transparent;
+  --background-secondary: transparent;
+  --background-secondary-alt: transparent;
+  --canvas-background: transparent;
+  --excalidraw-background-color: transparent;
+  --excalidraw-bg-color: transparent;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Frosted layer over the Excalibrain workspace */
+.workspace-leaf-content[data-type="excalibrain"] .view-content,
+.workspace-leaf-content[data-type="excalibrain-view"] .view-content,
+.workspace-leaf-content[data-type="excalibrain"] .view-content,
+.workspace-leaf-content:has(.excalibrain-contentEl) .view-content,
+.workspace-leaf-content:has(#excalibrain) .view-content,
+.view-content:has(.excalibrain),
+.view-content:has(.excalibrain-view),
+.view-content:has(.excalibrain-contentEl),
+.view-content:has(#excalibrain) {
+  backdrop-filter: var(--lt-excalibrain-glass-blur) !important;
+  -webkit-backdrop-filter: var(--lt-excalibrain-glass-blur) !important;
+}
+
+/* Excalibrain nodes/cards/controls */
+.excalibrain .excalibrain-node,
+.excalibrain .excalibrain-card,
+.excalibrain .excalibrain-note,
+.excalibrain .excalibrain-control,
+.excalibrain .excalibrain-menu,
+.excalibrain-view .excalibrain-node,
+.excalibrain-view .excalibrain-card,
+.excalibrain-view .excalibrain-note,
+.excalibrain-view .excalibrain-control,
+.excalibrain-view .excalibrain-menu,
+.workspace-leaf-content[data-type="excalibrain"] .workspace-leaf-content,
+.workspace-leaf-content[data-type="excalibrain"] .graph-controls,
+.workspace-leaf-content[data-type="excalibrain"] .graph-control,
+.workspace-leaf-content[data-type="excalibrain-view"] .graph-controls,
+.workspace-leaf-content[data-type="excalibrain-view"] .graph-control,
+.workspace-leaf-content[data-type="excalibrain"] .graph-controls,
+.workspace-leaf-content[data-type="excalibrain"] .graph-control,
+.workspace-leaf-content:has(.excalibrain-contentEl) .graph-controls,
+.workspace-leaf-content:has(.excalibrain-contentEl) .graph-control,
+.excalibrain-contentEl [class*="node" i],
+.excalibrain-contentEl [class*="card" i],
+.excalibrain-contentEl [class*="control" i],
+.excalibrain-contentEl [class*="menu" i] {
+  background: var(--lt-excalibrain-glass-bg) !important;
+  background-color: var(--lt-excalibrain-glass-bg) !important;
+  backdrop-filter: var(--lt-excalibrain-glass-blur) !important;
+  -webkit-backdrop-filter: var(--lt-excalibrain-glass-blur) !important;
+  border: 1px solid var(--lt-excalibrain-glass-border) !important;
+  border-radius: var(--lt-excalibrain-card-radius) !important;
+  box-shadow: none !important;
+}
+
+.excalibrain .excalibrain-node:hover,
+.excalibrain .excalibrain-card:hover,
+.excalibrain .excalibrain-note:hover,
+.excalibrain-view .excalibrain-node:hover,
+.excalibrain-view .excalibrain-card:hover,
+.excalibrain-view .excalibrain-note:hover {
+  background: var(--lt-excalibrain-glass-hover) !important;
+  background-color: var(--lt-excalibrain-glass-hover) !important;
+}
+
+/* Keep SVG/canvas layers clear so the vault background shows through */
+.workspace-leaf-content[data-type="excalibrain"] svg,
+.workspace-leaf-content[data-type="excalibrain"] canvas,
+.workspace-leaf-content[data-type="excalibrain-view"] svg,
+.workspace-leaf-content[data-type="excalibrain-view"] canvas,
+.workspace-leaf-content[data-type="excalibrain"] svg,
+.workspace-leaf-content[data-type="excalibrain"] canvas,
+.workspace-leaf-content:has(.excalibrain-contentEl) svg,
+.workspace-leaf-content:has(.excalibrain-contentEl) canvas,
+.excalibrain svg,
+.excalibrain canvas,
+.excalibrain-view svg,
+.excalibrain-view canvas,
+.excalibrain-contentEl svg,
+.excalibrain-contentEl canvas {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Excalibrain/Excalidraw-style SVG background rectangles */
+.workspace-leaf-content[data-type="excalibrain"] svg > rect:first-child,
+.workspace-leaf-content:has(.excalibrain-contentEl) svg > rect:first-child,
+.view-content:has(.excalibrain-contentEl) svg > rect:first-child,
+.excalibrain-contentEl svg > rect:first-child,
+#excalibrain svg > rect:first-child {
+  fill: transparent !important;
+}
+
+/* Some builds use an Excalidraw canvas/root inside Excalibrain. */
+.workspace-leaf-content[data-type="excalibrain"] .excalidraw,
+.workspace-leaf-content[data-type="excalibrain"] .excalidraw-container,
+.workspace-leaf-content[data-type="excalibrain"] .excalidraw-wrapper,
+.workspace-leaf-content:has(.excalibrain-contentEl) .excalidraw,
+.workspace-leaf-content:has(.excalibrain-contentEl) .excalidraw-container,
+.workspace-leaf-content:has(.excalibrain-contentEl) .excalidraw-wrapper {
+  --background-primary: transparent;
+  --background-secondary: transparent;
+  --excalidraw-background-color: transparent;
+  --excalidraw-bg-color: transparent;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Note embeds / transclusions */
+.markdown-preview-view .markdown-embed,
+.markdown-preview-view .internal-embed,
+.markdown-rendered .markdown-embed,
+.markdown-rendered .internal-embed,
+.cm-embed-block,
+.cm-embed-block:focus-within {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid var(--lt-excalibrain-glass-border) !important;
+  border-radius: var(--lt-excalibrain-card-radius) !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+.markdown-preview-view .markdown-embed:hover,
+.markdown-preview-view .internal-embed:hover,
+.markdown-rendered .markdown-embed:hover,
+.markdown-rendered .internal-embed:hover,
+.cm-embed-block:hover {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  outline: none !important;
+}
+
+.markdown-embed .markdown-embed-content,
+.markdown-embed .markdown-preview-view,
+.markdown-embed .markdown-preview-sizer,
+.markdown-embed .markdown-preview-section,
+.internal-embed .markdown-preview-view,
+.internal-embed .markdown-preview-sizer,
+.internal-embed .markdown-preview-section,
+.cm-embed-block .markdown-rendered {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.markdown-embed-title,
+.markdown-embed-link {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Nested embeds get a little more structure without becoming solid. */
+.markdown-embed .markdown-embed,
+.internal-embed .internal-embed,
+.markdown-embed .internal-embed,
+.internal-embed .markdown-embed {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Excalibrain note previews can carry plugin/inline node colours. Clear those layers too. */
+.excalibrain-contentEl .markdown-embed,
+.excalibrain-contentEl .internal-embed,
+.excalibrain-contentEl .markdown-embed *,
+.excalibrain-contentEl .internal-embed *,
+.excalibrain-contentEl .markdown-preview-view,
+.excalibrain-contentEl .markdown-preview-sizer,
+.excalibrain-contentEl .markdown-preview-section,
+.excalibrain-contentEl .markdown-rendered,
+.excalibrain-contentEl .markdown-embed-content,
+.excalibrain-contentEl foreignObject,
+.excalibrain-contentEl foreignObject > *,
+.excalibrain-contentEl foreignObject div {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.excalibrain-contentEl .markdown-embed,
+.excalibrain-contentEl .internal-embed {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none !important;
+}
+
+/* CDP: Excalibrain note previews are Excalidraw canvas-node embeddables. */
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node,
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node-container,
+.workspace-leaf-content[data-type="excalibrain"] .excalidraw-mdEmbed-hideFilename,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node-container,
+.workspace-leaf-content:has(.excalibrain-contentEl) .excalidraw-mdEmbed-hideFilename,
+.view-content:has(.excalibrain-contentEl) .canvas-node,
+.view-content:has(.excalibrain-contentEl) .canvas-node-container,
+.view-content:has(.excalibrain-contentEl) .excalidraw-mdEmbed-hideFilename,
+.excalibrain-contentEl .canvas-node,
+.excalibrain-contentEl .canvas-node-container,
+.excalibrain-contentEl .excalidraw-mdEmbed-hideFilename {
+  --canvas-background: transparent !important;
+  --background-primary: transparent !important;
+  --background-secondary: transparent !important;
+  --background-secondary-alt: transparent !important;
+  --canvas-color: transparent !important;
+  --canvas-border: transparent !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node table,
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node thead,
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node tbody,
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node tr,
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node th,
+.workspace-leaf-content[data-type="excalibrain"] .canvas-node td,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node table,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node thead,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node tbody,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node tr,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node th,
+.workspace-leaf-content:has(.excalibrain-contentEl) .canvas-node td,
+.excalibrain-contentEl .canvas-node table,
+.excalibrain-contentEl .canvas-node thead,
+.excalibrain-contentEl .canvas-node tbody,
+.excalibrain-contentEl .canvas-node tr,
+.excalibrain-contentEl .canvas-node th,
+.excalibrain-contentEl .canvas-node td {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.canvas-node.excalidraw-mdEmbed-hideFilename,
+.canvas-node.excalidraw-mdEmbed-hideFilename *,
+.canvas-node-container,
+.canvas-node-container *,
+.excalidraw-mdEmbed-hideFilename,
+.excalidraw-mdEmbed-hideFilename * {
+  --canvas-background: transparent !important;
+  --background-primary: transparent !important;
+  --background-secondary: transparent !important;
+  --background-secondary-alt: transparent !important;
+  background-color: transparent !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.canvas-node-content.markdown-embed .dataview.table-view-table,
+.canvas-node-content.markdown-embed .dataview.table-view-table *,
+.canvas-node-content.markdown-embed .block-language-dataview,
+.canvas-node-content.markdown-embed .block-language-dataview *,
+.excalidraw__embeddable__content .dataview.table-view-table,
+.excalidraw__embeddable__content .dataview.table-view-table *,
+.excalidraw__embeddable__content .block-language-dataview,
+.excalidraw__embeddable__content .block-language-dataview * {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Keep Excalibrain embedded note text readable in preview and interact mode. */
+.canvas-node.excalidraw-mdEmbed-hideFilename,
+.canvas-node.excalidraw-mdEmbed-hideFilename *,
+.canvas-node-content.markdown-embed,
+.canvas-node-content.markdown-embed *,
+.excalidraw__embeddable__content .markdown-embed,
+.excalidraw__embeddable__content .markdown-embed *,
+.excalidraw__embeddable__content .markdown-preview-view,
+.excalidraw__embeddable__content .markdown-preview-view * {
+  color: var(--lt-excalibrain-embed-text) !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow: none !important;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+.canvas-node.excalidraw-mdEmbed-hideFilename a,
+.canvas-node.excalidraw-mdEmbed-hideFilename .internal-link,
+.canvas-node-content.markdown-embed a,
+.canvas-node-content.markdown-embed .internal-link,
+.excalidraw__embeddable__content .markdown-embed a,
+.excalidraw__embeddable__content .markdown-embed .internal-link {
+  color: var(--lt-excalibrain-embed-link) !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow: none !important;
+  text-decoration-color: color-mix(in srgb, var(--lt-excalibrain-embed-link) 55%, transparent) !important;
+}
+
+.canvas-node.excalidraw-mdEmbed-hideFilename .tag,
+.canvas-node-content.markdown-embed .tag,
+.excalidraw__embeddable__content .markdown-embed .tag,
+.canvas-node.excalidraw-mdEmbed-hideFilename .metadata-property-key,
+.canvas-node.excalidraw-mdEmbed-hideFilename .metadata-property-value,
+.canvas-node-content.markdown-embed .metadata-property-key,
+.canvas-node-content.markdown-embed .metadata-property-value {
+  color: var(--lt-excalibrain-embed-muted) !important;
+}
+
+/* Interact/edit mode can reintroduce Obsidian light-theme text variables. */
+body .excalidraw__embeddable__content,
+body .excalidraw__embeddable__content *,
+body .canvas-node.theme-light.excalidraw-mdEmbed-hideFilename,
+body .canvas-node.theme-light.excalidraw-mdEmbed-hideFilename *,
+body .canvas-node.excalidraw-mdEmbed-hideFilename.is-editing,
+body .canvas-node.excalidraw-mdEmbed-hideFilename.is-editing *,
+body .canvas-node.excalidraw-mdEmbed-hideFilename.is-focused,
+body .canvas-node.excalidraw-mdEmbed-hideFilename.is-focused * {
+  --text-normal: var(--lt-excalibrain-embed-text) !important;
+  --text-muted: var(--lt-excalibrain-embed-muted) !important;
+  --text-faint: rgba(245, 245, 245, 0.48) !important;
+  --h1-color: var(--lt-excalibrain-embed-text) !important;
+  --h2-color: var(--lt-excalibrain-embed-text) !important;
+  --h3-color: var(--lt-excalibrain-embed-text) !important;
+  --h4-color: var(--lt-excalibrain-embed-text) !important;
+  --h5-color: var(--lt-excalibrain-embed-text) !important;
+  --h6-color: var(--lt-excalibrain-embed-muted) !important;
+  --link-color: var(--lt-excalibrain-embed-link) !important;
+  --link-color-hover: rgba(255, 233, 140, 0.98) !important;
+  --link-unresolved-color: var(--lt-excalibrain-embed-link) !important;
+  --link-external-color: var(--lt-excalibrain-embed-link) !important;
+  --code-normal: var(--lt-excalibrain-embed-text) !important;
+  caret-color: var(--lt-excalibrain-embed-text) !important;
+}
+
+body .excalidraw__embeddable__content :is(
+  .markdown-preview-view,
+  .markdown-preview-section,
+  .markdown-preview-sizer,
+  .markdown-rendered,
+  .markdown-embed-content,
+  .markdown-source-view,
+  .cm-editor,
+  .cm-scroller,
+  .cm-content,
+  .cm-line,
+  .cm-line *,
+  .HyperMD-header,
+  .HyperMD-header *,
+  .cm-header,
+  .cm-strong,
+  .cm-em,
+  .cm-formatting,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  li,
+  ul,
+  ol,
+  blockquote,
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td,
+  pre,
+  code,
+  span,
+  div
+),
+body .canvas-node.excalidraw-mdEmbed-hideFilename :is(
+  .markdown-preview-view,
+  .markdown-preview-section,
+  .markdown-preview-sizer,
+  .markdown-rendered,
+  .markdown-embed-content,
+  .markdown-source-view,
+  .cm-editor,
+  .cm-scroller,
+  .cm-content,
+  .cm-line,
+  .cm-line *,
+  .HyperMD-header,
+  .HyperMD-header *,
+  .cm-header,
+  .cm-strong,
+  .cm-em,
+  .cm-formatting,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  li,
+  ul,
+  ol,
+  blockquote,
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td,
+  pre,
+  code,
+  span,
+  div
+) {
+  color: var(--lt-excalibrain-embed-text) !important;
+  -webkit-text-fill-color: var(--lt-excalibrain-embed-text) !important;
+  text-shadow: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  opacity: 1 !important;
+}
+
+body .excalidraw__embeddable__content :is(
+  a,
+  a *,
+  .internal-link,
+  .internal-link *,
+  .external-link,
+  .external-link *,
+  .cm-link,
+  .cm-url,
+  .cm-hmd-internal-link,
+  .cm-hmd-internal-link *
+),
+body .canvas-node.excalidraw-mdEmbed-hideFilename :is(
+  a,
+  a *,
+  .internal-link,
+  .internal-link *,
+  .external-link,
+  .external-link *,
+  .cm-link,
+  .cm-url,
+  .cm-hmd-internal-link,
+  .cm-hmd-internal-link *
+) {
+  color: var(--lt-excalibrain-embed-link) !important;
+  -webkit-text-fill-color: var(--lt-excalibrain-embed-link) !important;
+}
+
+/* Extra paint-level guard for Excalidraw interactive markdown clones. */
+body .view-content.excalidraw-view :is(
+  .canvas-node-content.markdown-embed,
+  .markdown-embed-content,
+  .markdown-preview-view,
+  .markdown-rendered,
+  .markdown-source-view,
+  .cm-editor,
+  .cm-scroller,
+  .cm-content,
+  .cm-line,
+  .cm-line *,
+  .el-h1,
+  .el-h2,
+  .el-h3,
+  .el-h4,
+  .el-h5,
+  .el-h6,
+  .el-p,
+  .el-ul,
+  .el-ol,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  li,
+  span,
+  div
+),
+body .excalibrain-contentEl :is(
+  .canvas-node-content.markdown-embed,
+  .markdown-embed-content,
+  .markdown-preview-view,
+  .markdown-rendered,
+  .markdown-source-view,
+  .cm-editor,
+  .cm-scroller,
+  .cm-content,
+  .cm-line,
+  .cm-line *,
+  .el-h1,
+  .el-h2,
+  .el-h3,
+  .el-h4,
+  .el-h5,
+  .el-h6,
+  .el-p,
+  .el-ul,
+  .el-ol,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  li,
+  span,
+  div
+) {
+  color: var(--lt-excalibrain-embed-text) !important;
+  -webkit-text-fill-color: var(--lt-excalibrain-embed-text) !important;
+  fill: var(--lt-excalibrain-embed-text) !important;
+}
+
+body .view-content.excalidraw-view :is(
+  .canvas-node-content.markdown-embed,
+  .markdown-embed-content,
+  .markdown-preview-view,
+  .markdown-rendered,
+  .markdown-source-view,
+  .cm-editor
+) :is(a, a *, .internal-link, .internal-link *, .external-link, .external-link *, .cm-link, .cm-url),
+body .excalibrain-contentEl :is(
+  .canvas-node-content.markdown-embed,
+  .markdown-embed-content,
+  .markdown-preview-view,
+  .markdown-rendered,
+  .markdown-source-view,
+  .cm-editor
+) :is(a, a *, .internal-link, .internal-link *, .external-link, .external-link *, .cm-link, .cm-url) {
+  color: var(--lt-excalibrain-embed-link) !important;
+  -webkit-text-fill-color: var(--lt-excalibrain-embed-link) !important;
+  fill: var(--lt-excalibrain-embed-link) !important;
+}
+
+/* Excalidraw interact mode renders the embedded note inside its own theme-light iframe. */
+body.theme-light {
+  --lt-excalibrain-embed-panel-bg: rgba(6, 10, 8, 0.1);
+  --lt-excalibrain-embed-panel-bg-strong: rgba(6, 10, 8, 0.14);
+  --lt-excalibrain-embed-panel-border: transparent;
+  --lt-excalibrain-embed-panel-blur: none;
+  --lt-excalibrain-embed-text: rgba(245, 245, 245, 0.94);
+  --lt-excalibrain-embed-muted: rgba(245, 245, 245, 0.68);
+  --lt-excalibrain-embed-link: rgba(255, 221, 92, 0.96);
+}
+
+body.theme-light :is(
+  .markdown-source-view,
+  .markdown-preview-view,
+  .markdown-rendered,
+  .markdown-preview-sizer,
+  .markdown-preview-section,
+  .cm-editor,
+  .cm-scroller,
+  .cm-content,
+  .cm-line,
+  .cm-line *,
+  .cm-active,
+  .HyperMD-header,
+  .HyperMD-header *,
+  .cm-header,
+  .cm-strong,
+  .cm-em,
+  .cm-formatting,
+  .metadata-container,
+  .metadata-container *,
+  .metadata-properties-title,
+  .metadata-property,
+  .metadata-property *,
+  .inline-title,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  li,
+  ul,
+  ol,
+  blockquote,
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td,
+  pre,
+  code,
+  span,
+  div
+) {
+  --text-normal: var(--lt-excalibrain-embed-text) !important;
+  --text-muted: var(--lt-excalibrain-embed-muted) !important;
+  --text-faint: rgba(245, 245, 245, 0.48) !important;
+  --h1-color: var(--lt-excalibrain-embed-text) !important;
+  --h2-color: var(--lt-excalibrain-embed-text) !important;
+  --h3-color: var(--lt-excalibrain-embed-text) !important;
+  --h4-color: var(--lt-excalibrain-embed-text) !important;
+  --h5-color: var(--lt-excalibrain-embed-text) !important;
+  --h6-color: var(--lt-excalibrain-embed-muted) !important;
+  --link-color: var(--lt-excalibrain-embed-link) !important;
+  --link-color-hover: rgba(255, 233, 140, 0.98) !important;
+  --link-unresolved-color: var(--lt-excalibrain-embed-link) !important;
+  --link-external-color: var(--lt-excalibrain-embed-link) !important;
+  --code-normal: var(--lt-excalibrain-embed-text) !important;
+  color: var(--lt-excalibrain-embed-text) !important;
+  -webkit-text-fill-color: var(--lt-excalibrain-embed-text) !important;
+  fill: var(--lt-excalibrain-embed-text) !important;
+  caret-color: var(--lt-excalibrain-embed-text) !important;
+  text-shadow: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}
+
+body.theme-light :is(
+  .metadata-properties-title,
+  .metadata-property-key,
+  .metadata-property-value,
+  .cm-formatting,
+  .cm-formatting-header,
+  .cm-hashtag-begin,
+  .cm-hashtag-end
+) {
+  color: var(--lt-excalibrain-embed-muted) !important;
+  -webkit-text-fill-color: var(--lt-excalibrain-embed-muted) !important;
+  fill: var(--lt-excalibrain-embed-muted) !important;
+}
+
+body.theme-light :is(
+  a,
+  a *,
+  .internal-link,
+  .internal-link *,
+  .external-link,
+  .external-link *,
+  .cm-link,
+  .cm-url,
+  .cm-hmd-internal-link,
+  .cm-hmd-internal-link *
+) {
+  color: var(--lt-excalibrain-embed-link) !important;
+  -webkit-text-fill-color: var(--lt-excalibrain-embed-link) !important;
+  fill: var(--lt-excalibrain-embed-link) !important;
+}
+
+/* Frosted panel so Excalibrain embeds remain distinct from busy image backgrounds. */
+body .excalidraw__embeddable-container,
+body .excalidraw__embeddable-container__inner,
+body .excalidraw__embeddable__outer,
+body .excalidraw__embeddable__content {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: transparent !important;
+  outline: none !important;
+  overflow: hidden !important;
+}
+
+body .canvas-node.excalidraw-mdEmbed-hideFilename,
+body .canvas-node.excalidraw-mdEmbed-hideFilename .canvas-node-container,
+body .canvas-node.excalidraw-mdEmbed-hideFilename .canvas-node-content.markdown-embed {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+}
+
+body .excalidraw__embeddable-container,
+body .excalidraw__embeddable__outer,
+body .canvas-node.excalidraw-mdEmbed-hideFilename {
+  border: none !important;
+  border-radius: 12px !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+body .canvas-node.excalidraw-mdEmbed-hideFilename.is-editing,
+body .canvas-node.excalidraw-mdEmbed-hideFilename.is-focused {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+body .excalidraw__embeddable-container {
+  position: relative !important;
+}
+
+body .excalidraw__embeddable-container::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 12px;
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      transparent 58%,
+      rgba(6, 10, 8, 0.055) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(6, 10, 8, 0.11),
+      transparent 10%,
+      transparent 90%,
+      rgba(6, 10, 8, 0.11)
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.04),
+      transparent 12%,
+      transparent 88%,
+      rgba(0, 0, 0, 0.07)
+    );
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.13) !important;
+}
+
+body .excalidraw__embeddable-container__inner,
+body .excalidraw__embeddable__outer,
+body .excalidraw__embeddable__content,
+body .canvas-node.excalidraw-mdEmbed-hideFilename {
+  position: relative !important;
+  z-index: 1 !important;
+  border-radius: 12px !important;
+  border: none !important;
+  outline: none !important;
+}
+
+body .canvas-node.excalidraw-mdEmbed-hideFilename .canvas-node-content.markdown-embed,
+body .canvas-node.excalidraw-mdEmbed-hideFilename .markdown-embed-content,
+body .canvas-node.excalidraw-mdEmbed-hideFilename .markdown-preview-view,
+body .canvas-node.excalidraw-mdEmbed-hideFilename .markdown-source-view,
+body .excalidraw__embeddable__content iframe.embed-iframe.is-controlled {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 12px !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.theme-light {
+  background: transparent !important;
+  background-color: transparent !important;
+}
