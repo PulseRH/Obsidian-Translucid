@@ -644,7 +644,7 @@ settings:
   -
     id: tld-nn-indent-zebra
     title: Notebook Navigator gradient zebra guides
-    description: Horizontal gradient bands alternate by indentation depth. Requires Notebook Navigator's Show indent guides setting.
+    description: Replace thin guide lines with horizontal gradient bands at deeper indentation levels. The first level stays clear. Requires Notebook Navigator's Show indent guides setting.
     type: class-toggle
     default: false
   -
@@ -2295,29 +2295,28 @@ settings:
     --nn-theme-divider-resize-handle-hover-bg: transparent !important;
   }
 
-  /* Keep native line geometry, RTL/mobile offsets and pointer-events intact.
-     Only a decorative band is added, one indent-step wide, so adjacent depths
-     never stack. Logical guide depth, not recycled row order, sets the zebra. */
+  /* Replace the native thin line with one full-height gradient surface.
+     No translated 0.5px line or separate pseudo-element to create seams.
+     Skip depth 0; depth 1 starts the alternating stronger/weaker pattern. */
   body.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide {
     --tld-nn-guide-angle: 90deg;
-    --tld-nn-guide-mix: calc(var(--tld-nn-indent-strength, 20%) * (1 - 0.6 * mod(var(--nn-indent-guide-level, 0), 2)));
-  }
-  body.mod-rtl.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide {
-    --tld-nn-guide-angle: 270deg;
-  }
-  body.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide::after {
-    content: "";
-    position: absolute;
-    inset-block: 0;
-    inset-inline-start: 50%;
+    --tld-nn-guide-mix: calc(var(--tld-nn-indent-strength, 20%) * (1 - 0.6 * mod(max(0, var(--nn-indent-guide-level, 0) - 1), 2)));
     width: var(--nn-setting-nav-indent);
-    background: linear-gradient(
+    transform: none;
+    opacity: clamp(0, var(--nn-indent-guide-level, 0), 1);
+    background-color: transparent;
+    background-image: linear-gradient(
       var(--tld-nn-guide-angle),
       color-mix(in srgb, var(--tld-nn-indent-color, #9c9c9c) var(--tld-nn-guide-mix), transparent),
       transparent
     );
     pointer-events: none;
-    z-index: -1;
+  }
+  body.mod-rtl.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide {
+    --tld-nn-guide-angle: 270deg;
+  }
+  body.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide::after {
+    content: none;
   }
 }
 

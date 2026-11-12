@@ -62,8 +62,9 @@ The table keeps native scrolling, resizing, editing and selection indicators.
 Enable **Style Settings → Translucid → Plugins → Notebook Navigator gradient
 zebra guides**, then adjust shading colour and strength. Notebook Navigator's
 **Show indent guides** setting must also be enabled. Horizontal gradients fade
-across each indentation column and alternate by nesting depth. Native guide
-lines, row heights, selection and click targets are retained; RTL fades reverse.
+across each deeper indentation column and alternate by nesting depth. The first
+level stays unshaded, and the plugin's thin lines are replaced by full-height
+bands. Row heights, selection and click targets stay intact; RTL fades reverse.
 
 ### Extended Base
 Support activates automatically when the Extended Base plugin renders its
