@@ -519,6 +519,26 @@ settings:
     type: class-toggle
     default: false
   -
+    id: tld-bases-font-size
+    title: Bases text size
+    description: Text size for table values and headings, cards and list views.
+    type: variable-number-slider
+    default: 14
+    min: 10
+    max: 28
+    step: 1
+    format: px
+  -
+    id: tld-bases-row-height
+    title: Bases row height
+    description: Increase alongside text size for more space in table rows.
+    type: variable-number-slider
+    default: 30
+    min: 24
+    max: 160
+    step: 2
+    format: px
+  -
     id: tld-bases-center-vertical
     title: Center Bases text vertically
     description: Center values within table rows, including multiline rows, and card property lines.
@@ -1096,6 +1116,16 @@ settings:
 /* Bases uses virtualized, positioned flex cells. Keep those measurements,
    scroll containers, resize handles, editing and selection styles native. */
 @layer bases {
+  .bases-view {
+    --bases-table-font-size: var(--tld-bases-font-size, var(--font-smaller));
+    --bases-cards-font-size: var(--tld-bases-font-size, var(--font-smaller));
+    --bases-table-row-height: var(--tld-bases-row-height, 30px);
+    --metadata-input-font-size: var(--tld-bases-font-size, var(--font-smaller));
+  }
+  .bases-view :is(.bases-cards-line, .bases-list-item) {
+    font-size: var(--tld-bases-font-size, var(--font-smaller));
+  }
+
   body.tld-bases-frost .bases-view {
     --bases-table-group-background: transparent;
     --bases-table-header-background: color-mix(in srgb, var(--settings-glass-color) 65%, transparent);
@@ -1140,6 +1170,19 @@ settings:
   }
   body.tld-bases-center-horizontal .bases-cards-line :is(.value-list-container, .multi-select-container) {
     justify-content: center;
+  }
+
+  /* The native hidden pencil has an auto margin that pushes an aliased link
+     to the start. Take it out of the flex flow and reserve equal space on
+     both sides so the visible label, not label plus pencil, is centered. */
+  body.tld-bases-center-horizontal .bases-table-cell .metadata-link {
+    position: relative;
+    padding-inline: calc(var(--icon-size) + var(--size-4-2));
+  }
+  body.tld-bases-center-horizontal .bases-table-cell .metadata-link-flair {
+    position: absolute;
+    inset-inline-end: var(--size-4-1);
+    margin-inline-start: 0;
   }
 
   body.tld-bases-center-vertical .bases-table-container .bases-table-cell,
