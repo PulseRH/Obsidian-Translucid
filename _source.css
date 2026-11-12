@@ -515,7 +515,7 @@ settings:
   -
     id: tld-bases-zebra-direction
     title: Bases zebra direction
-    description: Table stripes by row, by column, or a checkerboard using one tint per cell. Cards and lists keep alternating items.
+    description: Table stripes by row, column, checkerboard or combined bands. Each cell gets one tint. Cards and lists keep alternating items.
     type: class-select
     allowEmpty: false
     default: tld-bases-zebra-horizontal
@@ -529,6 +529,9 @@ settings:
       -
         label: Both (checkerboard)
         value: tld-bases-zebra-both
+      -
+        label: Both (crosshatch bands)
+        value: tld-bases-zebra-crosshatch
   -
     id: tld-bases-hide-lines
     title: Hide Bases table lines
@@ -1179,14 +1182,18 @@ settings:
   /* Paint table stripes on cells only. Row and column tints never stack.
      No direction class preserves the earlier horizontal default. Native
      focus/editing backgrounds and selection overlays remain available. */
-  body.tld-bases-zebra:not(.tld-bases-zebra-vertical):not(.tld-bases-zebra-both)
+  body.tld-bases-zebra:not(.tld-bases-zebra-vertical):not(.tld-bases-zebra-both):not(.tld-bases-zebra-crosshatch)
     .bases-tbody > .bases-tr:nth-child(even) > .bases-td:not(.is-measuring):not(:focus-within),
-  body.tld-bases-zebra.tld-bases-zebra-vertical:not(.tld-bases-zebra-both)
+  body.tld-bases-zebra.tld-bases-zebra-vertical:not(.tld-bases-zebra-both):not(.tld-bases-zebra-crosshatch)
     .bases-tbody > .bases-tr > .bases-td:nth-child(even of .bases-td):not(.is-measuring):not(:focus-within),
-  body.tld-bases-zebra.tld-bases-zebra-both
+  body.tld-bases-zebra.tld-bases-zebra-both:not(.tld-bases-zebra-crosshatch)
     .bases-tbody > .bases-tr:nth-child(odd) > .bases-td:nth-child(even of .bases-td):not(.is-measuring):not(:focus-within),
-  body.tld-bases-zebra.tld-bases-zebra-both
-    .bases-tbody > .bases-tr:nth-child(even) > .bases-td:nth-child(odd of .bases-td):not(.is-measuring):not(:focus-within) {
+  body.tld-bases-zebra.tld-bases-zebra-both:not(.tld-bases-zebra-crosshatch)
+    .bases-tbody > .bases-tr:nth-child(even) > .bases-td:nth-child(odd of .bases-td):not(.is-measuring):not(:focus-within),
+  body.tld-bases-zebra.tld-bases-zebra-crosshatch
+    .bases-tbody > .bases-tr:nth-child(even) > .bases-td:not(.is-measuring):not(:focus-within),
+  body.tld-bases-zebra.tld-bases-zebra-crosshatch
+    .bases-tbody > .bases-tr:nth-child(odd) > .bases-td:nth-child(even of .bases-td):not(.is-measuring):not(:focus-within) {
     background-color: var(--tld-bases-stripe);
   }
 
