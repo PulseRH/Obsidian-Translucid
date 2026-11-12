@@ -66,6 +66,10 @@ across each deeper indentation column and alternate by nesting depth. The first
 level stays unshaded, and the plugin's thin lines are suppressed. Gradients fade
 across three indentation widths by default; **Navigator gradient length** adjusts
 that reach. Deeper gradients overlay shallower ones beneath the labels and icons.
+Adjacent depths alternate between the chosen tint and a stronger contrasting
+dark tint (light tint in light mode), so nested layers remain distinct when
+overlapping. Extra row-level lines from the Calmer Notebook navigator snippet
+are suppressed while this option is on.
 Row heights, selection and click targets stay intact; RTL fades reverse.
 
 ### Extended Base

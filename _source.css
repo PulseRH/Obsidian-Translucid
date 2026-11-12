@@ -2308,16 +2308,27 @@ settings:
   body.tld-nn-indent-zebra .notebook-navigator {
     --nn-theme-nav-indent-guide-color: transparent !important;
   }
+  /* The optional "Calmer Notebook navigator" snippet draws a second set of
+     lines on the ROW ::before, independent of the plugin's guide spans.
+     Remove only that image; keep selected/search/custom background surfaces. */
+  body.tld-nn-indent-zebra .notebook-navigator .nn-navitem[data-level]:not([data-level="0"]):not([data-level="1"])::before {
+    background-image: none;
+  }
   /* A local stacking context keeps depth-ordered fades below labels, icons,
      and the plugin's selected/search overlays while they overlap each other. */
   body.tld-nn-indent-zebra .notebook-navigator .nn-navitem-content {
     isolation: isolate;
   }
-  /* Skip depth 0; depth 1 starts the stronger/weaker pattern. Longer fades
+  /* Skip depth 0; depth 1 starts the light/dark pattern. Longer fades
      intentionally overlap, with each deeper layer painted above ancestors. */
   body.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide {
     --tld-nn-guide-angle: 90deg;
-    --tld-nn-guide-mix: calc(var(--tld-nn-indent-strength, 20%) * (1 - 0.6 * mod(max(0, var(--nn-indent-guide-level, 0) - 1), 2)));
+    --tld-nn-guide-parity: mod(max(0, var(--nn-indent-guide-level, 0) - 1), 2);
+    --tld-nn-guide-alternate: #000000;
+    --tld-nn-guide-tone: color-mix(in srgb,
+      var(--tld-nn-indent-color, #9c9c9c) calc((1 - var(--tld-nn-guide-parity)) * 100%),
+      var(--tld-nn-guide-alternate) calc(var(--tld-nn-guide-parity) * 100%));
+    --tld-nn-guide-mix: min(85%, calc(var(--tld-nn-indent-strength, 20%) * (1 + 0.8 * var(--tld-nn-guide-parity))));
     --nn-indent-guide-line-width: 0px;
     width: calc(var(--nn-setting-nav-indent) * var(--tld-nn-indent-length, 3));
     transform: none;
@@ -2329,13 +2340,16 @@ settings:
     z-index: calc(var(--nn-indent-guide-level, 0) - 1000);
     background-image: linear-gradient(
       var(--tld-nn-guide-angle),
-      color-mix(in srgb, var(--tld-nn-indent-color, #9c9c9c) var(--tld-nn-guide-mix), transparent),
+      color-mix(in srgb, var(--tld-nn-guide-tone) var(--tld-nn-guide-mix), transparent),
       transparent
     );
     pointer-events: none;
   }
   body.mod-rtl.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide {
     --tld-nn-guide-angle: 270deg;
+  }
+  body.theme-light.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide {
+    --tld-nn-guide-alternate: #ffffff;
   }
   body.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide::before,
   body.tld-nn-indent-zebra .notebook-navigator .nn-navitem-indent-guide::after {
