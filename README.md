@@ -33,6 +33,12 @@ Open **Settings → Style Settings → Translucid**. Each optional feature is a
 `class-toggle` that adds a `body.tld-*` class the CSS keys off. Defaults reproduce
 the previous snippet setup.
 
+### Bases
+Under **Style Settings → Translucid → Bases**, enable frosted backgrounds and
+zebra rows for table, cards and list views. Adjust the blur strength and toggle
+horizontal and vertical centering independently (centering is off by default).
+The table keeps native scrolling, resizing, editing and selection indicators.
+
 ### Layout widths
 The **Layout widths** section has sliders for the **Settings modal width**
 (Obsidian 1.13 sizes it with `--modal-width`/`--modal-max-width`, stock 90vw

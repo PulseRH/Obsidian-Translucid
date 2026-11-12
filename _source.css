@@ -486,6 +486,45 @@ settings:
     type: class-toggle
     default: true
   -
+    id: translucid-bases-header
+    title: Bases
+    type: heading
+    level: 1
+    collapsed: true
+  -
+    id: tld-bases-frost
+    title: Frosted Bases background
+    description: Glass backgrounds for standalone and embedded Bases, including table, cards and list views.
+    type: class-toggle
+    default: true
+  -
+    id: tld-bases-blur
+    title: Bases background blur
+    type: variable-number-slider
+    default: 12
+    min: 0
+    max: 40
+    step: 1
+    format: px
+  -
+    id: tld-bases-zebra
+    title: Zebra rows in Bases
+    description: Alternating translucent fills for table rows, cards and list items.
+    type: class-toggle
+    default: true
+  -
+    id: tld-bases-center-horizontal
+    title: Center Bases text horizontally
+    description: Center table headings and values, including numbers, and card text.
+    type: class-toggle
+    default: false
+  -
+    id: tld-bases-center-vertical
+    title: Center Bases text vertically
+    description: Center values within table rows, including multiline rows, and card property lines.
+    type: class-toggle
+    default: false
+  -
     id: translucid-statusbar-header
     title: Status bar
     type: heading
@@ -1002,36 +1041,26 @@ settings:
    TABLES — translucent zebra (translucent-zebra-tables.css)
    ===================================================================== */
 @layer tables {
-  body.tld-zebra .markdown-rendered table,
-  body.tld-zebra .bases-table,
-  body.tld-zebra [class*="bases-table"] {
+  body.tld-zebra .markdown-rendered table {
     background: transparent !important;
     border-spacing: 0 !important;
     border-collapse: collapse !important;
   }
-  body.tld-zebra .markdown-rendered thead th,
-  body.tld-zebra .bases-table-header,
-  body.tld-zebra .bases-th {
+  body.tld-zebra .markdown-rendered thead th {
     background-color: rgba(30, 30, 30, 0.9) !important;
     border-bottom: 0px solid var(--divider-color) !important;
     border-right: 0px solid var(--divider-color) !important;
     padding: 12px !important;
   }
-  body.tld-zebra .markdown-rendered tbody tr:nth-child(even),
-  body.tld-zebra .bases-tr:nth-child(even),
-  body.tld-zebra [class*="bases-row"]:nth-child(even) {
+  body.tld-zebra .markdown-rendered tbody tr:nth-child(even) {
     background-color: rgba(255, 255, 255, 0.04) !important;
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
   }
-  body.tld-zebra .markdown-rendered tbody tr:nth-child(odd),
-  body.tld-zebra .bases-tr:nth-child(odd),
-  body.tld-zebra [class*="bases-row"]:nth-child(odd) {
+  body.tld-zebra .markdown-rendered tbody tr:nth-child(odd) {
     background-color: transparent !important;
   }
   body.tld-zebra .markdown-rendered td,
-  body.tld-zebra .bases-td,
-  body.tld-zebra [class*="bases-cell"],
   body.tld-zebra .dbfolder-cell {
     border-bottom: 1px solid var(--divider-color) !important;
     border-right: 1px solid var(--divider-color) !important;
@@ -1043,31 +1072,83 @@ settings:
     transform: none !important;
   }
   body.tld-zebra .markdown-rendered td:first-child,
-  body.tld-zebra .bases-td:first-child,
-  body.tld-zebra .markdown-rendered th:first-child,
-  body.tld-zebra .bases-table-header:first-child {
+  body.tld-zebra .markdown-rendered th:first-child {
     border-left: 1px solid var(--divider-color) !important;
   }
-  body.tld-zebra .markdown-rendered td:focus,
-  body.tld-zebra .bases-td:focus {
+  body.tld-zebra .markdown-rendered td:focus {
     outline: none !important;
     box-shadow: none !important;
     background-clip: padding-box !important;
     transform: none !important;
   }
-  body.tld-zebra .markdown-rendered tbody tr:hover,
-  body.tld-zebra .bases-tr:hover,
-  body.tld-zebra [class*="bases-row"]:hover {
+  body.tld-zebra .markdown-rendered tbody tr:hover {
     filter: brightness(1.4) !important;
     transition: filter 0.15s ease !important;
   }
-  body.tld-zebra .markdown-rendered tbody tr:hover td,
-  body.tld-zebra .bases-tr:hover td,
-  body.tld-zebra [class*="bases-row"]:hover td {
+  body.tld-zebra .markdown-rendered tbody tr:hover td {
     background-color: rgba(255, 255, 255, 0.03) !important;
   }
   body.tld-zebra .markdown-rendered tr:last-child td {
     border-bottom: 2px solid var(--divider-color) !important;
+  }
+}
+
+/* Bases uses virtualized, positioned flex cells. Keep those measurements,
+   scroll containers, resize handles, editing and selection styles native. */
+@layer bases {
+  body.tld-bases-frost .bases-view {
+    --bases-table-group-background: transparent;
+    --bases-table-header-background: color-mix(in srgb, var(--settings-glass-color) 65%, transparent);
+    --bases-table-summary-background: var(--bases-table-header-background);
+    --bases-cards-background: color-mix(in srgb, var(--settings-glass-color) 40%, transparent);
+    --bases-cards-container-background: transparent;
+    background-color: color-mix(in srgb, var(--settings-glass-color) 28%, transparent);
+    -webkit-backdrop-filter: blur(var(--tld-bases-blur, 12px)) saturate(1.1);
+    backdrop-filter: blur(var(--tld-bases-blur, 12px)) saturate(1.1);
+    border-radius: var(--radius-m);
+  }
+
+  body.tld-bases-zebra .bases-view {
+    --tld-bases-stripe: rgba(255, 255, 255, 0.04);
+  }
+  body.theme-light.tld-bases-zebra .bases-view {
+    --tld-bases-stripe: rgba(0, 0, 0, 0.04);
+  }
+  body.tld-bases-zebra .bases-tbody > .bases-tr:nth-child(even):not(.is-measuring),
+  body.tld-bases-zebra .bases-cards-group > .bases-cards-item:nth-child(even),
+  body.tld-bases-zebra .bases-list-group-list > .bases-list-item:nth-child(even) {
+    background-color: var(--tld-bases-stripe);
+  }
+  body.tld-bases-zebra .bases-tbody > .bases-tr:hover {
+    background-color: var(--bases-table-row-background-hover);
+  }
+
+  body.tld-bases-center-horizontal .bases-table-header,
+  body.tld-bases-center-horizontal .bases-table-header-label,
+  body.tld-bases-center-horizontal .bases-table-cell,
+  body.tld-bases-center-horizontal .bases-table-cell .metadata-link,
+  body.tld-bases-center-horizontal .bases-table-cell .value-list-container,
+  body.tld-bases-center-horizontal .bases-table-cell .multi-select-container {
+    justify-content: center;
+    text-align: center;
+  }
+  body.tld-bases-center-horizontal .bases-table-cell :is(.metadata-input-number, .metadata-input-text, .metadata-input-longtext, .metadata-link-inner),
+  body.tld-bases-center-horizontal .bases-table-cell .bases-rendered-value,
+  body.tld-bases-center-horizontal .bases-cards-label,
+  body.tld-bases-center-horizontal .bases-cards-line {
+    text-align: center;
+  }
+  body.tld-bases-center-horizontal .bases-cards-line :is(.value-list-container, .multi-select-container) {
+    justify-content: center;
+  }
+
+  body.tld-bases-center-vertical .bases-table-container .bases-table-cell,
+  body.tld-bases-center-vertical .bases-table-container .bases-td {
+    align-items: center;
+  }
+  body.tld-bases-center-vertical .bases-cards-line {
+    display: flex;
+    align-items: center;
   }
 }
 
@@ -1861,9 +1942,12 @@ settings:
   /* The phone workspace also applies backdrop blur (including Background
      Switcher). Keep that frost behind the UI, rather than making the whole
      workspace another backdrop root that blocks section-level blur. */
+  /* Do not create a workspace stacking context: it would trap the fixed
+     drawer below the later mobile navbar, letting Tabs steal Settings taps.
+     The non-interactive ::before layer below still supplies the same frost. */
   body.is-mobile .workspace {
     position: relative;
-    z-index: 0;
+    z-index: auto;
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
   }
