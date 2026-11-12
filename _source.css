@@ -1169,6 +1169,24 @@ settings:
 /* Bases uses virtualized, positioned flex cells. Keep those measurements,
    scroll containers, resize handles, editing and selection styles native. */
 @layer bases {
+  /* Image-only native formula cells use their full fixed cell dimensions. */
+  .bases-table-cell.bases-rendered-value:has(> img:only-child) {
+    padding: 0;
+    line-height: 0;
+  }
+  .bases-table-cell.bases-rendered-value > img:only-child {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    border-radius: 0;
+    object-fit: cover;
+  }
+
   body.tld-bases-hide-lines .bases-view:not([data-view-type^="notion-"]) {
     --bases-table-column-border-width: 0px;
     --bases-table-row-border-width: 0px;
@@ -1362,6 +1380,33 @@ settings:
    Presence of those nodes activates support automatically, with no plugin JS
    or persistent setting changes. The opt-out gates every compatibility rule. */
 @layer extendedbase {
+  /* Markdown-rendered image cells have both td padding and an inline-image
+     baseline gap. Keep the image in normal flow to retain its natural aspect
+     ratio and automatic table row sizing; ordinary text cells are unchanged. */
+  body:not(.tld-disable-extended-base) .ntn-root .ntn-table .ntn-td:has(> .ntn-cell > img:only-child),
+  body:not(.tld-disable-extended-base) .ntn-root .ntn-table .ntn-td:has(> .ntn-cell > p:only-child > img:only-child) {
+    padding: 0;
+    border: 0;
+  }
+  body:not(.tld-disable-extended-base) .ntn-root .ntn-table .ntn-cell:has(> img:only-child),
+  body:not(.tld-disable-extended-base) .ntn-root .ntn-table .ntn-cell:has(> p:only-child > img:only-child),
+  body:not(.tld-disable-extended-base) .ntn-root .ntn-table .ntn-cell > p:has(> img:only-child) {
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+  }
+  body:not(.tld-disable-extended-base) .ntn-root .ntn-table .ntn-cell > img:only-child,
+  body:not(.tld-disable-extended-base) .ntn-root .ntn-table .ntn-cell > p:only-child > img:only-child {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    border-radius: 0;
+    object-fit: cover;
+  }
+
   body:not(.tld-disable-extended-base) .ntn-root {
     font-size: var(--tld-bases-font-size, 14px);
   }
